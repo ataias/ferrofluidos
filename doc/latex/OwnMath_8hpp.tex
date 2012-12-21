@@ -1,0 +1,307 @@
+\hypertarget{OwnMath_8hpp}{\section{Own\-Math.\-hpp File Reference}
+\label{OwnMath_8hpp}\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}}
+}
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include $<$Dense$>$}\\*
+{\ttfamily \#include $<$Eigen$>$}\\*
+{\ttfamily \#include $<$Sparse$>$}\\*
+{\ttfamily \#include $<$Sparse\-Core$>$}\\*
+{\ttfamily \#include $<$Sparse\-Cholesky$>$}\\*
+{\ttfamily \#include $<$Core$>$}\\*
+{\ttfamily \#include $<$Eigenvalues$>$}\\*
+{\ttfamily \#include $<$Geometry$>$}\\*
+{\ttfamily \#include $<$fstream$>$}\\*
+{\ttfamily \#include $<$string$>$}\\*
+{\ttfamily \#include $<$cstdlib$>$}\\*
+{\ttfamily \#include $<$ctime$>$}\\*
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{OwnMath_8hpp_ad37a804df2a1060b453ce07fe0ee3cbc}{A\-T}~21
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef Matrix$<$ double, 50, 50 $>$ \hyperlink{OwnMath_8hpp_ace2177c6747f7e84bffc79ff95e1e7e1}{Matrix50d}
+\item 
+typedef Matrix$<$ double, \hyperlink{OwnMath_8hpp_ad37a804df2a1060b453ce07fe0ee3cbc}{A\-T}, \hyperlink{OwnMath_8hpp_ad37a804df2a1060b453ce07fe0ee3cbc}{A\-T} $>$ \hyperlink{OwnMath_8hpp_af40fba3f1445d84d0a422f79b5905b43}{Array\-A\-Td}
+\item 
+typedef Eigen\-::\-Sparse\-Matrix\\*
+$<$ double $>$ \hyperlink{OwnMath_8hpp_a04b63929a2578b5ce61f09f0b8b18122}{Sp\-Mat}
+\item 
+typedef Eigen\-::\-Triplet$<$ double $>$ \hyperlink{OwnMath_8hpp_af639fb96631ba0018f0b2259fc95edfb}{T}
+\item 
+typedef Matrix$<$ double, \hyperlink{OwnMath_8hpp_ad37a804df2a1060b453ce07fe0ee3cbc}{A\-T}, \hyperlink{OwnMath_8hpp_ad37a804df2a1060b453ce07fe0ee3cbc}{A\-T} $>$ \hyperlink{OwnMath_8hpp_a1f61308c8a2c0aaae58a3e90551c62b2}{Matrix\-A\-Td}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+Matrix\-Xd \hyperlink{OwnMath_8hpp_af6eb1d8ad8285f603c979824a515d8c7}{dc\-\_\-\-U} (Matrix\-Xd U, double u1, double u2, double u3, double u4)
+\item 
+Matrix\-Xd \hyperlink{OwnMath_8hpp_a64b30c476d785c91dbc2053046d6067b}{dnc\-\_\-\-U} (Matrix\-Xd U, char file\mbox{[}$\,$\mbox{]})
+\item 
+Matrix\-Xd \hyperlink{OwnMath_8hpp_a6ee111013a8920fc6c42416b3a3567c2}{Poisson\-Sparse\-S\-I} (Matrix\-Xd g, Matrix\-Xd U, double dt, double dx, double K)
+\item 
+\hyperlink{OwnMath_8hpp_a1f61308c8a2c0aaae58a3e90551c62b2}{Matrix\-A\-Td} $\ast$ \hyperlink{OwnMath_8hpp_a222488b035032a5709bc78033598a9bc}{Solve\-Heat\-Equation\-E} (\hyperlink{OwnMath_8hpp_a1f61308c8a2c0aaae58a3e90551c62b2}{Matrix\-A\-Td} conditions, double alpha, int N\-\_\-t, double L, double t\-\_\-max)
+\item 
+\hyperlink{OwnMath_8hpp_a1f61308c8a2c0aaae58a3e90551c62b2}{Matrix\-A\-Td} $\ast$ \hyperlink{OwnMath_8hpp_a67b2ca4a14e0a6718bd2a450b157fac5}{Solve\-Heat\-Equation\-I} (\hyperlink{OwnMath_8hpp_a1f61308c8a2c0aaae58a3e90551c62b2}{Matrix\-A\-Td} conditions, double K, int N\-\_\-t, double L, double t\-\_\-max)
+\item 
+Matrix\-Xd \hyperlink{OwnMath_8hpp_aba844e0d3ee1c014dc8cc1761164e0fe}{Poisson} (Matrix\-Xd g)
+\item 
+Matrix\-Xd \hyperlink{OwnMath_8hpp_aeb36d89ec22b3e514a529923d72c98c6}{Poisson\-Sparse} (Matrix\-Xd g, Matrix\-Xd U)
+\item 
+void \hyperlink{OwnMath_8hpp_a744e1d660fdfdcc4da27c5959f6126ba}{file\-Name} (char $\ast$file)
+\item 
+void \hyperlink{OwnMath_8hpp_af1967a9d96face7e66c825248297ce3c}{save} (char file\mbox{[}$\,$\mbox{]}, clock\-\_\-t t\-Start, time\-\_\-t $\ast$inicio, Matrix\-Xd U, string equation)
+\item 
+void \hyperlink{OwnMath_8hpp_a81385cec696ed194b6d9e0ac1d49e4fa}{save\-Tm\-Eqn} (char file\mbox{[}$\,$\mbox{]}, clock\-\_\-t t\-Start, time\-\_\-t $\ast$inicio, string equation, Matrix\-Xd $\ast$U, int \hyperlink{OwnMath_8hpp_a7722c8ecbb62d99aee7ce68b1752f337}{N})
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{OwnMath_8hpp_a7722c8ecbb62d99aee7ce68b1752f337}{N} = 21
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ataias Pereira Reis \href{mailto:ataiasreis@gmail.com}{\tt ataiasreis@gmail.\-com} 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\-0
+\end{DoxyVersion}
+\hypertarget{OwnMath_8hpp_LICENSE}{}\subsection{L\-I\-C\-E\-N\-S\-E}\label{OwnMath_8hpp_LICENSE}
+This program is free software; you can redistribute it and/or modify it under the terms of the G\-N\-U General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but W\-I\-T\-H\-O\-U\-T A\-N\-Y W\-A\-R\-R\-A\-N\-T\-Y; without even the implied warranty of M\-E\-R\-C\-H\-A\-N\-T\-A\-B\-I\-L\-I\-T\-Y or F\-I\-T\-N\-E\-S\-S F\-O\-R A P\-A\-R\-T\-I\-C\-U\-L\-A\-R P\-U\-R\-P\-O\-S\-E. See the G\-N\-U General Public License for more details at \href{http://www.gnu.org/copyleft/gpl.html}{\tt http\-://www.\-gnu.\-org/copyleft/gpl.\-html}\hypertarget{OwnMath_8hpp_DESCRIPTION}{}\subsection{D\-E\-S\-C\-R\-I\-P\-T\-I\-O\-N}\label{OwnMath_8hpp_DESCRIPTION}
+A classe Time representa um momento de tempo. 
+
+\subsection{Macro Definition Documentation}
+\hypertarget{OwnMath_8hpp_ad37a804df2a1060b453ce07fe0ee3cbc}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!A\-T@{A\-T}}
+\index{A\-T@{A\-T}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{A\-T}]{\setlength{\rightskip}{0pt plus 5cm}\#define A\-T~21}}\label{OwnMath_8hpp_ad37a804df2a1060b453ce07fe0ee3cbc}
+
+
+\subsection{Typedef Documentation}
+\hypertarget{OwnMath_8hpp_af40fba3f1445d84d0a422f79b5905b43}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!Array\-A\-Td@{Array\-A\-Td}}
+\index{Array\-A\-Td@{Array\-A\-Td}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{Array\-A\-Td}]{\setlength{\rightskip}{0pt plus 5cm}typedef Matrix$<$double, {\bf A\-T}, {\bf A\-T}$>$ {\bf Array\-A\-Td}}}\label{OwnMath_8hpp_af40fba3f1445d84d0a422f79b5905b43}
+\hypertarget{OwnMath_8hpp_ace2177c6747f7e84bffc79ff95e1e7e1}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!Matrix50d@{Matrix50d}}
+\index{Matrix50d@{Matrix50d}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{Matrix50d}]{\setlength{\rightskip}{0pt plus 5cm}typedef Matrix$<$double, 50, 50$>$ {\bf Matrix50d}}}\label{OwnMath_8hpp_ace2177c6747f7e84bffc79ff95e1e7e1}
+\hypertarget{OwnMath_8hpp_a1f61308c8a2c0aaae58a3e90551c62b2}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!Matrix\-A\-Td@{Matrix\-A\-Td}}
+\index{Matrix\-A\-Td@{Matrix\-A\-Td}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{Matrix\-A\-Td}]{\setlength{\rightskip}{0pt plus 5cm}typedef Matrix$<$double, {\bf A\-T}, {\bf A\-T}$>$ {\bf Matrix\-A\-Td}}}\label{OwnMath_8hpp_a1f61308c8a2c0aaae58a3e90551c62b2}
+\hypertarget{OwnMath_8hpp_a04b63929a2578b5ce61f09f0b8b18122}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!Sp\-Mat@{Sp\-Mat}}
+\index{Sp\-Mat@{Sp\-Mat}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{Sp\-Mat}]{\setlength{\rightskip}{0pt plus 5cm}typedef Eigen\-::\-Sparse\-Matrix$<$double$>$ {\bf Sp\-Mat}}}\label{OwnMath_8hpp_a04b63929a2578b5ce61f09f0b8b18122}
+\hypertarget{OwnMath_8hpp_af639fb96631ba0018f0b2259fc95edfb}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!T@{T}}
+\index{T@{T}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{T}]{\setlength{\rightskip}{0pt plus 5cm}typedef Eigen\-::\-Triplet$<$double$>$ {\bf T}}}\label{OwnMath_8hpp_af639fb96631ba0018f0b2259fc95edfb}
+
+
+\subsection{Function Documentation}
+\hypertarget{OwnMath_8hpp_af6eb1d8ad8285f603c979824a515d8c7}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!dc\-\_\-\-U@{dc\-\_\-\-U}}
+\index{dc\-\_\-\-U@{dc\-\_\-\-U}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{dc\-\_\-\-U}]{\setlength{\rightskip}{0pt plus 5cm}Matrix\-Xd dc\-\_\-\-U (
+\begin{DoxyParamCaption}
+\item[{Matrix\-Xd}]{U, }
+\item[{double}]{u1, }
+\item[{double}]{u2, }
+\item[{double}]{u3, }
+\item[{double}]{u4}
+\end{DoxyParamCaption}
+)}}\label{OwnMath_8hpp_af6eb1d8ad8285f603c979824a515d8c7}
+The function dc\-\_\-\-U is made to create a dirichlet boundary condition, one with each side constant.
+
+This considers a square matrix, with dx = dy.
+
+
+\begin{DoxyParams}{Parameters}
+{\em U} & is the matrix to which the boundary will be changed \\
+\hline
+{\em u1} & is the value of column 0 \\
+\hline
+{\em u2} & is the value of row 0 \\
+\hline
+{\em u3} & is the value of row(N-\/1) \\
+\hline
+{\em u4} & is the value of column(N-\/1) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The matrix U is returned, with changed boundary conditions
+\end{DoxyReturn}
+\hypertarget{OwnMath_8hpp_a64b30c476d785c91dbc2053046d6067b}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!dnc\-\_\-\-U@{dnc\-\_\-\-U}}
+\index{dnc\-\_\-\-U@{dnc\-\_\-\-U}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{dnc\-\_\-\-U}]{\setlength{\rightskip}{0pt plus 5cm}Matrix\-Xd dnc\-\_\-\-U (
+\begin{DoxyParamCaption}
+\item[{Matrix\-Xd}]{U, }
+\item[{char}]{file\mbox{[}$\,$\mbox{]}}
+\end{DoxyParamCaption}
+)}}\label{OwnMath_8hpp_a64b30c476d785c91dbc2053046d6067b}
+The function dcn\-\_\-\-U is made to create a dirichlet boundary condition, one with each side. Actually it could be any condition, it just set the boundary of the matrix. Beside that, it takes the whole matrix, so includes any initial condition in the file to be read.
+
+This considers a square matrix, with dx = dy. The values are arbitrary and taken from a text file with the matrix. It does not require the number of columns of lines.
+
+
+\begin{DoxyParams}{Parameters}
+{\em U} & is the matrix to which the boundary will be changed \\
+\hline
+{\em file\mbox{[}$\,$\mbox{]}} & is the name of text file \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The matrix U is returned, with changed boundary conditions
+\end{DoxyReturn}
+$<$ var rn, cn \-: rows and columns number 青い \hypertarget{OwnMath_8hpp_a744e1d660fdfdcc4da27c5959f6126ba}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!file\-Name@{file\-Name}}
+\index{file\-Name@{file\-Name}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{file\-Name}]{\setlength{\rightskip}{0pt plus 5cm}void file\-Name (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{file}
+\end{DoxyParamCaption}
+)}}\label{OwnMath_8hpp_a744e1d660fdfdcc4da27c5959f6126ba}
+Method for creating a file name according to matrix size
+
+Matrix size is not a parameter of function, it is set as a global variable 
+\begin{DoxyParams}{Parameters}
+{\em file} & is a char pointer where the string will be saved \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+No return value.
+\end{DoxyReturn}
+\hypertarget{OwnMath_8hpp_aba844e0d3ee1c014dc8cc1761164e0fe}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!Poisson@{Poisson}}
+\index{Poisson@{Poisson}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{Poisson}]{\setlength{\rightskip}{0pt plus 5cm}Matrix\-Xd Poisson (
+\begin{DoxyParamCaption}
+\item[{Matrix\-Xd}]{g}
+\end{DoxyParamCaption}
+)}}\label{OwnMath_8hpp_aba844e0d3ee1c014dc8cc1761164e0fe}
+\hypertarget{OwnMath_8hpp_aeb36d89ec22b3e514a529923d72c98c6}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!Poisson\-Sparse@{Poisson\-Sparse}}
+\index{Poisson\-Sparse@{Poisson\-Sparse}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{Poisson\-Sparse}]{\setlength{\rightskip}{0pt plus 5cm}Matrix\-Xd Poisson\-Sparse (
+\begin{DoxyParamCaption}
+\item[{Matrix\-Xd}]{g, }
+\item[{Matrix\-Xd}]{U}
+\end{DoxyParamCaption}
+)}}\label{OwnMath_8hpp_aeb36d89ec22b3e514a529923d72c98c6}
+\hypertarget{OwnMath_8hpp_a6ee111013a8920fc6c42416b3a3567c2}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!Poisson\-Sparse\-S\-I@{Poisson\-Sparse\-S\-I}}
+\index{Poisson\-Sparse\-S\-I@{Poisson\-Sparse\-S\-I}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{Poisson\-Sparse\-S\-I}]{\setlength{\rightskip}{0pt plus 5cm}Matrix\-Xd Poisson\-Sparse\-S\-I (
+\begin{DoxyParamCaption}
+\item[{Matrix\-Xd}]{g, }
+\item[{Matrix\-Xd}]{U, }
+\item[{double}]{dt, }
+\item[{double}]{dx, }
+\item[{double}]{K}
+\end{DoxyParamCaption}
+)}}\label{OwnMath_8hpp_a6ee111013a8920fc6c42416b3a3567c2}
+The function Poisson\-Sparse\-S\-I is made to solve the Poisson Equation using an implicit method of solution
+
+Equation is\-: $K\nabla^2 U=g(x,y)$ 
+\begin{DoxyParams}{Parameters}
+{\em g} & is the non-\/homogeneity \\
+\hline
+{\em U} & is the matrix where the solution will be save \\
+\hline
+{\em dt} & is the time step \\
+\hline
+{\em dx} & is the spatial step. In y, the step is dy = dx \\
+\hline
+{\em K} & is the coefficient in the formula. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The matrix U is returned, as solution of the given equation
+\end{DoxyReturn}
+\hypertarget{OwnMath_8hpp_af1967a9d96face7e66c825248297ce3c}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!save@{save}}
+\index{save@{save}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{save}]{\setlength{\rightskip}{0pt plus 5cm}void save (
+\begin{DoxyParamCaption}
+\item[{char}]{file\mbox{[}$\,$\mbox{]}, }
+\item[{clock\-\_\-t}]{t\-Start, }
+\item[{time\-\_\-t $\ast$}]{inicio, }
+\item[{Matrix\-Xd}]{U, }
+\item[{string}]{equation}
+\end{DoxyParamCaption}
+)}}\label{OwnMath_8hpp_af1967a9d96face7e66c825248297ce3c}
+Method for saving a matrix in a file .m After save, it is possible to open easily with octave and print the graph for file
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\mbox{[}$\,$\mbox{]}} & name of file where matrix will be save \\
+\hline
+{\em t\-Start} & has the value of cpu time in the start, in this method the \char`\"{}t\-Final\char`\"{} is calculated and subtracted from t\-Start \\
+\hline
+{\em $\ast$inicio} & is a pointer that indicates the time of start, and date \\
+\hline
+{\em U} & is the matrix that will be saved \\
+\hline
+{\em equation} & is a string that receives the equation being solved, just to show in the .m file. Ex\-: Laplace Equation -\/ u\-\_\-xx + u\-\_\-yy = f(x,y) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+No return value.
+\end{DoxyReturn}
+\hypertarget{OwnMath_8hpp_a81385cec696ed194b6d9e0ac1d49e4fa}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!save\-Tm\-Eqn@{save\-Tm\-Eqn}}
+\index{save\-Tm\-Eqn@{save\-Tm\-Eqn}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{save\-Tm\-Eqn}]{\setlength{\rightskip}{0pt plus 5cm}void save\-Tm\-Eqn (
+\begin{DoxyParamCaption}
+\item[{char}]{file\mbox{[}$\,$\mbox{]}, }
+\item[{clock\-\_\-t}]{t\-Start, }
+\item[{time\-\_\-t $\ast$}]{inicio, }
+\item[{string}]{equation, }
+\item[{Matrix\-Xd $\ast$}]{U, }
+\item[{int}]{N}
+\end{DoxyParamCaption}
+)}}\label{OwnMath_8hpp_a81385cec696ed194b6d9e0ac1d49e4fa}
+Method for saving various matrices in a file .m After save, it is possible to open easily with octave and make a video of the matrices
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\mbox{[}$\,$\mbox{]}} & name of file where matrix will be save \\
+\hline
+{\em t\-Start} & has the value of cpu time in the start, in this method the \char`\"{}t\-Final\char`\"{} is calculated and subtracted from t\-Start \\
+\hline
+{\em $\ast$inicio} & is a pointer that indicates the time of start, and date \\
+\hline
+{\em equation} & is a string that receives the equation being solved, just to show in the .m file. Ex\-: Laplace Equation -\/ u\-\_\-xx + u\-\_\-yy = f(x,y) \\
+\hline
+{\em $\ast$\-U} & is a pointer to the 3d matrix U, that will be saved \\
+\hline
+{\em N} & indicates how many two-\/dimensional matrices there are in matrix U \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+No return value.
+\end{DoxyReturn}
+\hypertarget{OwnMath_8hpp_a222488b035032a5709bc78033598a9bc}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!Solve\-Heat\-Equation\-E@{Solve\-Heat\-Equation\-E}}
+\index{Solve\-Heat\-Equation\-E@{Solve\-Heat\-Equation\-E}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{Solve\-Heat\-Equation\-E}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Matrix\-A\-Td}$\ast$ Solve\-Heat\-Equation\-E (
+\begin{DoxyParamCaption}
+\item[{{\bf Matrix\-A\-Td}}]{conditions, }
+\item[{double}]{alpha, }
+\item[{int}]{N\-\_\-t, }
+\item[{double}]{L, }
+\item[{double}]{t\-\_\-max}
+\end{DoxyParamCaption}
+)}}\label{OwnMath_8hpp_a222488b035032a5709bc78033598a9bc}
+\hypertarget{OwnMath_8hpp_a67b2ca4a14e0a6718bd2a450b157fac5}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!Solve\-Heat\-Equation\-I@{Solve\-Heat\-Equation\-I}}
+\index{Solve\-Heat\-Equation\-I@{Solve\-Heat\-Equation\-I}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{Solve\-Heat\-Equation\-I}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Matrix\-A\-Td}$\ast$ Solve\-Heat\-Equation\-I (
+\begin{DoxyParamCaption}
+\item[{{\bf Matrix\-A\-Td}}]{conditions, }
+\item[{double}]{K, }
+\item[{int}]{N\-\_\-t, }
+\item[{double}]{L, }
+\item[{double}]{t\-\_\-max}
+\end{DoxyParamCaption}
+)}}\label{OwnMath_8hpp_a67b2ca4a14e0a6718bd2a450b157fac5}
+
+
+\subsection{Variable Documentation}
+\hypertarget{OwnMath_8hpp_a7722c8ecbb62d99aee7ce68b1752f337}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!N@{N}}
+\index{N@{N}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{N}]{\setlength{\rightskip}{0pt plus 5cm}int N = 21}}\label{OwnMath_8hpp_a7722c8ecbb62d99aee7ce68b1752f337}
