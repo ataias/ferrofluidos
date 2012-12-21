@@ -1,7 +1,11 @@
 /**
  * @file OwnMath.hpp
  * @author  Ataias Pereira Reis <ataiasreis@gmail.com>
+<<<<<<< HEAD
  * @version 1.0.1
+=======
+ * @version 1.0
+>>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6
  *
  * @section LICENSE
  *
@@ -44,6 +48,7 @@ using namespace Eigen;
 #define AT 21
 typedef Matrix<double, 50, 50> Matrix50d;
 typedef Matrix<double, AT, AT> ArrayATd;
+<<<<<<< HEAD
 typedef Eigen::SparseMatrix<double> SpMat;
 typedef Eigen::Triplet<double> T;
 
@@ -54,12 +59,19 @@ MatrixXd dc_U(MatrixXd U,
 		      double u4
 		      )
 {
+=======
+
+MatrixXd dc_U(MatrixXd U, double u1, double u2, double u3, double u4){
+>>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6
 	/**
 	 * The function dc_U is made to create a dirichlet boundary condition,
 	 * one with each side constant.
 	 *
 	 * This considers a square matrix, with dx = dy.
+<<<<<<< HEAD
 	 *
+=======
+>>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6
 	 * @param  U is the matrix to which the boundary will be changed
 	 * @param  u1 is the value of column 0
 	 * @param  u2 is the value of row 0
@@ -76,6 +88,7 @@ MatrixXd dc_U(MatrixXd U,
 	return(U);
 }
 
+<<<<<<< HEAD
 MatrixXd dnc_U(MatrixXd U,
 		       char file[]
 		       )
@@ -85,19 +98,32 @@ MatrixXd dnc_U(MatrixXd U,
 	 * one with each side. Actually it could be any condition, it just set
 	 * the boundary of the matrix. Beside that, it takes the whole matrix,
 	 * so includes any initial condition in the file to be read.
+=======
+MatrixXd dnc_U(MatrixXd U, char file[]){
+	/**
+	 * The function dcn_U is made to create a dirichlet boundary condition,
+	 * one with each side.
+>>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6
 	 *
 	 * This considers a square matrix, with dx = dy. The values are arbitrary
 	 * and taken from a text file with the matrix. It does not require the number
 	 * of columns of lines.
+<<<<<<< HEAD
 	 *
+=======
+>>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6
 	 * @param  U is the matrix to which the boundary will be changed
 	 * @param  file[] is the name of text file
 	 * @return The matrix U is returned, with changed boundary conditions
 	 */
 	ifstream m_file;
 	m_file.open(file);
+<<<<<<< HEAD
 	int rn = 0, cn=0; /*!< var rn, cn :
 	 	 	 	 	 	 \brief rows and columns number 青い */
+=======
+	int rn = 0, cn=0; /*!< rows and columns number 青い */
+>>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6
 
 	/*Loop to discover number of rows and columns while reading file*/
 	string line;
@@ -114,14 +140,25 @@ MatrixXd dnc_U(MatrixXd U,
 	}
 	cn = cn/rn;
 	m_file.close();
+<<<<<<< HEAD
 	U.resize(rn,cn);
 	m_file.open(file);
+=======
+//	cout << "Inside, after determined cn and rn\n";
+	/*--------------------------------------------------------------*/
+	U.resize(rn,cn);
+//	cout << "rn=" << rn << " und cn=" << cn << endl;
+//	cout << "After resize\n";
+	m_file.open(file);
+//	cout << "After opened file again\n";
+>>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6
 	for (int i = 0; i < rn; i++) {
 		for (int j = 0; j < cn; j++) {
 			m_file >> U(i,j);
 	    }
 	  }
 	m_file.close();
+<<<<<<< HEAD
 	return(U);
 }
 
@@ -145,6 +182,32 @@ MatrixXd PoissonSparseSI(MatrixXd g,
 	 * @param  K is the coefficient in the formula.
 	 * @return The matrix U is returned, as solution of the given equation
 	 */
+=======
+//	cout << "After closed file again\n";
+	return(U);
+}
+//---------------------------------------------------------------------
+
+/*
+ * Here, conditions include Boundary Conditions plus Initial Conditions
+ * Solving for domain 0 < x < L and 0 < y < L
+ */
+/*
+ * This one is specially for solving implicitly
+ *
+ *
+ */
+
+	typedef Eigen::SparseMatrix<double> SpMat;
+	typedef Eigen::Triplet<double> T;
+
+using namespace Eigen;
+using namespace std;
+
+//g is the matrix of non-homogenity
+MatrixXd PoissonSparseSI(MatrixXd g, MatrixXd U, double dt, double dx, double K){
+
+>>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6
 	std::vector<T> tripletList; //triplet, needed to fill sparse matrix
 	long unsigned n = (N-2)*(N-2);
 	tripletList.reserve(5*n);
@@ -206,6 +269,7 @@ MatrixATd* SolveHeatEquationE(
 					int N_t, //Number of points in time variable
 					double L, //length of interval in x and y;
 					double t_max //max time
+<<<<<<< HEAD
 				  )
 {
 	double dt = t_max / (N_t);
@@ -213,6 +277,14 @@ MatrixATd* SolveHeatEquationE(
 	double r = 1.0*alpha*dt/(dx*dx);
 	double h = 1.0*1-4.0*r;
 
+=======
+				  ){
+
+	double dt = t_max / (N_t);
+  double dx = (1.0*L)/(AT-1); //de 0 a L divido para para ter 10 de dimensão, a divisão se faz por AT-1 ao invés de AT
+  double r = 1.0*alpha*dt/(dx*dx);
+  double h = 1.0*1-4.0*r;
+>>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6
 	MatrixATd *U;
 	U = (MatrixATd*) malloc (N_t*sizeof(*U));
 	U[0] = conditions;
@@ -324,6 +396,22 @@ MatrixXd Poisson(MatrixXd g){ //seria bom checar se g é NxN
 
 	return(U);
 }
+<<<<<<< HEAD
+=======
+//----------------------------------------------
+
+/*
+ *
+ *
+ *
+ */
+
+	typedef Eigen::SparseMatrix<double> SpMat;
+	typedef Eigen::Triplet<double> T;
+
+using namespace Eigen;
+using namespace std;
+>>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6
 
 MatrixXd PoissonSparse(MatrixXd g, MatrixXd U){
 
@@ -381,6 +469,7 @@ MatrixXd PoissonSparse(MatrixXd g, MatrixXd U){
  *
  *
  */
+<<<<<<< HEAD
 void fileName(char* file)
 {
 	/**
@@ -390,6 +479,9 @@ void fileName(char* file)
 	 * @param file is a char pointer where the string will be saved
 	 * @return No return value.
 	 */
+=======
+void fileName(char* file){
+>>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6
     file[0] = 'm';
     file[1] = 'e';
     file[2] = 's';
@@ -404,6 +496,7 @@ void fileName(char* file)
     file[8] = 'm';
     file[9] = '\0';
 }
+<<<<<<< HEAD
 void save(char file[],
 	      clock_t tStart,
 	      time_t *inicio,
@@ -425,11 +518,19 @@ void save(char file[],
 	 * just to show in the .m file. Ex: Laplace Equation - u_xx + u_yy = f(x,y)
 	 * @return No return value.
 	 */
+=======
+void save(char file[], clock_t tStart, time_t *inicio, MatrixXd U, string equation)
+{
+>>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6
   ofstream m_file;
   m_file.open(file);
   m_file.unsetf(ios::floatfield);
   m_file.precision(15);
   m_file << "%_ Start time: " << ctime(inicio) << endl;
+<<<<<<< HEAD
+=======
+  //m_file << "%_ Solving equation u_xx + u_yy =f(x,y)" << endl;
+>>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6
   m_file << "%_ Solving equation " << equation << endl;
   m_file << "%_ Square Mesh" << endl;
   m_file << "%_ Domain in x and y: 0<x<1 e 0<y<1 " << endl;
@@ -461,6 +562,7 @@ void save(char file[],
   cout << "Mesh "<< N << "x" << N <<". Succeed to write in file. Operation time: " << (double)(clock() - tStart)/CLOCKS_PER_SEC << "s." << endl;
 }
 
+<<<<<<< HEAD
 
 void saveTmEqn(char file[],
 			   clock_t tStart,
@@ -486,6 +588,11 @@ void saveTmEqn(char file[],
 	 * @return No return value.
 	 */
 	/*
+=======
+/*
+void saveTimeEquation(char file[], clock_t tStart, time_t *inicio, MatrixXd U, int time, double dt)
+{
+>>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6
   ofstream m_file;
   m_file.open(file);
   m_file.unsetf(ios::floatfield);
@@ -525,6 +632,11 @@ void saveTmEqn(char file[],
   m_file << "%_ End of operation: " << ctime(&fim) << endl;
   m_file.close();
   cout << "Succeed to write in file. Operation time: " << (double)(clock() - tStart)/CLOCKS_PER_SEC << "s." << endl;
+<<<<<<< HEAD
   */
 }
 
+=======
+}
+*/
+>>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6

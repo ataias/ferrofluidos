@@ -17,7 +17,11 @@ PROJECT_NAME           = "Ferrofluids"
 # This could be handy for archiving the generated documentation or
 # if some version control system is used.
 
+<<<<<<< HEAD
 PROJECT_NUMBER         = 1.0.1
+=======
+PROJECT_NUMBER         = 1.0
+>>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer
@@ -91,7 +95,11 @@ ABBREVIATE_BRIEF       =
 # Doxygen will generate a detailed section even if there is only a brief
 # description.
 
+<<<<<<< HEAD
 ALWAYS_DETAILED_SEC    = YES #Mudei isso aqui, estava NO
+=======
+ALWAYS_DETAILED_SEC    = NO
+>>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6
 
 # If the INLINE_INHERITED_MEMB tag is set to YES, doxygen will show all
 # inherited members of a class in the documentation of that class as if those
