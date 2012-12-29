@@ -21,8 +21,8 @@ int main()
 	/*--------------------------*/
 
 	/*Solving Operations*/
-	MatrixXd g =  MatrixXd::Constant(N,N,0.0); 	/*Build g function*/
-	MatrixXd U = dc_U(U,1,2,3,4); 	/*Build Dirichlet contour condition on U*/
+	dMatrix g =  dMatrix::Constant(0.0); 	/*Build g function*/
+	dMatrix U = dc_U(U,1,2,3,4); 	/*Build Dirichlet contour condition on U*/
 	U = PoissonSparse(g, U); /*Solve L(U) = g using sparse matrix*/
 	/*------------------*/
 

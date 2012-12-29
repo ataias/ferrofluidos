@@ -1,6 +1,2 @@
 \form#0:$ e^{\pi i}+1 = 0 $
-<<<<<<< HEAD
-\form#1:$K\nabla^2=g(x,y)$
-\form#2:$K\nabla^2 U=g(x,y)$
-=======
->>>>>>> 31f6b56160b25dcb6dbeb27d4a283eaf3dde5db6
+\form#1:$K\nabla^2 U=g(x,y)$

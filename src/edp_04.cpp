@@ -19,18 +19,17 @@ int main()
 	/*This programs */
 	time_t start;
 	clock_t tStart = clock();
-	N = 50;
 
 	/*------Time Operations-----*/
 	time(&start);
 	tStart = clock();
 	/*--------------------------*/
-	MatrixATd conditions;
+	dMatrix conditions;
 	char file[] = "file4.dat";
-	conditions = dnc_U(conditions, file);
+	conditions = dReadConditions(file);
 	/*------------------------------------------------*/
 
-	MatrixATd *U;
+	dMatrix *U;
 	int N_t = 1000;
 	U = SolveHeatEquationI(conditions, 1, N_t, 1, 0.1);
 	/*------------------*/
