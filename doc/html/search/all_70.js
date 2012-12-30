@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['poisson',['Poisson',['../OwnMath_8hpp.html#aba844e0d3ee1c014dc8cc1761164e0fe',1,'OwnMath.hpp']]],
-  ['poissonsparse',['PoissonSparse',['../OwnMath_8hpp.html#aeb36d89ec22b3e514a529923d72c98c6',1,'OwnMath.hpp']]],
-  ['poissonsparsesi',['PoissonSparseSI',['../OwnMath_8hpp.html#a6ee111013a8920fc6c42416b3a3567c2',1,'OwnMath.hpp']]]
+  ['pentadiagonal',['PENTADIAGONAL',['../Constants_8h.html#ae47f293932efacd6ba896f1f074b9a74',1,'Constants.h']]],
+  ['poissonsparse',['PoissonSparse',['../OwnMath_8hpp.html#a21d3e48503d9d6e843c74ccead924949',1,'OwnMath.hpp']]]
 ];

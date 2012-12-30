@@ -1,2 +1,12 @@
 \form#0:$ e^{\pi i}+1 = 0 $
 \form#1:$K\nabla^2 U=g(x,y)$
+\form#2:$\rho\left( \frac{\partial \textbf{v}}{\partial t}+ \textbf{v}\cdot\nabla\textbf{v}\right)= -\nabla p+\mu\nabla^2\textbf{v}+\textbf{f}$
+\form#3:\[ \textbf{v}_{ij}^s=(u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1},v_{i+1j}+v_{i-1j}+v_{ij+1}+v_{ij-1}) \]
+\form#4:\[\textbf{v}^s=(u^s, v^s) \]
+\form#5:\[ u_{ij}^s=u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1}\]
+\form#6:\[ v_{ij}^s=v_{i+1j}+v_{i-1j}+v_{ij+1}+v_{ij-1}\]
+\form#7:\[\textbf{v}^t=(u^t, v^t) \]
+\form#8:\[ u_{ij}^t=\frac{1}{4}(u_{ij}+u_{i-1j}+u_{i-1j-1}+u_{ij+1})\]
+\form#9:\[ v_{ij}^t=\frac{1}{4}(v_{ij}+v_{i-1j}+v_{i-1j-1}+v_{ij+1})\]
+\form#10:\[u_{ij}^{*}=\left[\frac{\mu}{\rho}\left(\frac{u_{ij}^s-4u_{ij}}{\Delta x^2}\right)+\frac{f_{x,ij}}{\rho}- u_{ij}\frac{u_{i+1j}-u_{i-1j}}{2\Delta x}-v_{ij}^t\frac{u_{ij+1}-u_{ij-1}}{2\Delta x}\right]\Delta t + u_{ij}\]
+\form#11:\[v_{ij}^{*}=\left[\frac{\mu}{\rho}\left(\frac{v_{ij}^s-4v_{ij}}{\Delta x^2}\right)+ \frac{f_{y,ij}}{\rho}-u_{ij}^t\frac{v_{i+1j}-v_{i-1j}}{2\Delta x}-v_{ij}\frac{v_{ij+1}-v_{ij-1}}{2\Delta x}\right]\Delta t + v_{ij}\]

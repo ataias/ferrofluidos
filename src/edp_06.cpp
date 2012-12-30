@@ -14,17 +14,27 @@
 
 #ifndef DENSE_H
 #define DENSE_H
-#include<Dense>
+#include<eigen3/Eigen/Dense>
 #endif
 
 #ifndef EIGEN_H
 #define EIGEN_H
-#include<Eigen>
+#include<eigen3/Eigen/Eigen>
 #endif
 
 #ifndef FSTREAM_H
 #define FSTREAM_H
 #include<fstream>
+#endif
+
+#ifndef OWNMATH_H
+#define OWNMATH_H
+#include<OwnMath.hpp>
+#endif
+
+#ifndef LEXICAL_CAST_H
+#define LEXICAL_CAST_H
+#include <boost/lexical_cast.hpp>
 #endif
 
 using namespace std;

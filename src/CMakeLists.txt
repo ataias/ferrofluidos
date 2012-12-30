@@ -2,15 +2,10 @@
 # Packages needed for PIBIC files
 ######################################################################################
 
-set(CMAKE_C_FLAGS "-Wall -fopenmp")
-INCLUDE_DIRECTORIES(/home/ataias/workspace/ff/include/Eigen)
-INCLUDE_DIRECTORIES(/home/ataias/workspace/ff/include/OwnMath)
+set(CMAKE_C_FLAGS "-Wall -g -fopenmp ${CMAKE_CPP_FLAGS}")
+INCLUDE_DIRECTORIES(/home/ataias/workspace/ff/include)
 
-add_executable(edp_01 edp_01.cpp)
-add_executable(edp_02 edp_02.cpp)
-add_executable(edp_03 edp_03.cpp)
-add_executable(edp_04 edp_04.cpp)
-add_executable(edp_05 edp_05.cpp)
 add_executable(edp_06 edp_06.cpp)
-install (TARGETS edp_01 edp_02 edp_03 edp_04 edp_05 edp_06
+target_link_libraries(edp_06 ${Boost_PROGRAM_OPTIONS_LIBRARY} )
+install (TARGETS edp_06
   DESTINATION bin)
