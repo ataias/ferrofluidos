@@ -1,14 +1,32 @@
+# Author: Ataias Pereira Reis
+# The files in this project require boost and eigen libraries
+# The compilation is made with CMake that creates a makefile
+# to guide the compilation
+
 cmake_minimum_required(VERSION 2.6)
 project(ff)
 #The version number
 set (EDP_VERSION_MAJOR 1)
 set (EDP_VERSION_MINOR 0)
 
+SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
+#Searches for boost
+FIND_PACKAGE(Boost)
+IF (Boost_FOUND)
+    INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
+    ADD_DEFINITIONS( "-DHAS_BOOST" )
+ELSE(Boost_FOUND)
+    message(STATUS "Boost not found")
+ENDIF()
+
+#Searches for Eigen
+find_package (Eigen3 3.1.0)
+IF (EIGEN3_FOUND) 
+    INCLUDE_DIRECTORIES(${Eigen3_INCLUDE_DIRS})
+    message(STATUS "Eigen ${EIGEN3_VERSION} found" )
+ELSE(EIGEN3_FOUND) 
+    message(STATUS "Eigen3 not found" )
+ENDIF()
+
 add_subdirectory (src)
-#find_package (eigen)
-#if(EIGEN_FOUND) 
-#    include_directories(${EIGEN_INCLUDE_DIRS})
-#    target_link_libraries(edp eigen)
-#else(EIGEN_FOUND) 
-#    message(STATUS "Eigen not found" )
-#endif(EIGEN_FOUND)
+
