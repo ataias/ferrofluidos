@@ -1,0 +1,24 @@
+#Pré-requisitos
+
+sudo apt-get install libboost1.50-dev #ou versão superior
+sudo apt-get install libeigen3-dev #versão 3.1 ou superior
+
+Ou:
+baixe a boost no site
+http://www.boost.org/
+Descompacte o arquivo e copie a pasta boot para
+/usr/include/
+#Baixe a Eigen em
+http://eigen.tuxfamily.org/
+Execute o cmake como
+Entre na pasta descompactada do eigen
+mkdir build
+cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr/
+sudo make install
+
+GTK
+sudo apt-get install libgtk-3-*
+
+para compilar
+cc source_file.c $(pkg-config --cflags --libs gtk+-3.0)
