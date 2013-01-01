@@ -8,6 +8,7 @@
 #ifndef STDHEADER_HPP_
 #define STDHEADER_HPP_
 
+	/*------------C and C++ libraries---------------*/
 	#ifndef IOSTREAM_H
 	#define IOSTREAM_H
 	#include<iostream>
@@ -28,20 +29,47 @@
 	#include<ctime>
 	#endif /* CTIME_H */
 
-	#ifndef CONSTANTS_H
-	#define CONSTANTS_H
-	#include<Constants.h>
-	#endif /* CONSTANTS_H */
+	/*To deal with files*/
+	#ifndef FSTREAM_H
+	#define FSTREAM_H
+	#include<fstream>
+	#endif
 
-	#ifndef OWNMATH_HPP
-	#define OWNMATH_HPP
-	#include<OwnMath.hpp>
-	#endif /* OWNMATH_HPP */
+	#ifndef VECTOR_H
+	#define VECTOR_H
+	#include<vector>
+	#endif
+	/*----------------------------------------------*/
 
-	#ifndef NAMESPACESTD
-	#define NAMESPACESTD
-		using namespace std;
-		using namespace Eigen;
-	#endif /* NAMESPACESTD */
 
+	/*---------------BOOST LIBRARIES----------------*/
+	#ifndef LEXICAL_CAST_H
+	#define LEXICAL_CAST_H
+	#include <boost/lexical_cast.hpp>
+	#endif
+	/*----------------------------------------------*/
+
+	/*---------------Eigen Libraries --------------*/
+	#ifndef DENSE_H
+	#define DENSE_H
+	#include<eigen3/Eigen/Dense>
+	#endif
+
+	#ifndef SPARSE_H
+	#define SPARSE_H
+	#include<eigen3/Eigen/Sparse>
+	#endif
+
+	/*---------------------------------------------*/
+
+	#define PENTADIAGONAL 5
+	#define READ 0
+	#define WRITE 1
+	#define BINARY 0
+	#define ASCII 1
+	#define SUCCESS 1
+
+	typedef Eigen::SparseMatrix<double> SpMat;
+	typedef Eigen::Triplet<double> T;
+	/*---------------------------------------------*/
 #endif /* STDHEADER_HPP_ */

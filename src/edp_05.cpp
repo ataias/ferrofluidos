@@ -9,7 +9,7 @@
 /*
  * Description of the problem in these lines
  */
-#include<OwnMath.hpp>
+#include<stdheader.hpp>
 
 int main()
 {

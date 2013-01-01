@@ -7,35 +7,7 @@
  *      Testes sobre salvar matrizes da Eigen em arquivos binários
  */
 
-#ifndef IOSTREAM_H
-#define IOSTREAM_H
-#include<iostream>
-#endif
-
-#ifndef DENSE_H
-#define DENSE_H
-#include<eigen3/Eigen/Dense>
-#endif
-
-#ifndef EIGEN_H
-#define EIGEN_H
-#include<eigen3/Eigen/Eigen>
-#endif
-
-#ifndef FSTREAM_H
-#define FSTREAM_H
-#include<fstream>
-#endif
-
-#ifndef OWNMATH_H
-#define OWNMATH_H
-#include<OwnMath.hpp>
-#endif
-
-#ifndef LEXICAL_CAST_H
-#define LEXICAL_CAST_H
-#include <boost/lexical_cast.hpp>
-#endif
+#include<stdheader.hpp>
 
 using namespace std;
 using namespace Eigen;
@@ -59,6 +31,7 @@ int main()
 	Matrix3d c=Matrix3d::Random(3,3);
 	cout << a << endl << endl;
 	cout << c << endl << endl;
+	cout << sizeof(a)/9 << " " << sizeof(double) << endl;
 	write(a,c);
 	Matrix3d b,d;
 	read(&b,&d);

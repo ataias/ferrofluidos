@@ -5,7 +5,20 @@
 set(CMAKE_C_FLAGS "-Wall -g -fopenmp ${CMAKE_CPP_FLAGS}")
 INCLUDE_DIRECTORIES(/home/ataias/workspace/ff/include)
 
-add_executable(edp_06 edp_06.cpp)
-target_link_libraries(edp_06 ${Boost_PROGRAM_OPTIONS_LIBRARY} )
-install (TARGETS edp_06
-  DESTINATION bin)
+IF(COMPILE_UNIT_TEST_MATRIX_FILES_IO)
+add_executable(MatrixFilesIO_test MatrixFilesIO.cpp MatrixFilesIO_test.cpp)
+target_link_libraries(MatrixFilesIO_test ${Boost_PROGRAM_OPTIONS_LIBRARY} )
+install (TARGETS MatrixFilesIO_test DESTINATION bin)
+ENDIF(COMPILE_UNIT_TEST_MATRIX_FILES_IO)
+
+IF(COMPILE_UNIT_TEST_POISSON)
+add_executable(Poisson_test MatrixFilesIO.cpp Poisson.cpp Poisson_test.cpp)
+target_link_libraries(Poisson_test ${Boost_PROGRAM_OPTIONS_LIBRARY} )
+install (TARGETS Poisson_test DESTINATION bin)
+ENDIF(COMPILE_UNIT_TEST_POISSON)
+
+IF(COMPILE_OTHERS)
+add_executable(SimpleWriteAndRead SimpleTestReadAndWrite.cpp)
+target_link_libraries(SimpleWriteAndRead ${Boost_PROGRAM_OPTIONS_LIBRARY} )
+install (TARGETS SimpleWriteAndRead DESTINATION bin)
+ENDIF(COMPILE_OTHERS)

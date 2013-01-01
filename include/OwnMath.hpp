@@ -21,110 +21,16 @@
  * A classe Time representa um momento de tempo.
  */
 
-#ifndef IOSTREAM_H
-#define IOSTREAM_H
-#include<iostream>
-#endif
+#include<stdheader.hpp>
 
-#ifndef VECTOR_H
-#define VECTOR_H
-#include<vector>
-#endif
 
-#ifndef DENSE_H
-#define DENSE_H
-#include<eigen3/Eigen/Dense>
-#endif
-
-#ifndef EIGEN_H
-#define EIGEN_H
-#include<eigen3/Eigen/Eigen>
-#endif
-
-#ifndef SPARSE_H
-#define SPARSE_H
-#include<eigen3/Eigen/Sparse>
-#endif
-
-#ifndef SPARSECORE_H
-#define SPARSECORE_H
-#include<eigen3/Eigen/SparseCore>
-#endif
-
-#ifndef SPARSECHOLESKY_H
-#define SPARSECHOLESKY_H
-#include<eigen3/Eigen/SparseCholesky>
-#endif
-
-#ifndef CORE_H
-#define CORE_H
-#include<eigen3/Eigen/Core>
-#endif
-
-#ifndef EIGENVALUES_H
-#define EIGENVALUES_H
-#include<eigen3/Eigen/Eigenvalues>
-#endif
-
-#ifndef GEOMETRY_H
-#define GEOMETRY_H
-#include<eigen3/Eigen/Geometry>
-#endif
-
-#ifndef FSTREAM_H
-#define FSTREAM_H
-#include<fstream>
-#endif
-
-#ifndef STRING_H
-#define STRING_H
-#include<string>
-#endif
-
-#ifndef CSTRING_H
-#define CSTRING_H
-#include<cstring>
-#endif
-
-#ifndef CSTDLIB_H
-#define CSTDLIB_H
-#include<cstdlib>
-#endif
-
-#ifndef CTIME_H
-#define CTIME_H
-#include<ctime>
-#endif
-
-using namespace std;
-using namespace Eigen;
-
-/*Global Variables and typedefs*/
-#ifndef GLOBAL_H
-#define GLOBAL_H
-#include<Constants.h>
-#endif
-
-#ifdef MATRIX_ORDER
-typedef Matrix<double, MATRIX_ORDER, MATRIX_ORDER> dMatrix;
-typedef Matrix<double, MATRIX_ORDER, MATRIX_ORDER> dArray;
-typedef Matrix<double, nMatrixSystemOrder,1> dVector;
-typedef Matrix<double, nMatrixSystemOrder, 2> dBiVector;
-#endif
-
-typedef Eigen::SparseMatrix<double> SpMat;
-typedef Eigen::Triplet<double> T;
 
 dMatrix dReadConditions(char strFile[])
 {
 	/**
-	 * The function dReadConditions is made to read the conditions from a file
-	 * Actually it could be any condition, it just set
-	 * It takes the whole matrix in the file strFile[]
-	 * so includes any initial condition in the file to be read.
-	 *
-	 * It does not require the number
-	 * of columns of lines.
+	 * The method is made to read a matrix of doubles from an ASCII file
+	 * It requires the number of columns and lines
+	 * It will check if the read matrix is of right size
 	 *
 	 * @param  strFile[] is the name of text file
 	 * @return dMatrixRead is returned, with the contents of the file
@@ -166,7 +72,7 @@ dMatrix dReadConditions(char strFile[])
 	return(dMatrixRead);
 }
 
-dMatrix PoissonSparse(dMatrix dNonHomogeneity,
+dMatrix PoissonDirichlet(dMatrix dNonHomogeneity,
 					  dMatrix dBoundaryConditions
 					   )
 {
