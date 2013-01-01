@@ -9,7 +9,15 @@ project(ff)
 set (EDP_VERSION_MAJOR 1)
 set (EDP_VERSION_MINOR 0)
 
+#CONDITIONALS
+#Check of uncheck each as you wish
+SET(COMPILE_UNIT_TEST_MATRIX_FILES_IO 1)
+SET(COMPILE_UNIT_TEST_POISSON 0)
+SET(COMPILE_OTHERS 1)
+SET(COMPILE_MAIN_FILE 0) #not finished yet
+
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
+
 #Searches for boost
 FIND_PACKAGE(Boost)
 IF (Boost_FOUND)
@@ -29,4 +37,3 @@ ELSE(EIGEN3_FOUND)
 ENDIF()
 
 add_subdirectory (src)
-
