@@ -1,0 +1,307 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<title>Fluidos: Código-Fonte de Link to OwnMath.hpp</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() { searchBox.OnSelectItem(0); });
+</script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td style="padding-left: 0.5em;">
+   <div id="projectname">Fluidos
+   &#160;<span id="projectnumber">2.0.0</span>
+   </div>
+   <div id="projectbrief">Uma coleção de funções para resolver algumas equações diferenciais parciais. O objetivo de uso é para projetos com fluidos, mas elas são adaptáveis para outras funções.</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Gerado por Doxygen 1.8.1.2 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Busca');
+</script>
+  <div id="navrow1" class="tabs">
+    <ul class="tablist">
+      <li><a href="index.html"><span>Página&#160;Principal</span></a></li>
+      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li class="current"><a href="files.html"><span>Arquivos</span></a></li>
+      <li>
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <img id="MSearchSelect" src="search/mag_sel.png"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()"
+               alt=""/>
+          <input type="text" id="MSearchField" value="Busca" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.png" alt=""/></a>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="files.html"><span>Lista&#160;de&#160;Arquivos</span></a></li>
+      <li><a href="globals.html"><span>Arquivos&#160;Membros</span></a></li>
+    </ul>
+  </div>
+</div><!-- top -->
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>Todos</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Arquivos</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Funções</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Definições de Tipos</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Definições e Macros</a></div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">Link to OwnMath.hpp</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="Link_01to_01OwnMath_8hpp.html">Vá para a documentação deste arquivo.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include&lt;stdheader.hpp&gt;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="code" href="Link_01to_01OwnMath_8hpp.html#a7f27c8ee7ccd5786a6084bc1fc278168">   28</a></span>&#160;dMatrix <a class="code" href="Link_01to_01OwnMath_8hpp.html#a7f27c8ee7ccd5786a6084bc1fc278168">dReadConditions</a>(<span class="keywordtype">char</span> strFile[])</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;{</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        ifstream mFile;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        mFile.open(strFile);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="comment">/*Loop to discover number of rows and columns while reading file*/</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keywordtype">int</span> nRowNumber = 0;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keywordtype">string</span> strLineAux;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="keywordflow">while</span>(getline(mFile, strLineAux)){</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                nRowNumber++;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                }</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        mFile.close();</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        mFile.open(strFile);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="keywordtype">int</span> nTotalElements(0);</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keywordflow">while</span>(!mFile.eof()){</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                <span class="keywordtype">double</span> dAux;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                mFile &gt;&gt; dAux;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                nTotalElements++;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        }</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="keywordtype">int</span> nColumnNumber = nTotalElements/nRowNumber;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        mFile.close();</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="comment">/*Verify if the file has the right size to be worked*/</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        dMatrix dMatrixRead;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <span class="keywordflow">if</span>((nRowNumber == MATRIX_ORDER) &amp;&amp; (nColumnNumber == MATRIX_ORDER)){</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        mFile.open(strFile);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; nRowNumber; i++) {</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j = 0; j &lt; nColumnNumber; j++) {</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                        mFile &gt;&gt; dMatrixRead(i,j);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            }</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;          }</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        mFile.close();</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                 cout &lt;&lt; <span class="stringliteral">&quot;Error with size of matrix.&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                 exit (EXIT_FAILURE);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        }</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keywordflow">return</span>(dMatrixRead);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;}</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00075"></a><span class="lineno"><a class="code" href="Link_01to_01OwnMath_8hpp.html#a1fd9a6d9cf06f8a682118613f7d2e88c">   75</a></span>&#160;dMatrix <a class="code" href="Link_01to_01OwnMath_8hpp.html#a1fd9a6d9cf06f8a682118613f7d2e88c">PoissonDirichlet</a>(dMatrix dNonHomogeneity,</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                                          dMatrix dBoundaryConditions</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                                           )</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;{</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        std::vector&lt;T&gt; tripletList;     <span class="comment">//triplet, needed to fill sparse matrix</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        tripletList.reserve(<a class="code" href="Link_01to_01stdheader_8hpp.html#ae47f293932efacd6ba896f1f074b9a74">PENTADIAGONAL</a>*nMatrixSystemOrder);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <span class="keywordtype">double</span> dDeltaX = 1.0/(MATRIX_ORDER-1);                  <span class="comment">/*Mesh has domain 0 &lt; x &lt; 1 and 0 &lt; y &lt; 1*/</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        dBiVector dAuxiliaryIndexes = dBiVector::Zero();</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        dVector b;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="comment">/*Starting to build A*/</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="keywordtype">long</span> <span class="keywordtype">unsigned</span> i,j;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <span class="keywordflow">for</span>(i = 0; i&lt;nMatrixSystemOrder; i++)</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                tripletList.push_back(<a class="code" href="Link_01to_01stdheader_8hpp.html#af639fb96631ba0018f0b2259fc95edfb">T</a>(i,i,-4));</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="keywordflow">for</span>(i = 0; i&lt;= nMatrixSystemOrder-2; i++)</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                <span class="keywordflow">if</span>( (i+1) % (MATRIX_ORDER-2) != 0) tripletList.push_back(<a class="code" href="Link_01to_01stdheader_8hpp.html#af639fb96631ba0018f0b2259fc95edfb">T</a>(i,i+1,1));</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="keywordflow">for</span>(i = 0; i&lt;= nMatrixSystemOrder-2; i++)</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;            <span class="keywordflow">if</span>( (i+1) % (MATRIX_ORDER-2) != 0) tripletList.push_back(<a class="code" href="Link_01to_01stdheader_8hpp.html#af639fb96631ba0018f0b2259fc95edfb">T</a>(i+1,i,1));</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keywordflow">for</span>(i = 0; i &lt; (nMatrixSystemOrder-(MATRIX_ORDER-2)); i++)</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                tripletList.push_back(<a class="code" href="Link_01to_01stdheader_8hpp.html#af639fb96631ba0018f0b2259fc95edfb">T</a>(i,i+MATRIX_ORDER-2,1));</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="keywordflow">for</span>(i = 0; i&lt;(nMatrixSystemOrder-(MATRIX_ORDER-2)); i++)</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                tripletList.push_back(<a class="code" href="Link_01to_01stdheader_8hpp.html#af639fb96631ba0018f0b2259fc95edfb">T</a>(i+MATRIX_ORDER-2,i,1));</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        <a class="code" href="Link_01to_01stdheader_8hpp.html#a04b63929a2578b5ce61f09f0b8b18122">SpMat</a> A(nMatrixSystemOrder,nMatrixSystemOrder);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        A.setFromTriplets(tripletList.begin(), tripletList.end());</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <span class="comment">/*Ending A*/</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        <span class="keywordflow">for</span>(i = 1; i&lt;= (MATRIX_ORDER-2); i++)</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            <span class="keywordflow">for</span>(j=1; j&lt;=(MATRIX_ORDER-2); j++){</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                <span class="comment">/*ind has the indexes of U in a matrix with two columns*/</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                dAuxiliaryIndexes(j+(i-1)*(MATRIX_ORDER-2)-1,0)= j+1;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;                dAuxiliaryIndexes(j+(i-1)*(MATRIX_ORDER-2)-1,1)= i+1;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;            }</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="keywordflow">for</span>(i = 0; i&lt;nMatrixSystemOrder; i++){</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;            <span class="keywordtype">double</span> dAuxToBVector = 0;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;            <span class="keywordflow">if</span>(dAuxiliaryIndexes(i,0)-1 == 1)</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;                dAuxToBVector=dAuxToBVector+dBoundaryConditions(dAuxiliaryIndexes(i,1)-1,0);</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;            <span class="keywordflow">if</span>(dAuxiliaryIndexes(i,0)+1 == MATRIX_ORDER)</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;                dAuxToBVector=dAuxToBVector+dBoundaryConditions(dAuxiliaryIndexes(i,1)-1,MATRIX_ORDER-1);</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;            <span class="keywordflow">if</span>(dAuxiliaryIndexes(i,1)-1 == 1)</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;                dAuxToBVector=dAuxToBVector+dBoundaryConditions(MATRIX_ORDER-1,dAuxiliaryIndexes(i,0)-1);</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            <span class="keywordflow">if</span>(dAuxiliaryIndexes(i,1)+1 == MATRIX_ORDER)</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;                dAuxToBVector=dAuxToBVector+dBoundaryConditions(0,dAuxiliaryIndexes(i,0)-1);</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            b(i) = dDeltaX*dDeltaX*dNonHomogeneity(dAuxiliaryIndexes(i,0),dAuxiliaryIndexes(i,1))-dAuxToBVector;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        }</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        Eigen::SimplicialCholesky&lt;SpMat&gt; chol(A);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        dVector u = chol.solve(b);</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        dMatrix dPoissonSolution;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        <span class="keywordflow">for</span>(i=2; i&lt;=(MATRIX_ORDER-1); i++)</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;            <span class="keywordflow">for</span>(j=2; j&lt;=(MATRIX_ORDER-1); j++)</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;                dPoissonSolution(MATRIX_ORDER+1-i-1,j-1) = u((i-2)*(MATRIX_ORDER-2)+j-1-1);</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        <span class="keywordflow">return</span>(dPoissonSolution);</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;}</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;</div>
+<div class="line"><a name="l00140"></a><span class="lineno"><a class="code" href="Link_01to_01OwnMath_8hpp.html#a744e1d660fdfdcc4da27c5959f6126ba">  140</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="Link_01to_01OwnMath_8hpp.html#a744e1d660fdfdcc4da27c5959f6126ba">fileName</a>(<span class="keywordtype">char</span>* file)</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;{</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    file[0] = <span class="charliteral">&#39;m&#39;</span>;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    file[1] = <span class="charliteral">&#39;e&#39;</span>;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    file[2] = <span class="charliteral">&#39;s&#39;</span>;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    file[3] = <span class="charliteral">&#39;h&#39;</span>;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="keywordtype">int</span> m = MATRIX_ORDER/100;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    file[4] = <span class="charliteral">&#39;0&#39;</span> + m;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    m = MATRIX_ORDER - 100*m;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    file[5] = <span class="charliteral">&#39;0&#39;</span> + m/10;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    m = m%10;</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    file[6] = <span class="charliteral">&#39;0&#39;</span> + m;</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    file[7] = <span class="charliteral">&#39;.&#39;</span>;</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    file[8] = <span class="charliteral">&#39;m&#39;</span>;</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    file[9] = <span class="charliteral">&#39;\0&#39;</span>;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;}</div>
+<div class="line"><a name="l00163"></a><span class="lineno"><a class="code" href="Link_01to_01OwnMath_8hpp.html#af1967a9d96face7e66c825248297ce3c">  163</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="Link_01to_01OwnMath_8hpp.html#af1967a9d96face7e66c825248297ce3c">save</a>(<span class="keywordtype">char</span> file[],</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;              clock_t tStart,</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;              time_t *inicio,</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;              MatrixXd U,</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;              <span class="keywordtype">string</span> equation</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;              )</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;{</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;  ofstream m_file;</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;  m_file.open(file);</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;  m_file.unsetf(ios::floatfield);</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;  m_file.precision(15);</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;%_ Start time: &quot;</span> &lt;&lt; ctime(inicio) &lt;&lt; endl;</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;%_ Solving equation &quot;</span> &lt;&lt; equation &lt;&lt; endl;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;%_ Square Mesh&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;%_ Domain in x and y: 0&lt;x&lt;1 e 0&lt;y&lt;1 &quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;%_ MATRIX_ORDER = &quot;</span> &lt;&lt; MATRIX_ORDER &lt;&lt; <span class="stringliteral">&quot;. Spent time: &quot;</span> &lt;&lt; (double)(clock() - tStart)/CLOCKS_PER_SEC &lt;&lt; <span class="stringliteral">&quot;s.&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;MATRIX_ORDER = &quot;</span> &lt;&lt; MATRIX_ORDER &lt;&lt; <span class="stringliteral">&quot;;&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;  m_file &lt;&lt; endl;</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;U = [&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;  m_file &lt;&lt; U &lt;&lt; endl;</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;];&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;X = 0:1/(MATRIX_ORDER-1):1;&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;Y = 0:1/(MATRIX_ORDER-1):1;&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;figure;&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;mesh(X,Y,U);&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;hold on&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;title(&#39;Solution of L(U) = f(x,y) with &quot;</span>;</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;  m_file &lt;&lt; MATRIX_ORDER &lt;&lt; <span class="stringliteral">&quot;x&quot;</span> &lt;&lt; MATRIX_ORDER &lt;&lt; <span class="stringliteral">&quot; points&#39;)&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;xlabel(&#39;x&#39;)&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;ylabel(&#39;y&#39;)&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;zlabel(&#39;u(x,y)&#39;);&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;mkdir png;&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;hold off;&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;  <span class="keywordtype">int</span> a = MATRIX_ORDER/100;</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;  <span class="keywordtype">int</span> b = MATRIX_ORDER - 100*a;</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;  <span class="keywordtype">int</span> c = b%10;</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;print -dpng &#39;png/mesh&quot;</span> &lt;&lt; a &lt;&lt; b/10 &lt;&lt; c &lt;&lt; <span class="stringliteral">&quot;.png&#39;;&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;  time_t fim = time(NULL);</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;  m_file &lt;&lt; <span class="stringliteral">&quot;%_ End of operation: &quot;</span> &lt;&lt; ctime(&amp;fim) &lt;&lt; endl;</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;  m_file.close();</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;  cout &lt;&lt; <span class="stringliteral">&quot;Mesh &quot;</span>&lt;&lt; MATRIX_ORDER &lt;&lt; <span class="stringliteral">&quot;x&quot;</span> &lt;&lt; MATRIX_ORDER &lt;&lt;<span class="stringliteral">&quot;. Succeed to write in file. Operation time: &quot;</span> &lt;&lt; (double)(clock() - tStart)/CLOCKS_PER_SEC &lt;&lt; <span class="stringliteral">&quot;s.&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;}</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;</div>
+<div class="line"><a name="l00221"></a><span class="lineno"><a class="code" href="Link_01to_01OwnMath_8hpp.html#a81385cec696ed194b6d9e0ac1d49e4fa">  221</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="Link_01to_01OwnMath_8hpp.html#a81385cec696ed194b6d9e0ac1d49e4fa">saveTmEqn</a>(<span class="keywordtype">char</span> file[],</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                           clock_t tStart,</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;                           time_t *inicio,</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;                           <span class="keywordtype">string</span> equation,</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;                           MatrixXd *U,</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;                           <span class="keywordtype">int</span> N</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                           )</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;{</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        <span class="comment">/*</span></div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;<span class="comment">  ofstream m_file;</span></div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="comment">  m_file.open(file);</span></div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;<span class="comment">  m_file.unsetf(ios::floatfield);</span></div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;<span class="comment">  m_file.precision(15);</span></div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;%_ Start time: &quot; &lt;&lt; ctime(inicio) &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;%_ Solving equation u_xx + u_yy = u_t&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;%_ Square Mesh&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;%_ Domain in x and y: 0&lt;x&lt;1 e 0&lt;y&lt;1 &quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;%_ N = &quot; &lt;&lt; N &lt;&lt; &quot;. Spent time: &quot; &lt;&lt; (double)(clock() - tStart)/CLOCKS_PER_SEC &lt;&lt; &quot;s.&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;N = &quot; &lt;&lt; N &lt;&lt; &quot;;&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;<span class="comment">  m_file &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;<span class="comment"></span></div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;<span class="comment">  int frames = time / dt;</span></div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;<span class="comment">  for(int i=1; i&lt;frames; i++){</span></div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;<span class="comment">          m_file &lt;&lt; &quot;U(:,:,&quot; &lt;&lt; i &lt;&lt; &quot;) = [&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;<span class="comment">          m_file &lt;&lt; U.block&lt;&gt; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;<span class="comment">  }</span></div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;];&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;<span class="comment">  m_file &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="comment"></span></div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;X = 0:(1/N):(1-(1/N)/8);&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;Y = 0:(1/N):(1-(1/N)/8);&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;figure;&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;mesh(X,Y,U);&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;hold on&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;title(&#39;Solution of L(U) = f(x,y) with &quot;;</span></div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;<span class="comment">  m_file &lt;&lt; N &lt;&lt; &quot;x&quot; &lt;&lt; N &lt;&lt; &quot; points&#39;)&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;xlabel(&#39;x&#39;)&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;ylabel(&#39;y&#39;)&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;zlabel(&#39;u(x,y)&#39;);&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;mkdir png;&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;<span class="comment">  int a = N/100;</span></div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;<span class="comment">  int b = N - 100*a;</span></div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;<span class="comment">  int c = b%10;</span></div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;print -dpng &#39;png/mesh&quot; &lt;&lt; a &lt;&lt; b/10 &lt;&lt; c &lt;&lt; &quot;.png&#39;;&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;<span class="comment">  time_t fim = time(NULL);</span></div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;<span class="comment">  m_file &lt;&lt; &quot;%_ End of operation: &quot; &lt;&lt; ctime(&amp;fim) &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;<span class="comment">  m_file.close();</span></div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;<span class="comment">  cout &lt;&lt; &quot;Succeed to write in file. Operation time: &quot; &lt;&lt; (double)(clock() - tStart)/CLOCKS_PER_SEC &lt;&lt; &quot;s.&quot; &lt;&lt; endl;</span></div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;<span class="comment">  */</span></div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;}</div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+Gerado em Terça, 1 de Janeiro de 2013 22:01:01 para Fluidos por &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.1.2
+</small></address>
+</body>
+</html>

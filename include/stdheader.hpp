@@ -1,8 +1,10 @@
-/*
- * stdheader.hpp
- *
- *  Created on: Dec 29, 2012
- *      Author: ataias
+/**
+ * @file stdheader.hpp
+ * @author Ataias Pereira Reis
+ * Created on: Dec 29, 2012
+ * Este arquivo contém arquivos cabeçalho básicos para inserir em qualquer
+ * arquivo que faça parte do projeto. Isso evita o eclipse ficar reclamando
+ * da ausência de funções.
  */
 
 #ifndef STDHEADER_HPP_
@@ -69,6 +71,9 @@
 	#define ASCII 1
 	#define SUCCESS 1
 
+  /** Os seguintes typedef's foram criados com o intuito de serem usados
+  * na seção de matrizes esparsas.
+  * */
 	typedef Eigen::SparseMatrix<double> SpMat;
 	typedef Eigen::Triplet<double> T;
 	/*---------------------------------------------*/

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['eigen_5fh',['EIGEN_H',['../OwnMath_8hpp.html#a93aa2770c762cb5ca67566111eb4249f',1,'OwnMath.hpp']]],
-  ['eigenvalues_5fh',['EIGENVALUES_H',['../OwnMath_8hpp.html#a389425ba3c17cb3148308e5ade8c9465',1,'OwnMath.hpp']]]
+  ['error_5fmessage_5fwrong_5fparameters',['ERROR_MESSAGE_WRONG_PARAMETERS',['../Link_01to_01MatrixFilesIO_8hpp.html#a14505adbc87bb9be877db83d00ebe66c',1,'Link to MatrixFilesIO.hpp']]]
 ];

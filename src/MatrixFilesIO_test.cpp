@@ -2,13 +2,18 @@
  * @file MatrixFilesIO_test.cpp
  * @author Ataias Pereira Reis
  * Created on: Jan 1, 2013
- * This file is an unit test for reading and writing matrices
- * This was well achieve for ASCII and binary files
+ * Este arquivo é um teste unitário para leitura e escrita em matrizes.
+ * Ele testa a capacidade de leitura e escrita em arquivos texto, codificados em
+ * ASCII e também em arquivos binários contendo números em double.
+ * A ideia de arquivos binários é interessante pois salvando os números em
+ * binário pode economizar espaço se fosse salvar tudo em texto.
  *
- * The class is not finished as another function of it
- * will be job to create and save a .m file.
+ * A classe responsável pelo IO deste projeto ainda não está pronta.
+ * Falta criar uma função para criar arquivos .m. Mas ainda está sendo
+ * pensando se isto vai em outra classe ou nesta mesmo.
+ * Poderia ser criada uma classe responsável pela criação de arquivos que vão
+ * criar gráficos bi e tridimensionais.
  *
-
  */
 
 #include<MatrixFilesIO.hpp>

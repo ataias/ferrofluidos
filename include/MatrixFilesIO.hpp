@@ -102,6 +102,7 @@ public:
 	void OperationIO(Eigen::MatrixXd dMatrixToBeWritten);
 	void CreateAndSaveMFile();
 	void ShowMatrix();
+	Eigen::MatrixXd ReturnMatrix();
 };
 
 #endif /* MATRIXFILESIO_HPP_ */

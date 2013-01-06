@@ -18,10 +18,13 @@
  *
  * @section DESCRIPTION
  *
- * This file is the main program that makes calls of all other functions
- * in a project at University of Brasilia dealing with ferrofluids.
- * It makes use of Eigen library and implements some algorithms to solve
- * partial differential equations, including Navier-Stokes equation.
+ * Este arquivo é o programa principal que faz chamadas de todas as outras
+ * funções deste projeto que lida com equações diferenciais parciais.
+ * O intuito de uso é no projeto de iniciação científica de alunos do Vortex
+ * de iniciação científica na área de fluidos.
+ * Ele faz uso da biblioteca Eigen e implementa alguns algoritmos para resolver
+ * equações diferenciais parciais, incluindo a equação de Navier-Stokes em malhas
+ * quadradas, a equaçaõ é a seguinte:
  * \f$\rho\left( \frac{\partial \textbf{v}}{\partial t}+
  \textbf{v}\cdot\nabla\textbf{v}\right)=
  -\nabla p+\mu\nabla^2\textbf{v}+\textbf{f}\f$
