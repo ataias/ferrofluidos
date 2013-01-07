@@ -1,0 +1,84 @@
+\hypertarget{Link_01to_01NavierStokes_8hpp}{\section{Referência do Arquivo Link to Navier\-Stokes.\-hpp}
+\label{Link_01to_01NavierStokes_8hpp}\index{Link to Navier\-Stokes.\-hpp@{Link to Navier\-Stokes.\-hpp}}
+}
+\subsection*{Definições e Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{Link_01to_01NavierStokes_8hpp_a7b465172daca767277ac99b68dee3e26}{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-S\-U\-M}
+\item 
+\#define \hyperlink{Link_01to_01NavierStokes_8hpp_aa9a08f012a83de71ab83d88fe6e8c3f5}{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-S\-U\-M}
+\item 
+\#define \hyperlink{Link_01to_01NavierStokes_8hpp_ace22c44d61c0ecc3470372b4fb49d698}{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-A\-V\-E\-R\-A\-G\-E}
+\item 
+\#define \hyperlink{Link_01to_01NavierStokes_8hpp_a546a31dff68ecffcb4a92e8dc923eca1}{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-A\-V\-E\-R\-A\-G\-E}
+\item 
+\#define \hyperlink{Link_01to_01NavierStokes_8hpp_a470b6e7e09d892d6dbfe92598e3c52ca}{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-N\-O\-\_\-\-P\-R\-E\-S\-S\-U\-R\-E}
+\item 
+\#define \hyperlink{Link_01to_01NavierStokes_8hpp_a5a6c5f78a34496126f3d0f5ceae7f190}{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-N\-O\-\_\-\-P\-R\-E\-S\-S\-U\-R\-E}
+\end{DoxyCompactItemize}
+
+
+\subsection{Definições e macros}
+\hypertarget{Link_01to_01NavierStokes_8hpp_ace22c44d61c0ecc3470372b4fb49d698}{\index{Link to Navier\-Stokes.\-hpp@{Link to Navier\-Stokes.\-hpp}!V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-A\-V\-E\-R\-A\-G\-E@{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-A\-V\-E\-R\-A\-G\-E}}
+\index{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-A\-V\-E\-R\-A\-G\-E@{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-A\-V\-E\-R\-A\-G\-E}!Link to NavierStokes.hpp@{Link to Navier\-Stokes.\-hpp}}
+\subsubsection[{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-A\-V\-E\-R\-A\-G\-E}]{\setlength{\rightskip}{0pt plus 5cm}\#define V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-A\-V\-E\-R\-A\-G\-E}}\label{Link_01to_01NavierStokes_8hpp_ace22c44d61c0ecc3470372b4fb49d698}
+{\bfseries Valor\-:}
+\begin{DoxyCode}
+0.25*(dVelocityX(i,j)[nTime]+dVelocityX(i-1,j)[nTime]\(\backslash\)
+                                           +dVelocityX(i,j+1)[nTime]+dVelocityX
+      (i-1,j-1)[nTime])
+\end{DoxyCode}
+This part stands for the average of velocities in the X axis. \[\textbf{v}^t=(u^t, v^t) \] The 't' stands for nothing special \[ u_{ij}^t=\frac{1}{4}(u_{ij}+u_{i-1j}+u_{i-1j-1}+u_{ij+1})\] \hypertarget{Link_01to_01NavierStokes_8hpp_a470b6e7e09d892d6dbfe92598e3c52ca}{\index{Link to Navier\-Stokes.\-hpp@{Link to Navier\-Stokes.\-hpp}!V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-N\-O\-\_\-\-P\-R\-E\-S\-S\-U\-R\-E@{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-N\-O\-\_\-\-P\-R\-E\-S\-S\-U\-R\-E}}
+\index{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-N\-O\-\_\-\-P\-R\-E\-S\-S\-U\-R\-E@{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-N\-O\-\_\-\-P\-R\-E\-S\-S\-U\-R\-E}!Link to NavierStokes.hpp@{Link to Navier\-Stokes.\-hpp}}
+\subsubsection[{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-N\-O\-\_\-\-P\-R\-E\-S\-S\-U\-R\-E}]{\setlength{\rightskip}{0pt plus 5cm}\#define V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-N\-O\-\_\-\-P\-R\-E\-S\-S\-U\-R\-E}}\label{Link_01to_01NavierStokes_8hpp_a470b6e7e09d892d6dbfe92598e3c52ca}
+{\bfseries Valor\-:}
+\begin{DoxyCode}
+(m\_dNu*(dVelocityXSum-4*dVelocityX(i,j)[nTime])/(dDeltaX*dDeltaX)+
+      dExternalForceX(i,j)/m\_dRho\(\backslash\)
+                                         -dVelocityX(i,j)*(dVelocityX(i+1,j)[
+      nTime]-dVelocityX(i-1,j)[nTime])/(2*dDeltaX)\(\backslash\)
+                                         -dVelocityYAverage*(dVelocityX(i,j+1)[
+      nTime]-dVelocityX(i,j-1)[nTime])/(2*dDeltaX))*dDeltaT\(\backslash\)
+                                     +dVelocityX(i,j)[nTime]
+\end{DoxyCode}
+This part stand for the velocity obtained by Navier Stokes equation without considering the pressure \[u_{ij}^{*}=\left[\frac{\mu}{\rho}\left(\frac{u_{ij}^s-4u_{ij}}{\Delta x^2}\right)+\frac{f_{x,ij}}{\rho}- u_{ij}\frac{u_{i+1j}-u_{i-1j}}{2\Delta x}-v_{ij}^t\frac{u_{ij+1}-u_{ij-1}}{2\Delta x}\right]\Delta t + u_{ij}\] \hypertarget{Link_01to_01NavierStokes_8hpp_a7b465172daca767277ac99b68dee3e26}{\index{Link to Navier\-Stokes.\-hpp@{Link to Navier\-Stokes.\-hpp}!V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-S\-U\-M@{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-S\-U\-M}}
+\index{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-S\-U\-M@{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-S\-U\-M}!Link to NavierStokes.hpp@{Link to Navier\-Stokes.\-hpp}}
+\subsubsection[{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-S\-U\-M}]{\setlength{\rightskip}{0pt plus 5cm}\#define V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-X\-\_\-\-S\-U\-M}}\label{Link_01to_01NavierStokes_8hpp_a7b465172daca767277ac99b68dee3e26}
+{\bfseries Valor\-:}
+\begin{DoxyCode}
+dVelocityX(i+1,j)[nTime]+dVelocityX(i-1,j)[nTime]\(\backslash\)
+                                       +dVelocityX(i,j+1)[nTime]+dVelocityX(i,j
+      -1)[nTime]
+\end{DoxyCode}
+This part stands for the sum of velocities in the X axis. \[\textbf{v}^s=(u^s, v^s) \] The 's' stands for 'sum' \[ u_{ij}^s=u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1}\] \hypertarget{Link_01to_01NavierStokes_8hpp_a546a31dff68ecffcb4a92e8dc923eca1}{\index{Link to Navier\-Stokes.\-hpp@{Link to Navier\-Stokes.\-hpp}!V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-A\-V\-E\-R\-A\-G\-E@{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-A\-V\-E\-R\-A\-G\-E}}
+\index{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-A\-V\-E\-R\-A\-G\-E@{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-A\-V\-E\-R\-A\-G\-E}!Link to NavierStokes.hpp@{Link to Navier\-Stokes.\-hpp}}
+\subsubsection[{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-A\-V\-E\-R\-A\-G\-E}]{\setlength{\rightskip}{0pt plus 5cm}\#define V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-A\-V\-E\-R\-A\-G\-E}}\label{Link_01to_01NavierStokes_8hpp_a546a31dff68ecffcb4a92e8dc923eca1}
+{\bfseries Valor\-:}
+\begin{DoxyCode}
+0.25*(dVelocityY(i,j)[nTime]+dVelocityY(i-1,j)[nTime]\(\backslash\)
+                                           +dVelocityY(i,j+1)[nTime]+dVelocityY
+      (i-1,j-1)[nTime])
+\end{DoxyCode}
+This part stands for the average of velocities in the X axis. \[\textbf{v}^t=(u^t, v^t) \] The 't' stands for nothing special \[ v_{ij}^t=\frac{1}{4}(v_{ij}+v_{i-1j}+v_{i-1j-1}+v_{ij+1})\] \hypertarget{Link_01to_01NavierStokes_8hpp_a5a6c5f78a34496126f3d0f5ceae7f190}{\index{Link to Navier\-Stokes.\-hpp@{Link to Navier\-Stokes.\-hpp}!V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-N\-O\-\_\-\-P\-R\-E\-S\-S\-U\-R\-E@{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-N\-O\-\_\-\-P\-R\-E\-S\-S\-U\-R\-E}}
+\index{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-N\-O\-\_\-\-P\-R\-E\-S\-S\-U\-R\-E@{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-N\-O\-\_\-\-P\-R\-E\-S\-S\-U\-R\-E}!Link to NavierStokes.hpp@{Link to Navier\-Stokes.\-hpp}}
+\subsubsection[{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-N\-O\-\_\-\-P\-R\-E\-S\-S\-U\-R\-E}]{\setlength{\rightskip}{0pt plus 5cm}\#define V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-N\-O\-\_\-\-P\-R\-E\-S\-S\-U\-R\-E}}\label{Link_01to_01NavierStokes_8hpp_a5a6c5f78a34496126f3d0f5ceae7f190}
+{\bfseries Valor\-:}
+\begin{DoxyCode}
+(m\_dNu*(dVelocityYSum-4*dVelocityY(i,j)[nTime])/(dDeltaX*dDeltaX)+
+      dExternalForceY(i,j)/m\_dRho\(\backslash\)
+                                         -dVelocityXAverage*(dVelocityY(i+1,j)[
+      nTime]-dVelocityY(i-1,j)[nTime])/(2*dDeltaX)\(\backslash\)
+                                         -dVelocityY(i,j)[nTime]*(dVelocityY(i,
+      j+1)[nTime]-dVelocityY(i,j-1)[nTime])/(2*dDeltaX))*dDeltaT\(\backslash\)
+                                     +dVelocityY(i,j)[nTime]
+\end{DoxyCode}
+This part stand for the velocity obtained by Navier Stokes equation without considering the pressure \[v_{ij}^{*}=\left[\frac{\mu}{\rho}\left(\frac{v_{ij}^s-4v_{ij}}{\Delta x^2}\right)+ \frac{f_{y,ij}}{\rho}-u_{ij}^t\frac{v_{i+1j}-v_{i-1j}}{2\Delta x}-v_{ij}\frac{v_{ij+1}-v_{ij-1}}{2\Delta x}\right]\Delta t + v_{ij}\] \hypertarget{Link_01to_01NavierStokes_8hpp_aa9a08f012a83de71ab83d88fe6e8c3f5}{\index{Link to Navier\-Stokes.\-hpp@{Link to Navier\-Stokes.\-hpp}!V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-S\-U\-M@{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-S\-U\-M}}
+\index{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-S\-U\-M@{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-S\-U\-M}!Link to NavierStokes.hpp@{Link to Navier\-Stokes.\-hpp}}
+\subsubsection[{V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-S\-U\-M}]{\setlength{\rightskip}{0pt plus 5cm}\#define V\-E\-L\-O\-C\-I\-T\-Y\-\_\-\-Y\-\_\-\-S\-U\-M}}\label{Link_01to_01NavierStokes_8hpp_aa9a08f012a83de71ab83d88fe6e8c3f5}
+{\bfseries Valor\-:}
+\begin{DoxyCode}
+dVelocityY(i+1,j)[nTime]+dVelocityY(i-1,j)[nTime]\(\backslash\)
+                                        +dVelocityY(i,j+1)[nTime]+dVelocityY(i,
+      j-1)[nTime]
+\end{DoxyCode}
+This part stands for the sum of velocities in the Y axis. \[\textbf{v}^s=(u^s, v^s) \] The 's' stands for 'sum' \[ v_{ij}^s=v_{i+1j}+v_{i-1j}+v_{ij+1}+v_{ij-1}\] 

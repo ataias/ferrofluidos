@@ -1,0 +1,289 @@
+\hypertarget{OwnMath_8hpp}{\section{Own\-Math.\-hpp File Reference}
+\label{OwnMath_8hpp}\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}}
+}
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include $<$eigen3/\-Eigen/\-Dense$>$}\\*
+{\ttfamily \#include $<$eigen3/\-Eigen/\-Eigen$>$}\\*
+{\ttfamily \#include $<$eigen3/\-Eigen/\-Sparse$>$}\\*
+{\ttfamily \#include $<$eigen3/\-Eigen/\-Sparse\-Core$>$}\\*
+{\ttfamily \#include $<$eigen3/\-Eigen/\-Sparse\-Cholesky$>$}\\*
+{\ttfamily \#include $<$eigen3/\-Eigen/\-Core$>$}\\*
+{\ttfamily \#include $<$eigen3/\-Eigen/\-Eigenvalues$>$}\\*
+{\ttfamily \#include $<$eigen3/\-Eigen/\-Geometry$>$}\\*
+{\ttfamily \#include $<$fstream$>$}\\*
+{\ttfamily \#include $<$cstring$>$}\\*
+{\ttfamily \#include $<$Constants.\-h$>$}\\*
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$string$>$}\\*
+{\ttfamily \#include $<$cstdlib$>$}\\*
+{\ttfamily \#include $<$ctime$>$}\\*
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{OwnMath_8hpp_a0e56521e7ab51dee5a9705e070406265}{V\-E\-C\-T\-O\-R\-\_\-\-H}
+\item 
+\#define \hyperlink{OwnMath_8hpp_a6dec3d571412f6cbdcd6864e07d5802c}{D\-E\-N\-S\-E\-\_\-\-H}
+\item 
+\#define \hyperlink{OwnMath_8hpp_a93aa2770c762cb5ca67566111eb4249f}{E\-I\-G\-E\-N\-\_\-\-H}
+\item 
+\#define \hyperlink{OwnMath_8hpp_aeae5c5f976800a63556783733fa6aa21}{S\-P\-A\-R\-S\-E\-\_\-\-H}
+\item 
+\#define \hyperlink{OwnMath_8hpp_a4acd292aa63ac6842ddf5a77ba882075}{S\-P\-A\-R\-S\-E\-C\-O\-R\-E\-\_\-\-H}
+\item 
+\#define \hyperlink{OwnMath_8hpp_a6121574ff2889cc78e558de3f492a340}{S\-P\-A\-R\-S\-E\-C\-H\-O\-L\-E\-S\-K\-Y\-\_\-\-H}
+\item 
+\#define \hyperlink{OwnMath_8hpp_ae6acd7c0dd22c3e817d22221b2c84d7b}{C\-O\-R\-E\-\_\-\-H}
+\item 
+\#define \hyperlink{OwnMath_8hpp_a389425ba3c17cb3148308e5ade8c9465}{E\-I\-G\-E\-N\-V\-A\-L\-U\-E\-S\-\_\-\-H}
+\item 
+\#define \hyperlink{OwnMath_8hpp_a5ace0c341da226eaec04fc6299f08bfd}{G\-E\-O\-M\-E\-T\-R\-Y\-\_\-\-H}
+\item 
+\#define \hyperlink{OwnMath_8hpp_a3dda2b7567aba87f183f5d29249e1cef}{F\-S\-T\-R\-E\-A\-M\-\_\-\-H}
+\item 
+\#define \hyperlink{OwnMath_8hpp_a402fe211ce26aa9a2501987dd79d1c81}{S\-T\-R\-I\-N\-G\-\_\-\-H}
+\item 
+\#define \hyperlink{OwnMath_8hpp_aeff16ff72d81fb829dfa4dfe4b3b8cb2}{C\-S\-T\-R\-I\-N\-G\-\_\-\-H}
+\item 
+\#define \hyperlink{OwnMath_8hpp_af48afac96055572da065ffb5284f2386}{C\-S\-T\-D\-L\-I\-B\-\_\-\-H}
+\item 
+\#define \hyperlink{OwnMath_8hpp_a28f298b782a871822489bac9c8830ecf}{C\-T\-I\-M\-E\-\_\-\-H}
+\item 
+\#define \hyperlink{OwnMath_8hpp_a33388a32774c49292f6da0e896701042}{G\-L\-O\-B\-A\-L\-\_\-\-H}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef Matrix$<$ double, \\*
+\hyperlink{Constants_8h_acedc2f07cbeff1f61e7102b71982a7ce}{M\-A\-T\-R\-I\-X\-\_\-\-O\-R\-D\-E\-R}, \hyperlink{Constants_8h_acedc2f07cbeff1f61e7102b71982a7ce}{M\-A\-T\-R\-I\-X\-\_\-\-O\-R\-D\-E\-R} $>$ \hyperlink{OwnMath_8hpp_a514d1f734166cfa76b96bf7cb3052563}{d\-Matrix}
+\item 
+typedef Matrix$<$ double, \\*
+\hyperlink{Constants_8h_acedc2f07cbeff1f61e7102b71982a7ce}{M\-A\-T\-R\-I\-X\-\_\-\-O\-R\-D\-E\-R}, \hyperlink{Constants_8h_acedc2f07cbeff1f61e7102b71982a7ce}{M\-A\-T\-R\-I\-X\-\_\-\-O\-R\-D\-E\-R} $>$ \hyperlink{OwnMath_8hpp_a121585b3997c52e5c7941c1a2654b2ed}{d\-Array}
+\item 
+typedef Matrix$<$ double, \\*
+\hyperlink{Constants_8h_ac7d9f9c76559910ccd35c79bf59f9e42}{n\-Matrix\-System\-Order}, 1 $>$ \hyperlink{OwnMath_8hpp_a7bb01783b5e12e1596160cd70d82108a}{d\-Vector}
+\item 
+typedef Matrix$<$ double, \\*
+\hyperlink{Constants_8h_ac7d9f9c76559910ccd35c79bf59f9e42}{n\-Matrix\-System\-Order}, 2 $>$ \hyperlink{OwnMath_8hpp_abc277d3b701238b46c2035a91260dbdf}{d\-Bi\-Vector}
+\item 
+typedef Eigen\-::\-Sparse\-Matrix\\*
+$<$ double $>$ \hyperlink{OwnMath_8hpp_a04b63929a2578b5ce61f09f0b8b18122}{Sp\-Mat}
+\item 
+typedef Eigen\-::\-Triplet$<$ double $>$ \hyperlink{OwnMath_8hpp_af639fb96631ba0018f0b2259fc95edfb}{T}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{OwnMath_8hpp_a514d1f734166cfa76b96bf7cb3052563}{d\-Matrix} \hyperlink{OwnMath_8hpp_a7f27c8ee7ccd5786a6084bc1fc278168}{d\-Read\-Conditions} (char str\-File\mbox{[}$\,$\mbox{]})
+\item 
+\hyperlink{OwnMath_8hpp_a514d1f734166cfa76b96bf7cb3052563}{d\-Matrix} \hyperlink{OwnMath_8hpp_a21d3e48503d9d6e843c74ccead924949}{Poisson\-Sparse} (\hyperlink{OwnMath_8hpp_a514d1f734166cfa76b96bf7cb3052563}{d\-Matrix} d\-Non\-Homogeneity, \hyperlink{OwnMath_8hpp_a514d1f734166cfa76b96bf7cb3052563}{d\-Matrix} d\-Boundary\-Conditions)
+\item 
+void \hyperlink{OwnMath_8hpp_a744e1d660fdfdcc4da27c5959f6126ba}{file\-Name} (char $\ast$file)
+\item 
+void \hyperlink{OwnMath_8hpp_af1967a9d96face7e66c825248297ce3c}{save} (char file\mbox{[}$\,$\mbox{]}, clock\-\_\-t t\-Start, time\-\_\-t $\ast$inicio, Matrix\-Xd U, string equation)
+\item 
+void \hyperlink{OwnMath_8hpp_a81385cec696ed194b6d9e0ac1d49e4fa}{save\-Tm\-Eqn} (char file\mbox{[}$\,$\mbox{]}, clock\-\_\-t t\-Start, time\-\_\-t $\ast$inicio, string equation, Matrix\-Xd $\ast$U, int N)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ataias Pereira Reis \href{mailto:ataiasreis@gmail.com}{\tt ataiasreis@gmail.\-com} 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\-0.\-1
+\end{DoxyVersion}
+\hypertarget{OwnMath_8hpp_LICENSE}{}\subsection{L\-I\-C\-E\-N\-S\-E}\label{OwnMath_8hpp_LICENSE}
+This program is free software; you can redistribute it and/or modify it under the terms of the G\-N\-U General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but W\-I\-T\-H\-O\-U\-T A\-N\-Y W\-A\-R\-R\-A\-N\-T\-Y; without even the implied warranty of M\-E\-R\-C\-H\-A\-N\-T\-A\-B\-I\-L\-I\-T\-Y or F\-I\-T\-N\-E\-S\-S F\-O\-R A P\-A\-R\-T\-I\-C\-U\-L\-A\-R P\-U\-R\-P\-O\-S\-E. See the G\-N\-U General Public License for more details at \href{http://www.gnu.org/copyleft/gpl.html}{\tt http\-://www.\-gnu.\-org/copyleft/gpl.\-html}\hypertarget{OwnMath_8hpp_DESCRIPTION}{}\subsection{D\-E\-S\-C\-R\-I\-P\-T\-I\-O\-N}\label{OwnMath_8hpp_DESCRIPTION}
+A classe Time representa um momento de tempo. 
+
+\subsection{Macro Definition Documentation}
+\hypertarget{OwnMath_8hpp_ae6acd7c0dd22c3e817d22221b2c84d7b}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!C\-O\-R\-E\-\_\-\-H@{C\-O\-R\-E\-\_\-\-H}}
+\index{C\-O\-R\-E\-\_\-\-H@{C\-O\-R\-E\-\_\-\-H}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{C\-O\-R\-E\-\_\-\-H}]{\setlength{\rightskip}{0pt plus 5cm}\#define C\-O\-R\-E\-\_\-\-H}}\label{OwnMath_8hpp_ae6acd7c0dd22c3e817d22221b2c84d7b}
+\hypertarget{OwnMath_8hpp_af48afac96055572da065ffb5284f2386}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!C\-S\-T\-D\-L\-I\-B\-\_\-\-H@{C\-S\-T\-D\-L\-I\-B\-\_\-\-H}}
+\index{C\-S\-T\-D\-L\-I\-B\-\_\-\-H@{C\-S\-T\-D\-L\-I\-B\-\_\-\-H}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{C\-S\-T\-D\-L\-I\-B\-\_\-\-H}]{\setlength{\rightskip}{0pt plus 5cm}\#define C\-S\-T\-D\-L\-I\-B\-\_\-\-H}}\label{OwnMath_8hpp_af48afac96055572da065ffb5284f2386}
+\hypertarget{OwnMath_8hpp_aeff16ff72d81fb829dfa4dfe4b3b8cb2}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!C\-S\-T\-R\-I\-N\-G\-\_\-\-H@{C\-S\-T\-R\-I\-N\-G\-\_\-\-H}}
+\index{C\-S\-T\-R\-I\-N\-G\-\_\-\-H@{C\-S\-T\-R\-I\-N\-G\-\_\-\-H}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{C\-S\-T\-R\-I\-N\-G\-\_\-\-H}]{\setlength{\rightskip}{0pt plus 5cm}\#define C\-S\-T\-R\-I\-N\-G\-\_\-\-H}}\label{OwnMath_8hpp_aeff16ff72d81fb829dfa4dfe4b3b8cb2}
+\hypertarget{OwnMath_8hpp_a28f298b782a871822489bac9c8830ecf}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!C\-T\-I\-M\-E\-\_\-\-H@{C\-T\-I\-M\-E\-\_\-\-H}}
+\index{C\-T\-I\-M\-E\-\_\-\-H@{C\-T\-I\-M\-E\-\_\-\-H}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{C\-T\-I\-M\-E\-\_\-\-H}]{\setlength{\rightskip}{0pt plus 5cm}\#define C\-T\-I\-M\-E\-\_\-\-H}}\label{OwnMath_8hpp_a28f298b782a871822489bac9c8830ecf}
+\hypertarget{OwnMath_8hpp_a6dec3d571412f6cbdcd6864e07d5802c}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!D\-E\-N\-S\-E\-\_\-\-H@{D\-E\-N\-S\-E\-\_\-\-H}}
+\index{D\-E\-N\-S\-E\-\_\-\-H@{D\-E\-N\-S\-E\-\_\-\-H}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{D\-E\-N\-S\-E\-\_\-\-H}]{\setlength{\rightskip}{0pt plus 5cm}\#define D\-E\-N\-S\-E\-\_\-\-H}}\label{OwnMath_8hpp_a6dec3d571412f6cbdcd6864e07d5802c}
+\hypertarget{OwnMath_8hpp_a93aa2770c762cb5ca67566111eb4249f}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!E\-I\-G\-E\-N\-\_\-\-H@{E\-I\-G\-E\-N\-\_\-\-H}}
+\index{E\-I\-G\-E\-N\-\_\-\-H@{E\-I\-G\-E\-N\-\_\-\-H}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{E\-I\-G\-E\-N\-\_\-\-H}]{\setlength{\rightskip}{0pt plus 5cm}\#define E\-I\-G\-E\-N\-\_\-\-H}}\label{OwnMath_8hpp_a93aa2770c762cb5ca67566111eb4249f}
+\hypertarget{OwnMath_8hpp_a389425ba3c17cb3148308e5ade8c9465}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!E\-I\-G\-E\-N\-V\-A\-L\-U\-E\-S\-\_\-\-H@{E\-I\-G\-E\-N\-V\-A\-L\-U\-E\-S\-\_\-\-H}}
+\index{E\-I\-G\-E\-N\-V\-A\-L\-U\-E\-S\-\_\-\-H@{E\-I\-G\-E\-N\-V\-A\-L\-U\-E\-S\-\_\-\-H}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{E\-I\-G\-E\-N\-V\-A\-L\-U\-E\-S\-\_\-\-H}]{\setlength{\rightskip}{0pt plus 5cm}\#define E\-I\-G\-E\-N\-V\-A\-L\-U\-E\-S\-\_\-\-H}}\label{OwnMath_8hpp_a389425ba3c17cb3148308e5ade8c9465}
+\hypertarget{OwnMath_8hpp_a3dda2b7567aba87f183f5d29249e1cef}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!F\-S\-T\-R\-E\-A\-M\-\_\-\-H@{F\-S\-T\-R\-E\-A\-M\-\_\-\-H}}
+\index{F\-S\-T\-R\-E\-A\-M\-\_\-\-H@{F\-S\-T\-R\-E\-A\-M\-\_\-\-H}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{F\-S\-T\-R\-E\-A\-M\-\_\-\-H}]{\setlength{\rightskip}{0pt plus 5cm}\#define F\-S\-T\-R\-E\-A\-M\-\_\-\-H}}\label{OwnMath_8hpp_a3dda2b7567aba87f183f5d29249e1cef}
+\hypertarget{OwnMath_8hpp_a5ace0c341da226eaec04fc6299f08bfd}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!G\-E\-O\-M\-E\-T\-R\-Y\-\_\-\-H@{G\-E\-O\-M\-E\-T\-R\-Y\-\_\-\-H}}
+\index{G\-E\-O\-M\-E\-T\-R\-Y\-\_\-\-H@{G\-E\-O\-M\-E\-T\-R\-Y\-\_\-\-H}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{G\-E\-O\-M\-E\-T\-R\-Y\-\_\-\-H}]{\setlength{\rightskip}{0pt plus 5cm}\#define G\-E\-O\-M\-E\-T\-R\-Y\-\_\-\-H}}\label{OwnMath_8hpp_a5ace0c341da226eaec04fc6299f08bfd}
+\hypertarget{OwnMath_8hpp_a33388a32774c49292f6da0e896701042}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!G\-L\-O\-B\-A\-L\-\_\-\-H@{G\-L\-O\-B\-A\-L\-\_\-\-H}}
+\index{G\-L\-O\-B\-A\-L\-\_\-\-H@{G\-L\-O\-B\-A\-L\-\_\-\-H}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{G\-L\-O\-B\-A\-L\-\_\-\-H}]{\setlength{\rightskip}{0pt plus 5cm}\#define G\-L\-O\-B\-A\-L\-\_\-\-H}}\label{OwnMath_8hpp_a33388a32774c49292f6da0e896701042}
+\hypertarget{OwnMath_8hpp_aeae5c5f976800a63556783733fa6aa21}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!S\-P\-A\-R\-S\-E\-\_\-\-H@{S\-P\-A\-R\-S\-E\-\_\-\-H}}
+\index{S\-P\-A\-R\-S\-E\-\_\-\-H@{S\-P\-A\-R\-S\-E\-\_\-\-H}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{S\-P\-A\-R\-S\-E\-\_\-\-H}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\-P\-A\-R\-S\-E\-\_\-\-H}}\label{OwnMath_8hpp_aeae5c5f976800a63556783733fa6aa21}
+\hypertarget{OwnMath_8hpp_a6121574ff2889cc78e558de3f492a340}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!S\-P\-A\-R\-S\-E\-C\-H\-O\-L\-E\-S\-K\-Y\-\_\-\-H@{S\-P\-A\-R\-S\-E\-C\-H\-O\-L\-E\-S\-K\-Y\-\_\-\-H}}
+\index{S\-P\-A\-R\-S\-E\-C\-H\-O\-L\-E\-S\-K\-Y\-\_\-\-H@{S\-P\-A\-R\-S\-E\-C\-H\-O\-L\-E\-S\-K\-Y\-\_\-\-H}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{S\-P\-A\-R\-S\-E\-C\-H\-O\-L\-E\-S\-K\-Y\-\_\-\-H}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\-P\-A\-R\-S\-E\-C\-H\-O\-L\-E\-S\-K\-Y\-\_\-\-H}}\label{OwnMath_8hpp_a6121574ff2889cc78e558de3f492a340}
+\hypertarget{OwnMath_8hpp_a4acd292aa63ac6842ddf5a77ba882075}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!S\-P\-A\-R\-S\-E\-C\-O\-R\-E\-\_\-\-H@{S\-P\-A\-R\-S\-E\-C\-O\-R\-E\-\_\-\-H}}
+\index{S\-P\-A\-R\-S\-E\-C\-O\-R\-E\-\_\-\-H@{S\-P\-A\-R\-S\-E\-C\-O\-R\-E\-\_\-\-H}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{S\-P\-A\-R\-S\-E\-C\-O\-R\-E\-\_\-\-H}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\-P\-A\-R\-S\-E\-C\-O\-R\-E\-\_\-\-H}}\label{OwnMath_8hpp_a4acd292aa63ac6842ddf5a77ba882075}
+\hypertarget{OwnMath_8hpp_a402fe211ce26aa9a2501987dd79d1c81}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!S\-T\-R\-I\-N\-G\-\_\-\-H@{S\-T\-R\-I\-N\-G\-\_\-\-H}}
+\index{S\-T\-R\-I\-N\-G\-\_\-\-H@{S\-T\-R\-I\-N\-G\-\_\-\-H}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{S\-T\-R\-I\-N\-G\-\_\-\-H}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\-T\-R\-I\-N\-G\-\_\-\-H}}\label{OwnMath_8hpp_a402fe211ce26aa9a2501987dd79d1c81}
+\hypertarget{OwnMath_8hpp_a0e56521e7ab51dee5a9705e070406265}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!V\-E\-C\-T\-O\-R\-\_\-\-H@{V\-E\-C\-T\-O\-R\-\_\-\-H}}
+\index{V\-E\-C\-T\-O\-R\-\_\-\-H@{V\-E\-C\-T\-O\-R\-\_\-\-H}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{V\-E\-C\-T\-O\-R\-\_\-\-H}]{\setlength{\rightskip}{0pt plus 5cm}\#define V\-E\-C\-T\-O\-R\-\_\-\-H}}\label{OwnMath_8hpp_a0e56521e7ab51dee5a9705e070406265}
+
+
+\subsection{Typedef Documentation}
+\hypertarget{OwnMath_8hpp_a121585b3997c52e5c7941c1a2654b2ed}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!d\-Array@{d\-Array}}
+\index{d\-Array@{d\-Array}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{d\-Array}]{\setlength{\rightskip}{0pt plus 5cm}typedef Matrix$<$double, {\bf M\-A\-T\-R\-I\-X\-\_\-\-O\-R\-D\-E\-R}, {\bf M\-A\-T\-R\-I\-X\-\_\-\-O\-R\-D\-E\-R}$>$ {\bf d\-Array}}}\label{OwnMath_8hpp_a121585b3997c52e5c7941c1a2654b2ed}
+\hypertarget{OwnMath_8hpp_abc277d3b701238b46c2035a91260dbdf}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!d\-Bi\-Vector@{d\-Bi\-Vector}}
+\index{d\-Bi\-Vector@{d\-Bi\-Vector}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{d\-Bi\-Vector}]{\setlength{\rightskip}{0pt plus 5cm}typedef Matrix$<$double, {\bf n\-Matrix\-System\-Order}, 2$>$ {\bf d\-Bi\-Vector}}}\label{OwnMath_8hpp_abc277d3b701238b46c2035a91260dbdf}
+\hypertarget{OwnMath_8hpp_a514d1f734166cfa76b96bf7cb3052563}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!d\-Matrix@{d\-Matrix}}
+\index{d\-Matrix@{d\-Matrix}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{d\-Matrix}]{\setlength{\rightskip}{0pt plus 5cm}typedef Matrix$<$double, {\bf M\-A\-T\-R\-I\-X\-\_\-\-O\-R\-D\-E\-R}, {\bf M\-A\-T\-R\-I\-X\-\_\-\-O\-R\-D\-E\-R}$>$ {\bf d\-Matrix}}}\label{OwnMath_8hpp_a514d1f734166cfa76b96bf7cb3052563}
+\hypertarget{OwnMath_8hpp_a7bb01783b5e12e1596160cd70d82108a}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!d\-Vector@{d\-Vector}}
+\index{d\-Vector@{d\-Vector}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{d\-Vector}]{\setlength{\rightskip}{0pt plus 5cm}typedef Matrix$<$double, {\bf n\-Matrix\-System\-Order},1$>$ {\bf d\-Vector}}}\label{OwnMath_8hpp_a7bb01783b5e12e1596160cd70d82108a}
+\hypertarget{OwnMath_8hpp_a04b63929a2578b5ce61f09f0b8b18122}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!Sp\-Mat@{Sp\-Mat}}
+\index{Sp\-Mat@{Sp\-Mat}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{Sp\-Mat}]{\setlength{\rightskip}{0pt plus 5cm}typedef Eigen\-::\-Sparse\-Matrix$<$double$>$ {\bf Sp\-Mat}}}\label{OwnMath_8hpp_a04b63929a2578b5ce61f09f0b8b18122}
+\hypertarget{OwnMath_8hpp_af639fb96631ba0018f0b2259fc95edfb}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!T@{T}}
+\index{T@{T}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{T}]{\setlength{\rightskip}{0pt plus 5cm}typedef Eigen\-::\-Triplet$<$double$>$ {\bf T}}}\label{OwnMath_8hpp_af639fb96631ba0018f0b2259fc95edfb}
+
+
+\subsection{Function Documentation}
+\hypertarget{OwnMath_8hpp_a7f27c8ee7ccd5786a6084bc1fc278168}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!d\-Read\-Conditions@{d\-Read\-Conditions}}
+\index{d\-Read\-Conditions@{d\-Read\-Conditions}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{d\-Read\-Conditions}]{\setlength{\rightskip}{0pt plus 5cm}{\bf d\-Matrix} d\-Read\-Conditions (
+\begin{DoxyParamCaption}
+\item[{char}]{str\-File\mbox{[}$\,$\mbox{]}}
+\end{DoxyParamCaption}
+)}}\label{OwnMath_8hpp_a7f27c8ee7ccd5786a6084bc1fc278168}
+The function d\-Read\-Conditions is made to read the conditions from a file Actually it could be any condition, it just set It takes the whole matrix in the file str\-File\mbox{[}\mbox{]} so includes any initial condition in the file to be read.
+
+It does not require the number of columns of lines.
+
+
+\begin{DoxyParams}{Parameters}
+{\em str\-File\mbox{[}$\,$\mbox{]}} & is the name of text file \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+d\-Matrix\-Read is returned, with the contents of the file
+\end{DoxyReturn}
+\hypertarget{OwnMath_8hpp_a744e1d660fdfdcc4da27c5959f6126ba}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!file\-Name@{file\-Name}}
+\index{file\-Name@{file\-Name}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{file\-Name}]{\setlength{\rightskip}{0pt plus 5cm}void file\-Name (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{file}
+\end{DoxyParamCaption}
+)}}\label{OwnMath_8hpp_a744e1d660fdfdcc4da27c5959f6126ba}
+Method for creating a file name according to matrix size
+
+Matrix size is not a parameter of function, it is set as a global variable 
+\begin{DoxyParams}{Parameters}
+{\em str\-File} & is a char pointer where the string will be saved \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+No return value.
+\end{DoxyReturn}
+\hypertarget{OwnMath_8hpp_a21d3e48503d9d6e843c74ccead924949}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!Poisson\-Sparse@{Poisson\-Sparse}}
+\index{Poisson\-Sparse@{Poisson\-Sparse}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{Poisson\-Sparse}]{\setlength{\rightskip}{0pt plus 5cm}{\bf d\-Matrix} Poisson\-Sparse (
+\begin{DoxyParamCaption}
+\item[{{\bf d\-Matrix}}]{d\-Non\-Homogeneity, }
+\item[{{\bf d\-Matrix}}]{d\-Boundary\-Conditions}
+\end{DoxyParamCaption}
+)}}\label{OwnMath_8hpp_a21d3e48503d9d6e843c74ccead924949}
+Method to solve the poisson equation by a sparse method
+
+
+\begin{DoxyParams}{Parameters}
+{\em d\-Non\-Homogeneity} & is the non homogeneity in the right-\/hand side of poisson equation \\
+\hline
+{\em d\-Boundary\-Conditions} & contains the boundary and initial conditions \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+d\-Poisson\-Solution is returned
+\end{DoxyReturn}
+\hypertarget{OwnMath_8hpp_af1967a9d96face7e66c825248297ce3c}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!save@{save}}
+\index{save@{save}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{save}]{\setlength{\rightskip}{0pt plus 5cm}void save (
+\begin{DoxyParamCaption}
+\item[{char}]{file\mbox{[}$\,$\mbox{]}, }
+\item[{clock\-\_\-t}]{t\-Start, }
+\item[{time\-\_\-t $\ast$}]{inicio, }
+\item[{Matrix\-Xd}]{U, }
+\item[{string}]{equation}
+\end{DoxyParamCaption}
+)}}\label{OwnMath_8hpp_af1967a9d96face7e66c825248297ce3c}
+Method for saving a matrix in a file .m After save, it is possible to open easily with octave and print the graph for file
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\mbox{[}$\,$\mbox{]}} & name of file where matrix will be save \\
+\hline
+{\em t\-Start} & has the value of cpu time in the start, in this method the \char`\"{}t\-Final\char`\"{} is calculated and subtracted from t\-Start \\
+\hline
+{\em $\ast$inicio} & is a pointer that indicates the time of start, and date \\
+\hline
+{\em U} & is the matrix that will be saved \\
+\hline
+{\em equation} & is a string that receives the equation being solved, just to show in the .m file. Ex\-: Laplace Equation -\/ u\-\_\-xx + u\-\_\-yy = f(x,y) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+No return value.
+\end{DoxyReturn}
+\hypertarget{OwnMath_8hpp_a81385cec696ed194b6d9e0ac1d49e4fa}{\index{Own\-Math.\-hpp@{Own\-Math.\-hpp}!save\-Tm\-Eqn@{save\-Tm\-Eqn}}
+\index{save\-Tm\-Eqn@{save\-Tm\-Eqn}!OwnMath.hpp@{Own\-Math.\-hpp}}
+\subsubsection[{save\-Tm\-Eqn}]{\setlength{\rightskip}{0pt plus 5cm}void save\-Tm\-Eqn (
+\begin{DoxyParamCaption}
+\item[{char}]{file\mbox{[}$\,$\mbox{]}, }
+\item[{clock\-\_\-t}]{t\-Start, }
+\item[{time\-\_\-t $\ast$}]{inicio, }
+\item[{string}]{equation, }
+\item[{Matrix\-Xd $\ast$}]{U, }
+\item[{int}]{N}
+\end{DoxyParamCaption}
+)}}\label{OwnMath_8hpp_a81385cec696ed194b6d9e0ac1d49e4fa}
+Method for saving various matrices in a file .m After save, it is possible to open easily with octave and make a video of the matrices
+
+Not implemented yet
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\mbox{[}$\,$\mbox{]}} & name of file where matrix will be save \\
+\hline
+{\em t\-Start} & has the value of cpu time in the start, in this method the \char`\"{}t\-Final\char`\"{} is calculated and subtracted from t\-Start \\
+\hline
+{\em $\ast$inicio} & is a pointer that indicates the time of start, and date \\
+\hline
+{\em equation} & is a string that receives the equation being solved, just to show in the .m file. Ex\-: Laplace Equation -\/ u\-\_\-xx + u\-\_\-yy = f(x,y) \\
+\hline
+{\em $\ast$\-U} & is a pointer to the 3d matrix U, that will be saved \\
+\hline
+{\em N} & indicates how many two-\/dimensional matrices there are in matrix U \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+No return value.
+\end{DoxyReturn}

@@ -1,0 +1,90 @@
+\hypertarget{classMatrixFilesIO}{\section{Referência da Classe Matrix\-Files\-I\-O}
+\label{classMatrixFilesIO}\index{Matrix\-Files\-I\-O@{Matrix\-Files\-I\-O}}
+}
+
+
+{\ttfamily \#include $<$Link to Matrix\-Files\-I\-O.\-hpp$>$}
+
+\subsection*{Métodos Públicos}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classMatrixFilesIO_a2ee9e9a5f8069acaa387b6da8c1f9292}{Matrix\-Files\-I\-O} (int n\-Matrix\-Order, bool b\-Read\-Or\-Write, bool b\-Binary\-Or\-A\-S\-C\-I\-I, std\-::string str\-File\-Name)
+\item 
+virtual \hyperlink{classMatrixFilesIO_a7645a3e9f62d0392e0bf2fabfd01ac60}{$\sim$\-Matrix\-Files\-I\-O} ()
+\item 
+void \hyperlink{classMatrixFilesIO_ab03be51691b7df2dbd568c3a2c4712b2}{Operation\-I\-O} ()
+\item 
+void \hyperlink{classMatrixFilesIO_a480461ce9c342b163ab4e73204564f1c}{Operation\-I\-O} (Eigen\-::\-Matrix\-Xd d\-Matrix\-To\-Be\-Written)
+\item 
+void \hyperlink{classMatrixFilesIO_afbaf5a617dbce55f14f791bf27f2d053}{Create\-And\-Save\-M\-File} ()
+\item 
+void \hyperlink{classMatrixFilesIO_a9598951332c398ea59d7c18fc103e820}{Show\-Matrix} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Construtores \& Destrutores}
+\hypertarget{classMatrixFilesIO_a2ee9e9a5f8069acaa387b6da8c1f9292}{\index{Matrix\-Files\-I\-O@{Matrix\-Files\-I\-O}!Matrix\-Files\-I\-O@{Matrix\-Files\-I\-O}}
+\index{Matrix\-Files\-I\-O@{Matrix\-Files\-I\-O}!MatrixFilesIO@{Matrix\-Files\-I\-O}}
+\subsubsection[{Matrix\-Files\-I\-O}]{\setlength{\rightskip}{0pt plus 5cm}Matrix\-Files\-I\-O\-::\-Matrix\-Files\-I\-O (
+\begin{DoxyParamCaption}
+\item[{int}]{n\-Matrix\-Order, }
+\item[{bool}]{b\-Read\-Or\-Write, }
+\item[{bool}]{b\-Binary\-Or\-A\-S\-C\-I\-I, }
+\item[{std\-::string}]{str\-File\-Name}
+\end{DoxyParamCaption}
+)}}\label{classMatrixFilesIO_a2ee9e9a5f8069acaa387b6da8c1f9292}
+Este é o construtor da classe de I\-O para matrizes, \hyperlink{classMatrixFilesIO}{Matrix\-Files\-I\-O}. O construtor deve ser utilizado sempre. Uma vez criado um objeto, ele só poderá executar o método específico com o qual foi construído. Vamos falar dos parâmetros então. 
+\begin{DoxyParams}{Parâmetros}
+{\em n\-Matrix\-Order} & é um inteiro que pede a ordem da matriz que será lida ou salva. \\
+\hline
+{\em b\-Read\-Or\-Write} & pode tomar os valores R\-E\-A\-D ou W\-R\-I\-T\-E, que são 0 e 1 respectivamente. isso limite então se o objeto servirá para ler dados ou salvá-\/los. \\
+\hline
+{\em b\-Binary\-Or\-A\-S\-C\-I\-I} & pode tomar os valores B\-I\-N\-A\-R\-Y ou A\-S\-C\-I\-I que indica se será salvo ou lido arquivos em binário double ou em caracteres A\-S\-C\-I\-I. \\
+\hline
+{\em str\-File\-Name} & é o nome do arquivo que será criado ou lido dele.\\
+\hline
+\end{DoxyParams}
+\hypertarget{classMatrixFilesIO_a7645a3e9f62d0392e0bf2fabfd01ac60}{\index{Matrix\-Files\-I\-O@{Matrix\-Files\-I\-O}!$\sim$\-Matrix\-Files\-I\-O@{$\sim$\-Matrix\-Files\-I\-O}}
+\index{$\sim$\-Matrix\-Files\-I\-O@{$\sim$\-Matrix\-Files\-I\-O}!MatrixFilesIO@{Matrix\-Files\-I\-O}}
+\subsubsection[{$\sim$\-Matrix\-Files\-I\-O}]{\setlength{\rightskip}{0pt plus 5cm}Matrix\-Files\-I\-O\-::$\sim$\-Matrix\-Files\-I\-O (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classMatrixFilesIO_a7645a3e9f62d0392e0bf2fabfd01ac60}
+
+
+\subsection{Métodos}
+\hypertarget{classMatrixFilesIO_afbaf5a617dbce55f14f791bf27f2d053}{\index{Matrix\-Files\-I\-O@{Matrix\-Files\-I\-O}!Create\-And\-Save\-M\-File@{Create\-And\-Save\-M\-File}}
+\index{Create\-And\-Save\-M\-File@{Create\-And\-Save\-M\-File}!MatrixFilesIO@{Matrix\-Files\-I\-O}}
+\subsubsection[{Create\-And\-Save\-M\-File}]{\setlength{\rightskip}{0pt plus 5cm}void Matrix\-Files\-I\-O\-::\-Create\-And\-Save\-M\-File (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classMatrixFilesIO_afbaf5a617dbce55f14f791bf27f2d053}
+\hypertarget{classMatrixFilesIO_ab03be51691b7df2dbd568c3a2c4712b2}{\index{Matrix\-Files\-I\-O@{Matrix\-Files\-I\-O}!Operation\-I\-O@{Operation\-I\-O}}
+\index{Operation\-I\-O@{Operation\-I\-O}!MatrixFilesIO@{Matrix\-Files\-I\-O}}
+\subsubsection[{Operation\-I\-O}]{\setlength{\rightskip}{0pt plus 5cm}void Matrix\-Files\-I\-O\-::\-Operation\-I\-O (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classMatrixFilesIO_ab03be51691b7df2dbd568c3a2c4712b2}
+\hypertarget{classMatrixFilesIO_a480461ce9c342b163ab4e73204564f1c}{\index{Matrix\-Files\-I\-O@{Matrix\-Files\-I\-O}!Operation\-I\-O@{Operation\-I\-O}}
+\index{Operation\-I\-O@{Operation\-I\-O}!MatrixFilesIO@{Matrix\-Files\-I\-O}}
+\subsubsection[{Operation\-I\-O}]{\setlength{\rightskip}{0pt plus 5cm}void Matrix\-Files\-I\-O\-::\-Operation\-I\-O (
+\begin{DoxyParamCaption}
+\item[{Eigen\-::\-Matrix\-Xd}]{d\-Matrix\-To\-Be\-Written}
+\end{DoxyParamCaption}
+)}}\label{classMatrixFilesIO_a480461ce9c342b163ab4e73204564f1c}
+\hypertarget{classMatrixFilesIO_a9598951332c398ea59d7c18fc103e820}{\index{Matrix\-Files\-I\-O@{Matrix\-Files\-I\-O}!Show\-Matrix@{Show\-Matrix}}
+\index{Show\-Matrix@{Show\-Matrix}!MatrixFilesIO@{Matrix\-Files\-I\-O}}
+\subsubsection[{Show\-Matrix}]{\setlength{\rightskip}{0pt plus 5cm}void Matrix\-Files\-I\-O\-::\-Show\-Matrix (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classMatrixFilesIO_a9598951332c398ea59d7c18fc103e820}
+Esta função mostra a matriz m\-\_\-d\-Matrix que é uma matriz lida ou a última matriz salva em arquivo.
+
+A documentação para esta classe foi gerada a partir dos seguintes arquivos\-:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{Link_01to_01MatrixFilesIO_8hpp}{Link to Matrix\-Files\-I\-O.\-hpp}\item 
+\hyperlink{Link_01to_01MatrixFilesIO_8cpp}{Link to Matrix\-Files\-I\-O.\-cpp}\end{DoxyCompactItemize}

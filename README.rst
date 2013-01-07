@@ -81,7 +81,7 @@ Artigos matemáticos
  - PoissonEquationWithPython_
  - Fipy_
  - NavierStokesPython_
-
+ - kmkns_
 GIT
 -------------------
  - Para remover arquivos deletados da pasta:
@@ -110,3 +110,4 @@ GIT
 .. _PoissonEquationWithPython: http://www.scientificpython.net/1/post/2012/05/poisson-equation-on-the-square.html
 .. _Fipy: http://www.hasenkopf2000.net/wiki/page/fipy-solving-pdes-python/
 .. _NavierStokesPython: http://fenicsproject.org/documentation/dolfin/1.0.0/python/demo/pde/navier-stokes/python/documentation.html
+.. _kmkns: http://code.google.com/p/kmkns/

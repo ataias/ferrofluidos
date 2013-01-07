@@ -1,0 +1,137 @@
+\hypertarget{Link_01to_01OwnMath_8hpp}{\section{Referência do Arquivo Link to Own\-Math.\-hpp}
+\label{Link_01to_01OwnMath_8hpp}\index{Link to Own\-Math.\-hpp@{Link to Own\-Math.\-hpp}}
+}
+{\ttfamily \#include $<$stdheader.\-hpp$>$}\\*
+\subsection*{Funções}
+\begin{DoxyCompactItemize}
+\item 
+d\-Matrix \hyperlink{Link_01to_01OwnMath_8hpp_a7f27c8ee7ccd5786a6084bc1fc278168}{d\-Read\-Conditions} (char str\-File\mbox{[}$\,$\mbox{]})
+\item 
+d\-Matrix \hyperlink{Link_01to_01OwnMath_8hpp_a1fd9a6d9cf06f8a682118613f7d2e88c}{Poisson\-Dirichlet} (d\-Matrix d\-Non\-Homogeneity, d\-Matrix d\-Boundary\-Conditions)
+\item 
+void \hyperlink{Link_01to_01OwnMath_8hpp_a744e1d660fdfdcc4da27c5959f6126ba}{file\-Name} (char $\ast$file)
+\item 
+void \hyperlink{Link_01to_01OwnMath_8hpp_af1967a9d96face7e66c825248297ce3c}{save} (char file\mbox{[}$\,$\mbox{]}, clock\-\_\-t t\-Start, time\-\_\-t $\ast$inicio, Matrix\-Xd U, string equation)
+\item 
+void \hyperlink{Link_01to_01OwnMath_8hpp_a81385cec696ed194b6d9e0ac1d49e4fa}{save\-Tm\-Eqn} (char file\mbox{[}$\,$\mbox{]}, clock\-\_\-t t\-Start, time\-\_\-t $\ast$inicio, string equation, Matrix\-Xd $\ast$U, int N)
+\end{DoxyCompactItemize}
+
+
+\subsection{Funções}
+\hypertarget{Link_01to_01OwnMath_8hpp_a7f27c8ee7ccd5786a6084bc1fc278168}{\index{Link to Own\-Math.\-hpp@{Link to Own\-Math.\-hpp}!d\-Read\-Conditions@{d\-Read\-Conditions}}
+\index{d\-Read\-Conditions@{d\-Read\-Conditions}!Link to OwnMath.hpp@{Link to Own\-Math.\-hpp}}
+\subsubsection[{d\-Read\-Conditions}]{\setlength{\rightskip}{0pt plus 5cm}d\-Matrix d\-Read\-Conditions (
+\begin{DoxyParamCaption}
+\item[{char}]{str\-File\mbox{[}$\,$\mbox{]}}
+\end{DoxyParamCaption}
+)}}\label{Link_01to_01OwnMath_8hpp_a7f27c8ee7ccd5786a6084bc1fc278168}
+The method is made to read a matrix of doubles from an A\-S\-C\-I\-I file It requires the number of columns and lines It will check if the read matrix is of right size
+
+
+\begin{DoxyParams}{Parâmetros}
+{\em str\-File\mbox{[}$\,$\mbox{]}} & is the name of text file \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Retorna}
+d\-Matrix\-Read is returned, with the contents of the file
+\end{DoxyReturn}
+\hypertarget{Link_01to_01OwnMath_8hpp_a744e1d660fdfdcc4da27c5959f6126ba}{\index{Link to Own\-Math.\-hpp@{Link to Own\-Math.\-hpp}!file\-Name@{file\-Name}}
+\index{file\-Name@{file\-Name}!Link to OwnMath.hpp@{Link to Own\-Math.\-hpp}}
+\subsubsection[{file\-Name}]{\setlength{\rightskip}{0pt plus 5cm}void file\-Name (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{file}
+\end{DoxyParamCaption}
+)}}\label{Link_01to_01OwnMath_8hpp_a744e1d660fdfdcc4da27c5959f6126ba}
+Method for creating a file name according to matrix size
+
+Matrix size is not a parameter of function, it is set as a global variable 
+\begin{DoxyParams}{Parâmetros}
+{\em str\-File} & is a char pointer where the string will be saved \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Retorna}
+No return value.
+\end{DoxyReturn}
+\hypertarget{Link_01to_01OwnMath_8hpp_a1fd9a6d9cf06f8a682118613f7d2e88c}{\index{Link to Own\-Math.\-hpp@{Link to Own\-Math.\-hpp}!Poisson\-Dirichlet@{Poisson\-Dirichlet}}
+\index{Poisson\-Dirichlet@{Poisson\-Dirichlet}!Link to OwnMath.hpp@{Link to Own\-Math.\-hpp}}
+\subsubsection[{Poisson\-Dirichlet}]{\setlength{\rightskip}{0pt plus 5cm}d\-Matrix Poisson\-Dirichlet (
+\begin{DoxyParamCaption}
+\item[{d\-Matrix}]{d\-Non\-Homogeneity, }
+\item[{d\-Matrix}]{d\-Boundary\-Conditions}
+\end{DoxyParamCaption}
+)}}\label{Link_01to_01OwnMath_8hpp_a1fd9a6d9cf06f8a682118613f7d2e88c}
+Method to solve the poisson equation by a sparse method
+
+
+\begin{DoxyParams}{Parâmetros}
+{\em d\-Non\-Homogeneity} & is the non homogeneity in the right-\/hand side of poisson equation \\
+\hline
+{\em d\-Boundary\-Conditions} & contains the boundary and initial conditions \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Retorna}
+d\-Poisson\-Solution is returned
+\end{DoxyReturn}
+\hypertarget{Link_01to_01OwnMath_8hpp_af1967a9d96face7e66c825248297ce3c}{\index{Link to Own\-Math.\-hpp@{Link to Own\-Math.\-hpp}!save@{save}}
+\index{save@{save}!Link to OwnMath.hpp@{Link to Own\-Math.\-hpp}}
+\subsubsection[{save}]{\setlength{\rightskip}{0pt plus 5cm}void save (
+\begin{DoxyParamCaption}
+\item[{char}]{file\mbox{[}$\,$\mbox{]}, }
+\item[{clock\-\_\-t}]{t\-Start, }
+\item[{time\-\_\-t $\ast$}]{inicio, }
+\item[{Matrix\-Xd}]{U, }
+\item[{string}]{equation}
+\end{DoxyParamCaption}
+)}}\label{Link_01to_01OwnMath_8hpp_af1967a9d96face7e66c825248297ce3c}
+Method for saving a matrix in a file .m After save, it is possible to open easily with octave and print the graph for file
+
+
+\begin{DoxyParams}{Parâmetros}
+{\em file\mbox{[}$\,$\mbox{]}} & name of file where matrix will be save \\
+\hline
+{\em t\-Start} & has the value of cpu time in the start, in this method the \char`\"{}t\-Final\char`\"{} is calculated and subtracted from t\-Start \\
+\hline
+{\em $\ast$inicio} & is a pointer that indicates the time of start, and date \\
+\hline
+{\em U} & is the matrix that will be saved \\
+\hline
+{\em equation} & is a string that receives the equation being solved, just to show in the .m file. Ex\-: Laplace Equation -\/ u\-\_\-xx + u\-\_\-yy = f(x,y) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Retorna}
+No return value.
+\end{DoxyReturn}
+\hypertarget{Link_01to_01OwnMath_8hpp_a81385cec696ed194b6d9e0ac1d49e4fa}{\index{Link to Own\-Math.\-hpp@{Link to Own\-Math.\-hpp}!save\-Tm\-Eqn@{save\-Tm\-Eqn}}
+\index{save\-Tm\-Eqn@{save\-Tm\-Eqn}!Link to OwnMath.hpp@{Link to Own\-Math.\-hpp}}
+\subsubsection[{save\-Tm\-Eqn}]{\setlength{\rightskip}{0pt plus 5cm}void save\-Tm\-Eqn (
+\begin{DoxyParamCaption}
+\item[{char}]{file\mbox{[}$\,$\mbox{]}, }
+\item[{clock\-\_\-t}]{t\-Start, }
+\item[{time\-\_\-t $\ast$}]{inicio, }
+\item[{string}]{equation, }
+\item[{Matrix\-Xd $\ast$}]{U, }
+\item[{int}]{N}
+\end{DoxyParamCaption}
+)}}\label{Link_01to_01OwnMath_8hpp_a81385cec696ed194b6d9e0ac1d49e4fa}
+Method for saving various matrices in a file .m After save, it is possible to open easily with octave and make a video of the matrices
+
+Not implemented yet
+
+
+\begin{DoxyParams}{Parâmetros}
+{\em file\mbox{[}$\,$\mbox{]}} & name of file where matrix will be save \\
+\hline
+{\em t\-Start} & has the value of cpu time in the start, in this method the \char`\"{}t\-Final\char`\"{} is calculated and subtracted from t\-Start \\
+\hline
+{\em $\ast$inicio} & is a pointer that indicates the time of start, and date \\
+\hline
+{\em equation} & is a string that receives the equation being solved, just to show in the .m file. Ex\-: Laplace Equation -\/ u\-\_\-xx + u\-\_\-yy = f(x,y) \\
+\hline
+{\em $\ast$\-U} & is a pointer to the 3d matrix U, that will be saved \\
+\hline
+{\em N} & indicates how many two-\/dimensional matrices there are in matrix U \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Retorna}
+No return value.
+\end{DoxyReturn}
