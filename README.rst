@@ -60,27 +60,53 @@ Build Instructions
 To run the tests::
 
   nosetests
+
+
+Documentação
+^^^^^^^^^^^^^^^^^
+
+PYTHON
+------------------
+ - CythonDoc_ 
+ - PythonDoc_
+ - IPython_
+ - EPD8_
+ - Mayavi_
+ - Sphinx_
+ - Scipy_
+ - Reportlab_
+
+Artigos matemáticos
+------------------
+ - PoissonEquationWithPython_
+ - Fipy_
+ - NavierStokesPython_
+
+GIT
+-------------------
+ - Para remover arquivos deletados da pasta:
+ - git rm $(git ls-files --deleted)
+ - adicionar uma pasta
+ - git add pasta
+ - criar commit
+ - git commit -m "comentário"
+ - atualizar o repositório no site
+ - git push origin master
+
 .. _Eigen3: http://eigen.tuxfamily.org/
 .. _Boost:  http://www.boost.org/
 .. _Cython: http://cython.org/
 .. _CMake:  http://cmake.org/
 .. _Nose:   http://pypi.python.org/pypi/nose/
 .. _Python: http://python.org/
-
-PYTHON
-http://docs.cython.org/
-http://docs.python.org/
-http://ipython.org/
-http://docs.enthought.com/EPD_8/
-http://docs.enthought.com/mayavi
-http://sphinx-doc.org/
-http://docs.scipy.org/
-http://www.reportlab.com/
-
-GIT
-Para remover arquivos deletados da pasta:
-git rm $(git ls-files --deleted)
-adicionar uma pasta
-git add pasta
-atualizar o repositório no site
-git push origin master
+.. _CythonDoc: http://docs.cython.org/
+.. _PythonDoc: http://docs.python.org/
+.. _IPython: http://ipython.org/
+.. _EPD8: http://docs.enthought.com/EPD_8/
+.. _Sphinx: http://sphinx-doc.org/
+.. _Mayavi: http://docs.enthought.com/mayavi
+.. _Scipy: http://docs.scipy.org/
+.. _Reportlab: http://www.reportlab.com/
+.. _PoissonEquationWithPython: http://www.scientificpython.net/1/post/2012/05/poisson-equation-on-the-square.html
+.. _Fipy: http://www.hasenkopf2000.net/wiki/page/fipy-solving-pdes-python/
+.. _NavierStokesPython: http://fenicsproject.org/documentation/dolfin/1.0.0/python/demo/pde/navier-stokes/python/documentation.html
