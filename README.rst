@@ -15,28 +15,25 @@ Build Dependencies
 - Eigen3_
 - Boost_
 - Cython_
-
-GTK
-sudo apt-get install libgtk-3-*
+- GTK: sudo apt-get install libgtk-3-*
 
 para compilar
 cc source_file.c $(pkg-config --cflags --libs gtk+-3.0)
 
-Ou:
-baixe a boost no site
-http://www.boost.org/
-Descompacte o arquivo
-Dê o comando:
-$ sudo ./bootstrap.sh
-$ sudo ./bjam install
-#Baixe a Eigen em
-http://eigen.tuxfamily.org/
-Execute o cmake como
-Entre na pasta descompactada do eigen
-mkdir build
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=/usr/
-sudo make install
+
+Instalar Eigen
+------------------
+- Descompacte o arquivo do site da Eigen
+
+::
+
+  mkdir build
+  cd build
+  cmake .. -DCMAKE_INSTALL_PREFIX=/usr/
+  make
+  sudo make install
+  
+..
 
 Test Dependencies
 ^^^^^^^^^^^^^^^^^
@@ -75,6 +72,7 @@ PYTHON
  - Sphinx_
  - Scipy_
  - Reportlab_
+ - IntroNumericPython_
 
 Artigos matemáticos
 ------------------
@@ -111,3 +109,4 @@ GIT
 .. _Fipy: http://www.hasenkopf2000.net/wiki/page/fipy-solving-pdes-python/
 .. _NavierStokesPython: http://fenicsproject.org/documentation/dolfin/1.0.0/python/demo/pde/navier-stokes/python/documentation.html
 .. _kmkns: http://code.google.com/p/kmkns/
+.. _IntroNumericPython: http://math.jacobs-university.de/oliver/teaching/numpy-intro/numpy-intro/index.html
