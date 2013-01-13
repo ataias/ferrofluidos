@@ -19,7 +19,10 @@ Build Dependencies
 
 GTK:
 ----------------
+- Instalar GTK e informações de como compilar um programa.
+
 ::
+
 	sudo apt-get install libgtk-3-*
 	cc source_file.c $(pkg-config --cflags --libs gtk+-3.0)
 
