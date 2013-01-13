@@ -20,7 +20,7 @@ Build Dependencies
 GTK:
 ----------------
 - Instalar GTK e informações de como compilar um programa.
-
+- Small Change
 ::
 
 	sudo apt-get install libgtk-3-*
