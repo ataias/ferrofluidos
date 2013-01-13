@@ -15,11 +15,15 @@ Build Dependencies
 - Eigen3_
 - Boost_
 - Cython_
-- GTK: sudo apt-get install libgtk-3-*
 
-para compilar
-cc source_file.c $(pkg-config --cflags --libs gtk+-3.0)
 
+GTK:
+----------------
+::
+	sudo apt-get install libgtk-3-*
+	cc source_file.c $(pkg-config --cflags --libs gtk+-3.0)
+
+..
 
 Instalar Eigen
 ------------------
