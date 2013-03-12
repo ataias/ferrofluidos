@@ -13,7 +13,10 @@ Build Dependencies
 - CMake_
 - C++ compiler (g++ for instance)
 - Eigen3_
-- Boost_
+- Boost_ 
+::
+sudo apt-get install libboost-all-dev
+..
 - Cython_
 
 
