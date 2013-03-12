@@ -15,7 +15,9 @@ Build Dependencies
 - Eigen3_
 - Boost_ 
 ::
+
 sudo apt-get install libboost-all-dev
+
 ..
 - Cython_
 
