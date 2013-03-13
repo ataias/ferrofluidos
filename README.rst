@@ -14,10 +14,12 @@ Build Dependencies
 - C++ compiler (g++ for instance)
 - Eigen3_
 - Boost_ 
-sudo apt-get install libboost-all-dev
-
 - Cython_
+::
 
+	sudo apt-get install libboost-all-dev
+
+..
 
 GTK:
 ----------------
