@@ -19,6 +19,9 @@ Build Dependencies
 
 	sudo apt-get install libboost-all-dev
 	sudo apt-get install eigen
+	sudo apt-get install python-scipy python3-scipy
+	sudo apt-get install cython
+	
 ..
 
 GTK:
