@@ -5,7 +5,7 @@
 Biblioteca que contém classes e métodos para resolver a equação de Poisson 
 com condições de Dirichlet ou Neumann.
 
-Autor: Prabhu Ramachandran <ataiasreis at gmail dot com>
+Autor: Ataias Pereira Reis <ataiasreis at gmail.com>
 Última modificação: Março, 2013
 """
 
@@ -28,7 +28,7 @@ class Grid:
         self.dx = float(xmax-xmin)/(nx-1)
         self.dy = float(ymax-ymin)/(ny-1)
         self.u = numpy.zeros((nx, ny), 'd')
-        # Utilizado para calcular
+        # Utilizado para calcular erro
         self.old_u = self.u.copy()        
 
     def setBC(self, l, r, b, t):        
@@ -61,7 +61,7 @@ class Grid:
 
 class PoissonSolver:
     
-    """Um resolvePoisson."""
+    """Um resolvePoisson.""" 
     global DIRICHLET, METHOD
     def __init__(self, 
                 grid,
