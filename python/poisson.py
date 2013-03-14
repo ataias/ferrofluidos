@@ -132,7 +132,10 @@ class PoissonSolver:
 def BC(x, y):    
     """Used to set the boundary condition for the grid of points.
     Change this as you feel fit."""    
-    return (x**2 - y**2)
+    #return (x**2 - y**2)
+    if type(x)==float and x == 1.0:
+        return 1
+    return 0
 
 
 def test(nx=5, ny=5, eps=1.0e-16, n_iter=0, method='Gauss'):
@@ -146,7 +149,8 @@ def test(nx=5, ny=5, eps=1.0e-16, n_iter=0, method='Gauss'):
     
 
 def main(n=31, n_iter = 0):
-    test();
+    timet = test();
+    print "Tempo gasto:", timet
 
 if __name__ == "__main__":
     main()
