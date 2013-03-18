@@ -306,9 +306,15 @@ int Poisson::PoissonPython(PyObject* dBoundaryConditions,
 BOOST_PYTHON_MODULE(libpoisson)
 {
 	class_<Poisson>("Poisson")
-		.def("conditions", &Poisson::PoissonPython)
-		.def("poissonSolver", &Poisson::PoissonSolver)
-		.def("saveSolution", &Poisson::saveSolution)
+		.def("conditions", &Poisson::PoissonPython,
+				(arg("dBoundaryConditions"),
+				 arg("dNonHomogeneity"),
+				 arg("bDirichletOrNeumann"),
+				 arg("bSparseOrNot"),
+				 arg("nMatrixOrder")),
+				 "This function takes important values required to solve the Poisson problem on a square.")
+		.def("poissonSolver", &Poisson::PoissonSolver, "Solves the Poisson problem on a square, with previous given conditions.")
+		.def("saveSolution", &Poisson::saveSolution, (arg("pyArraySolution")), "Saves the solution of Poisson problem in pyArraySolution object.")
 	;
 }
 #endif
