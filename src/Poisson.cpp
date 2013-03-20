@@ -235,6 +235,7 @@ void Poisson::PoissonNeumannNoSparseSolver(){
 	Eigen::MatrixXd dPoissonNoSparse = m_dBoundaryConditions;
 	Eigen::MatrixXd dPoissonNoSparseOld = m_dBoundaryConditions;
 	Eigen::MatrixXd ERROR = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+	int k=0;
 	double dDeltaX = 1.0/(m_nMatrixOrder-1);
 	do{
 		for(int i = 0; i<m_nMatrixOrder; i++)
@@ -256,13 +257,17 @@ void Poisson::PoissonNeumannNoSparseSolver(){
 		   }
 		  }
 		  ERROR = dPoissonNoSparse-dPoissonNoSparseOld;
-		  if(ERROR.norm() < 0.000001) STOP = true;
+		  double dERROR = ERROR.norm();
+		  std::cout << "Erro: " << dERROR << " " << k <<std::endl;
+		  k = k + 1;
+		  std::cout << std::endl << dPoissonNoSparse << std::endl;
+		  if(dERROR < 1e-15) STOP = true;
 		  dPoissonNoSparseOld = dPoissonNoSparse;
 	}while(!STOP);
 
 	//Quinas
 	m_dNeumannSolution = dPoissonNoSparse;
-//	CORRECT_CORNERS_DIRICHLET
+	CORRECT_CORNERS_NEUMANN
 }
 void Poisson::PoissonSolver(){
 	if(m_bSparseOrNot){

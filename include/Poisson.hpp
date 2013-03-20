@@ -33,37 +33,39 @@ using namespace boost::python;
 	m_dDirichletSolution(0,m_nMatrixOrder-1) = 0.5*(m_dDirichletSolution(0,m_nMatrixOrder-2)+\
 			m_dDirichletSolution(m_nMatrixOrder-1,1));
 
+#define CORRECT_CORNERS_NEUMANN \
+	m_dNeumannSolution(0,0) = 0.5*(m_dNeumannSolution(0,1)+m_dNeumannSolution(1,0));\
+	m_dNeumannSolution(m_nMatrixOrder-1,0) = 0.5*(m_dNeumannSolution(m_nMatrixOrder-2,0)+\
+		m_dNeumannSolution(m_nMatrixOrder-1,1));\
+	m_dNeumannSolution(m_nMatrixOrder-1,m_nMatrixOrder-1) = 0.5*(m_dNeumannSolution(m_nMatrixOrder-2,m_nMatrixOrder-1)+\
+			m_dNeumannSolution(m_nMatrixOrder-1,m_nMatrixOrder-2));\
+	m_dNeumannSolution(0,m_nMatrixOrder-1) = 0.5*(m_dNeumannSolution(0,m_nMatrixOrder-2)+\
+			m_dNeumannSolution(m_nMatrixOrder-1,1));
+
 #define POISSON_NOSPARSE_INTERNAL_POINTS \
 	dPoissonNoSparse(i,j) = -0.25*dDeltaX*dDeltaX*m_dNonHomogeneity(i,j) +\
 	0.25*(dPoissonNoSparse(i-1,j)+dPoissonNoSparse(i+1,j)+\
 	dPoissonNoSparse(i,j-1)+dPoissonNoSparse(i,j+1));
 
 #define POISSON_NOSPARSE_WEST_POINTS \
-	dPoissonNoSparse(i,0) = 0.25*(2*dPoissonNoSparse(i,1)+\
-	2*dDeltaX*m_dBoundaryConditions(i,0)+dPoissonNoSparse(i+1,0)\
-	+dPoissonNoSparse(i-1,0))\
-	-0.25*dDeltaX*dDeltaX*m_dNonHomogeneity(i,0);
+		dPoissonNoSparse(i,0) =  -(-2*dDeltaX*m_dBoundaryConditions(i,0)\
+								+4*dPoissonNoSparse(i,1)\
+								-dPoissonNoSparse(i,2))/3;
 
 #define POISSON_NOSPARSE_EAST_POINTS \
-	dPoissonNoSparse(i,m_nMatrixOrder-1) = 0.25*(2*dPoissonNoSparse(i,m_nMatrixOrder-2)+\
-	2*dDeltaX*m_dBoundaryConditions(i,m_nMatrixOrder-1)+\
-	dPoissonNoSparse(i+1,m_nMatrixOrder-1)+\
-	dPoissonNoSparse(i-1,m_nMatrixOrder-1))-\
-	0.25*dDeltaX*dDeltaX*m_dNonHomogeneity(i,m_nMatrixOrder-1);
+		dPoissonNoSparse(i,m_nMatrixOrder-1) =   (2*dDeltaX*m_dBoundaryConditions(i,m_nMatrixOrder-1)\
+												+4*dPoissonNoSparse(i,m_nMatrixOrder-2)\
+												-dPoissonNoSparse(i,m_nMatrixOrder-3))/3;
 
 #define POISSON_NOSPARSE_NORTH_POINTS \
-	dPoissonNoSparse(0,j) = 0.25*(2*dPoissonNoSparse(1,j)+\
-	2*dDeltaX*m_dBoundaryConditions(0,j)+\
-	dPoissonNoSparse(0,j-1)+\
-	dPoissonNoSparse(0,j+1))-\
-	0.25*dDeltaX*dDeltaX*m_dNonHomogeneity(0,j);
+		dPoissonNoSparse(0,j) =  -(-2*dDeltaX*m_dBoundaryConditions(0,j)\
+								+4*dPoissonNoSparse(1,j)\
+								-dPoissonNoSparse(2,j))/3;
 
 #define POISSON_NOSPARSE_SOUTH_POINTS \
-	dPoissonNoSparse(m_nMatrixOrder-1,j) = 0.25*(2*dPoissonNoSparse(m_nMatrixOrder-2,j)-\
-	2*dDeltaX*m_dBoundaryConditions(m_nMatrixOrder-1,j)+\
-	dPoissonNoSparse(m_nMatrixOrder-1,j-1)+\
-	dPoissonNoSparse(m_nMatrixOrder-1,j+1))-\
-	0.25*dDeltaX*dDeltaX*m_dNonHomogeneity(m_nMatrixOrder-1,j);
+		dPoissonNoSparse(m_nMatrixOrder-1,j) = (2*dDeltaX*m_dBoundaryConditions(m_nMatrixOrder-1,j)\
+											  +4*dPoissonNoSparse(m_nMatrixOrder-2,j)\
+											  -dPoissonNoSparse(m_nMatrixOrder-3,j))/3;
 
 #define INTERNAL_POINT \
 	(i>0) && (i<(m_nMatrixOrder-1)) && \
