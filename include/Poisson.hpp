@@ -48,7 +48,7 @@ using namespace boost::python;
 	dPoissonNoSparse(i,j-1)+dPoissonNoSparse(i,j+1));
 
 #define POISSON_NOSPARSE_WEST_POINTS \
-		dPoissonNoSparse(i,0) =  -(-2*dDeltaX*m_dBoundaryConditions(i,0)\
+		dPoissonNoSparse(i,0) =   (-2*dDeltaX*m_dBoundaryConditions(i,0)\
 								+4*dPoissonNoSparse(i,1)\
 								-dPoissonNoSparse(i,2))/3;
 
@@ -58,7 +58,7 @@ using namespace boost::python;
 												-dPoissonNoSparse(i,m_nMatrixOrder-3))/3;
 
 #define POISSON_NOSPARSE_NORTH_POINTS \
-		dPoissonNoSparse(0,j) =  -(-2*dDeltaX*m_dBoundaryConditions(0,j)\
+		dPoissonNoSparse(0,j) =   (-2*dDeltaX*m_dBoundaryConditions(0,j)\
 								+4*dPoissonNoSparse(1,j)\
 								-dPoissonNoSparse(2,j))/3;
 

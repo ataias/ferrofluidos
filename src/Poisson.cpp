@@ -232,36 +232,62 @@ void Poisson::PoissonNeumannSparseSolver()
 
 void Poisson::PoissonNeumannNoSparseSolver(){
 	bool STOP=false;
+	//When passing from numpy to eigen, needs tranpose()
+	m_dBoundaryConditions.transposeInPlace();
+	m_dNonHomogeneity.transposeInPlace();
+
 	Eigen::MatrixXd dPoissonNoSparse = m_dBoundaryConditions;
 	Eigen::MatrixXd dPoissonNoSparseOld = m_dBoundaryConditions;
-	Eigen::MatrixXd ERROR = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+	Eigen::MatrixXd dError = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
 	int k=0;
 	double dDeltaX = 1.0/(m_nMatrixOrder-1);
 	do{
+
+		for(int i = 0; i<m_nMatrixOrder; i++)
+				  for(int j = 0; j<m_nMatrixOrder; j++){
+				   if(WEST_POINT) {
+					   POISSON_NOSPARSE_WEST_POINTS
+				   }
+				   else if(EAST_POINT) {
+					   POISSON_NOSPARSE_EAST_POINTS
+				   }
+				   else if(NORTH_POINT) {
+					   POISSON_NOSPARSE_NORTH_POINTS
+				   }
+				   else if(SOUTH_POINT) {
+					   POISSON_NOSPARSE_SOUTH_POINTS
+				   }
+				  }
+
 		for(int i = 0; i<m_nMatrixOrder; i++)
 		  for(int j = 0; j<m_nMatrixOrder; j++){
 		   if(INTERNAL_POINT){
 			   POISSON_NOSPARSE_INTERNAL_POINTS
 		   }
-		   else if(WEST_POINT) {
-			   POISSON_NOSPARSE_WEST_POINTS
-		   }
-		   else if(EAST_POINT) {
-			   POISSON_NOSPARSE_EAST_POINTS
-		   }
-		   else if(NORTH_POINT) {
-			   POISSON_NOSPARSE_NORTH_POINTS
-		   }
-		   else if(SOUTH_POINT) {
-			   POISSON_NOSPARSE_SOUTH_POINTS
-		   }
 		  }
-		  ERROR = dPoissonNoSparse-dPoissonNoSparseOld;
-		  double dERROR = ERROR.norm();
-		  std::cout << "Erro: " << dERROR << " " << k <<std::endl;
+
+		for(int i = 0; i<m_nMatrixOrder; i++)
+				  for(int j = 0; j<m_nMatrixOrder; j++){
+				   if(WEST_POINT) {
+					   POISSON_NOSPARSE_WEST_POINTS
+				   }
+				   else if(EAST_POINT) {
+					   POISSON_NOSPARSE_EAST_POINTS
+				   }
+				   else if(NORTH_POINT) {
+					   POISSON_NOSPARSE_NORTH_POINTS
+				   }
+				   else if(SOUTH_POINT) {
+					   POISSON_NOSPARSE_SOUTH_POINTS
+				   }
+				  }
+
+		  dError = dPoissonNoSparse-dPoissonNoSparseOld;
+		  double d_error = dError.norm();
+		  std::cout << "Erro: " << d_error << " " << k <<std::endl;
 		  k = k + 1;
 		  std::cout << std::endl << dPoissonNoSparse << std::endl;
-		  if(dERROR < 1e-15) STOP = true;
+		  if(d_error < 1e-15) STOP = true;
 		  dPoissonNoSparseOld = dPoissonNoSparse;
 	}while(!STOP);
 
