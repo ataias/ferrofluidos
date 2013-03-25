@@ -48,24 +48,24 @@ using namespace boost::python;
 	dPoissonNoSparse(i,j-1)+dPoissonNoSparse(i,j+1));
 
 #define POISSON_NOSPARSE_WEST_POINTS \
-		dPoissonNoSparse(i,0) =   (-2*dDeltaX*m_dBoundaryConditions(i,0)\
-								+4*dPoissonNoSparse(i,1)\
-								-dPoissonNoSparse(i,2))/3;
+		dPoissonNoSparse(i,0) =   (2.*dDeltaX*m_dBoundaryConditions(i,0)\
+								+4.*dPoissonNoSparse(i,1)\
+								-dPoissonNoSparse(i,2))/3.;
 
 #define POISSON_NOSPARSE_EAST_POINTS \
-		dPoissonNoSparse(i,m_nMatrixOrder-1) =   (2*dDeltaX*m_dBoundaryConditions(i,m_nMatrixOrder-1)\
-												+4*dPoissonNoSparse(i,m_nMatrixOrder-2)\
-												-dPoissonNoSparse(i,m_nMatrixOrder-3))/3;
+		dPoissonNoSparse(i,m_nMatrixOrder-1) =   (-2.*dDeltaX*m_dBoundaryConditions(i,m_nMatrixOrder-1)\
+												+4.*dPoissonNoSparse(i,m_nMatrixOrder-2)\
+												-dPoissonNoSparse(i,m_nMatrixOrder-3))/3.;
 
 #define POISSON_NOSPARSE_NORTH_POINTS \
-		dPoissonNoSparse(0,j) =   (-2*dDeltaX*m_dBoundaryConditions(0,j)\
-								+4*dPoissonNoSparse(1,j)\
-								-dPoissonNoSparse(2,j))/3;
+		dPoissonNoSparse(0,j) =   (2.*dDeltaX*m_dBoundaryConditions(0,j)\
+								+4.*dPoissonNoSparse(1,j)\
+								-dPoissonNoSparse(2,j))/3.;
 
 #define POISSON_NOSPARSE_SOUTH_POINTS \
-		dPoissonNoSparse(m_nMatrixOrder-1,j) = (2*dDeltaX*m_dBoundaryConditions(m_nMatrixOrder-1,j)\
-											  +4*dPoissonNoSparse(m_nMatrixOrder-2,j)\
-											  -dPoissonNoSparse(m_nMatrixOrder-3,j))/3;
+		dPoissonNoSparse(m_nMatrixOrder-1,j) = (-2.*dDeltaX*m_dBoundaryConditions(m_nMatrixOrder-1,j)\
+											  +4.*dPoissonNoSparse(m_nMatrixOrder-2,j)\
+											  -dPoissonNoSparse(m_nMatrixOrder-3,j))/3.;
 
 #define INTERNAL_POINT \
 	(i>0) && (i<(m_nMatrixOrder-1)) && \
