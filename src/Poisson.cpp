@@ -241,10 +241,15 @@ void Poisson::PoissonNeumannNoSparseSolver(){
 	Eigen::MatrixXd dError = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
 	int k=0;
 	double dDeltaX = 1.0/(m_nMatrixOrder-1);
+	int N=0;
 	do{
 
-		for(int i = 0; i<m_nMatrixOrder; i++)
-				  for(int j = 0; j<m_nMatrixOrder; j++){
+		if (N == 10000) STOP=true;
+		N++;
+		for(int nY = 0; nY<m_nMatrixOrder; nY++)
+				  for(int nX = 0; nX<m_nMatrixOrder; nX++){
+					  int i = nX;
+					  int j = nY;
 				   if(WEST_POINT) {
 					   POISSON_NOSPARSE_WEST_POINTS
 				   }
@@ -282,13 +287,12 @@ void Poisson::PoissonNeumannNoSparseSolver(){
 				   }
 				  }
 
+		  double dMinimumValue = dPoissonNoSparse.minCoeff();
+		  dPoissonNoSparse = dPoissonNoSparse - Eigen::MatrixXd::Constant(m_nMatrixOrder, m_nMatrixOrder, dMinimumValue);
 		  dError = dPoissonNoSparse-dPoissonNoSparseOld;
 		  double d_error = dError.norm();
-		  std::cout << "Erro: " << d_error << " " << k <<std::endl;
-		  k = k + 1;
-		  std::cout << std::endl << dPoissonNoSparse << std::endl;
-		  if(d_error < 1e-15) STOP = true;
 		  dPoissonNoSparseOld = dPoissonNoSparse;
+		  std::cout << "N = " << N << "\n";
 	}while(!STOP);
 
 	//Quinas
