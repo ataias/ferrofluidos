@@ -233,14 +233,15 @@ void Poisson::PoissonNeumannSparseSolver()
 void Poisson::PoissonNeumannNoSparseSolver(){
 	bool STOP=false;
 	//When passing from numpy to eigen, needs tranpose()
-	m_dBoundaryConditions.transposeInPlace();
-	m_dNonHomogeneity.transposeInPlace();
+//	m_dBoundaryConditions.transposeInPlace();
+//	m_dNonHomogeneity.transposeInPlace();
 
 	Eigen::MatrixXd dPoissonNoSparse = m_dBoundaryConditions;
 	Eigen::MatrixXd dPoissonNoSparseOld = m_dBoundaryConditions;
 	Eigen::MatrixXd dError = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
 	int k=0;
 	double dDeltaX = 1.0/(m_nMatrixOrder-1);
+	double dDeltaX2 = dDeltaX*dDeltaX;
 	int N=0;
 	do{
 
@@ -289,10 +290,43 @@ void Poisson::PoissonNeumannNoSparseSolver(){
 
 		  double dMinimumValue = dPoissonNoSparse.minCoeff();
 		  dPoissonNoSparse = dPoissonNoSparse - Eigen::MatrixXd::Constant(m_nMatrixOrder, m_nMatrixOrder, dMinimumValue);
-		  dError = dPoissonNoSparse-dPoissonNoSparseOld;
+		  dError = Eigen::MatrixXd::Zero(m_nMatrixOrder, m_nMatrixOrder);
+
+
+		  //Derivative tests
+		  for(int i = 0; i<m_nMatrixOrder; i++)
+			  for(int j = 0; j<m_nMatrixOrder; j++){
+		          //QUINAS
+		          if(i==0 && j==0)
+		        	  continue;
+		          if(i==0 && j==m_nMatrixOrder-1)
+		        	  continue;
+		          if(i==m_nMatrixOrder-1 && j==0)
+		        	  continue;
+		          if(i==m_nMatrixOrder-1 && j==m_nMatrixOrder-1)
+		              continue;
+
+		          if(i==0)        //NORTH POINT
+		        	  NORTH_DERIVATIVE_POISSON
+
+		          else if(i==m_nMatrixOrder-1) //SOUTH POINT
+		        	  SOUTH_DERIVATIVE_POISSON
+
+		          else if (j==0)      //WEST POINT
+		        	  WEST_DERIVATIVE_POISSON
+
+		          else if(j==m_nMatrixOrder-1) //EAST POINT
+		        	  EAST_DERIVATIVE_POISSON
+
+		          else //INTERNAL POINT
+		        	  POISSON_EQUATION_INTERNAL_POINT
+			  }
+		  //End derivative tests
 		  double d_error = dError.norm();
+		  if(d_error < 1e-12) STOP=true; //Condição de parada
+
 		  dPoissonNoSparseOld = dPoissonNoSparse;
-		  std::cout << "N = " << N << "\n";
+		  std::cout << "N = " << N << " " << d_error << "\n";
 	}while(!STOP);
 
 	//Quinas

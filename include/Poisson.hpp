@@ -43,7 +43,7 @@ using namespace boost::python;
 			m_dNeumannSolution(m_nMatrixOrder-1,1));
 
 #define POISSON_NOSPARSE_INTERNAL_POINTS \
-	dPoissonNoSparse(i,j) = -0.25*dDeltaX*dDeltaX*m_dNonHomogeneity(i,j) +\
+	dPoissonNoSparse(i,j) = -0.25*dDeltaX2*m_dNonHomogeneity(i,j) +\
 	0.25*(dPoissonNoSparse(i-1,j)+dPoissonNoSparse(i+1,j)+\
 	dPoissonNoSparse(i,j-1)+dPoissonNoSparse(i,j+1));
 
@@ -66,6 +66,43 @@ using namespace boost::python;
 		dPoissonNoSparse(m_nMatrixOrder-1,j) = (-2.*dDeltaX*m_dBoundaryConditions(m_nMatrixOrder-1,j)\
 											  +4.*dPoissonNoSparse(m_nMatrixOrder-2,j)\
 											  -dPoissonNoSparse(m_nMatrixOrder-3,j))/3.;
+
+#define NORTH_DERIVATIVE_POISSON \
+		dError(i,j) =  \
+				              (-1.5*dPoissonNoSparse(i,j)+\
+				              2*dPoissonNoSparse(i+1,j)-\
+				              0.5*dPoissonNoSparse(i+2,j))/dDeltaX\
+				              +m_dBoundaryConditions(i,j);
+
+#define SOUTH_DERIVATIVE_POISSON \
+		dError(i,j) =  \
+				              ( 1.5*dPoissonNoSparse(i,j)\
+				              -2*dPoissonNoSparse(i-1,j)\
+				              +0.5*dPoissonNoSparse(i-2,j))/dDeltaX\
+				              +m_dBoundaryConditions(i,j);
+
+#define WEST_DERIVATIVE_POISSON \
+		dError(i,j) =  \
+		              (-1.5*dPoissonNoSparse(i,j)\
+		              +2*dPoissonNoSparse(i,j+1)\
+		              -0.5*dPoissonNoSparse(i,j+2))/dDeltaX\
+		              +m_dBoundaryConditions(i,j);
+
+#define EAST_DERIVATIVE_POISSON\
+		dError(i,j) =  \
+				              ( 1.5*dPoissonNoSparse(i,j)\
+				              -2*dPoissonNoSparse(i,j-1)\
+				              +0.5*dPoissonNoSparse(i,j-2))/dDeltaX\
+				              +m_dBoundaryConditions(i,j);
+
+#define POISSON_EQUATION_INTERNAL_POINT \
+		dError(i,j) = \
+				              (dPoissonNoSparse(i-1,j)\
+				              +dPoissonNoSparse(i+1,j)\
+				              +dPoissonNoSparse(i,j-1)\
+				              +dPoissonNoSparse(i,j+1)\
+				              -4*dPoissonNoSparse(i,j))/dDeltaX2\
+				              - m_dNonHomogeneity(i,j);
 
 #define INTERNAL_POINT \
 	(i>0) && (i<(m_nMatrixOrder-1)) && \
