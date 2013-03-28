@@ -8,6 +8,17 @@
 #ifndef NAVIERSTOKES_HPP_
 #define NAVIERSTOKES_HPP_
 
+#define WRAP_PYTHON_NS 1
+#include<stdheader.hpp>
+#if WRAP_PYTHON_NS
+#include <boost/python/detail/wrap_python.hpp>
+#include <boost/python.hpp>
+#include <numpy/arrayobject.h>
+#include <boost/python/module.hpp>
+#include <boost/python/def.hpp>
+using namespace boost::python;
+#endif
+
 /**This part stands for the sum of velocities in the X axis.
  * @f[\textbf{v}^s=(u^s, v^s) @f]
  * The 's' stands for 'sum'
