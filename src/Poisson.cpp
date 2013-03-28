@@ -245,7 +245,7 @@ void Poisson::PoissonNeumannNoSparseSolver(){
 	int N=0;
 	do{
 
-		if (N == 10000) STOP=true;
+		if (N == 30000) STOP=true;
 		N++;
 		for(int nY = 0; nY<m_nMatrixOrder; nY++)
 				  for(int nX = 0; nX<m_nMatrixOrder; nX++){
@@ -323,7 +323,7 @@ void Poisson::PoissonNeumannNoSparseSolver(){
 			  }
 		  //End derivative tests
 		  double d_error = dError.norm();
-		  if(d_error < 1e-12) STOP=true; //Condição de parada
+		  if(d_error < 1e-13) STOP=true; //Condição de parada
 
 		  dPoissonNoSparseOld = dPoissonNoSparse;
 		  std::cout << "N = " << N << " " << d_error << "\n";
