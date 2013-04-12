@@ -1,10 +1,3 @@
-/*
- * OwnMath.cpp
- *
- *  Created on: Dec 29, 2012
- *      Author: ataias
- */
-
 /**
  * @file main.cpp
  * @author  Ataias Pereira Reis <ataiasreis@gmail.com>
@@ -34,22 +27,67 @@
  -\nabla p+\mu\nabla^2\textbf{v}+\textbf{f}\f$
  */
 
-#include<../include/NavierStokes.hpp>
+#include <../include/NavierStokes.hpp>
 
 #if WRAP_PYTHON_NS
 template<typename Derived>
-void NavierStokes::NavierStokesInit(const Eigen::MatrixBase<Derived>& dBoundaryConditions_,
-						 const Eigen::MatrixBase<Derived>& dNonHomogeneity_,
-						 bool bDirichletOrNeumann,
-						 bool bSparseOrNot)
+void NavierStokes::NavierStokesInit(
+		const Eigen::MatrixBase<Derived>& dVelocityXBoundaryCondition_,
+ 	 	const Eigen::MatrixBase<Derived>& dVelocityYBoundaryCondition_,
+ 	 	const Eigen::MatrixBase<Derived>& dExternalForceX_,
+ 	 	const Eigen::MatrixBase<Derived>& dExternalForceY_
+ 	 	)
 {
 #else
-Poisson::Poisson(Eigen::MatrixXd dBoundaryConditions,
-				 Eigen::MatrixXd dNonHomogeneity,
-				 bool bDirichletOrNeumann,
-				 bool bSparseOrNot
-				 ) {
+	NavierStokes(
+			Eigen::MatrixXd dVelocityXBoundaryCondition,
+			Eigen::MatrixXd dVelocityYBoundaryCondition,
+			Eigen::MatrixXd dExternalForceX,
+			Eigen::MatrixXd dExternalForceY,
+			double dMi, double dRho
+			);
 #endif
+
+#if WRAP_PYTHON_NS
+		Eigen::MatrixXd dVelocityXBoundaryCondition = dVelocityXBoundaryCondition_;
+		Eigen::MatrixXd dVelocityYBoundaryCondition = dVelocityYBoundaryCondition_;
+		Eigen::MatrixXd dExternalForceX = dExternalForceX_;
+		Eigen::MatrixXd dExternalForceY = dExternalForceY_;
+#endif
+		bool bCheckSquareVelocityX = dVelocityXBoundaryCondition.rows() == dVelocityXBoundaryCondition.cols();
+		bool bCheckSquareVelocityY = dVelocityYBoundaryCondition.rows() == dVelocityYBoundaryCondition.cols();
+		bool bCheckSquareForceX    = dExternalForceX.rows() == dExternalForceX.cols();
+		bool bCheckSquareForceY    = dExternalForceY.rows() == dExternalForceY.cols();
+
+		bool bCheckSameOrderRow    = (dVelocityXBoundaryCondition.rows() == dExternalForceX.rows()) &&
+									 (dVelocityXBoundaryCondition.rows() == dExternalForceY.rows()) &&
+									 (dVelocityYBoundaryCondition.rows() == dExternalForceX.rows()) &&
+									 (dVelocityYBoundaryCondition.rows() == dExternalForceY.rows());
+
+		bool bCheckSameOrderColumn = (dVelocityXBoundaryCondition.cols() == dExternalForceX.cols()) &&
+				 	 	 	 	 	 (dVelocityXBoundaryCondition.cols() == dExternalForceY.cols()) &&
+				 	 	 	 	 	 (dVelocityYBoundaryCondition.cols() == dExternalForceX.cols()) &&
+				 	 	 	 	 	 (dVelocityYBoundaryCondition.cols() == dExternalForceY.cols());
+
+		bool bCompatibleMatrices   = bCheckSquareVelocityX &&
+								     bCheckSquareVelocityY &&
+								     bCheckSquareForceX &&
+								     bCheckSquareForceY;
+		if(!bCompatibleMatrices)
+		{
+			exit(EXIT_FAILURE);
+		}
+
+		/*It could have been used rows() or columns() of any of the matrix of parameters*/
+		m_nMatrixOrder = dVelocityXBoundaryCondition.rows();
+		m_dVelocityXBoundaryCondition = dVelocityXBoundaryCondition;
+		m_dVelocityYBoundaryCondition = dVelocityYBoundaryCondition;
+		m_dExternalForceX = dExternalForceX;
+		m_dExternalForceY = dExternalForceY;
+#if WRAP_PYTHON_NS
+		return(0);
+#endif
+}
 /*
 void NavierStokes::VelocityNoPressure()
 	//Computes velocity ignoring pressure
@@ -79,4 +117,21 @@ void NavierStokes::VelocityNoPressure()
 		}
 	} /*VelocityNoPressure()*/
 
-*/
+#if WRAP_PYTHON_NS
+int NavierStokes::NavierStokesPython(
+		PyObject* dVelocityXBoundaryCondition,
+		PyObject* dVelocityYBoundaryCondition,
+		PyObject* dExternalForceX,
+		PyObject* dExternalForceY,
+		double dMi, double dRho,
+		const int nMatrixOrder
+		)
+{
+	Eigen::Map<Eigen::MatrixXd> _dVelocityXBoundaryCondition((double *) PyArray_DATA(dVelocityXBoundaryCondition),nMatrixOrder,nMatrixOrder);
+	Eigen::Map<Eigen::MatrixXd> _dVelocityYBoundaryCondition((double *) PyArray_DATA(dVelocityYBoundaryCondition),nMatrixOrder,nMatrixOrder);
+	Eigen::Map<Eigen::MatrixXd> _dExternalForceX((double *) PyArray_DATA(dExternalForceX),nMatrixOrder,nMatrixOrder);
+	Eigen::Map<Eigen::MatrixXd> _dExternalForceY((double *) PyArray_DATA(dExternalForceY),nMatrixOrder,nMatrixOrder);
+
+    return NavierStokesInit(_dVelocityXBoundaryCondition, _dVelocityYBoundaryCondition, _dExternalForceX, _dExternalForceY);
+}
+#endif

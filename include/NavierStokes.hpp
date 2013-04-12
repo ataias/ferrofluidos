@@ -15,10 +15,10 @@
 #include <boost/python.hpp>
 #include <numpy/arrayobject.h>
 #include <boost/python/module.hpp>
+#include <boost/python/detail/api_placeholder.hpp>
 #include <boost/python/def.hpp>
 using namespace boost::python;
 #endif
-
 /**This part stands for the sum of velocities in the X axis.
  * @f[\textbf{v}^s=(u^s, v^s) @f]
  * The 's' stands for 'sum'
@@ -84,14 +84,18 @@ using namespace boost::python;
 class NavierStokes {
 private:
 
-	Eigen::MatrixXd *dVelocityX;
-	Eigen::MatrixXd *dVelocityY;
+	Eigen::MatrixXd m_dVelocityX;
+	Eigen::MatrixXd m_dVelocityY;
 
-	Eigen::MatrixXd dVelocityXNoPressure; 	/*term of velocity* in x axis*/
-	Eigen::MatrixXd dVelocityYNoPressure; 	/*term of velocity* in y axis*/
+	Eigen::MatrixXd m_dVelocityXNoPressure; 	/*term of velocity* in x axis*/
+	Eigen::MatrixXd m_dVelocityYNoPressure; 	/*term of velocity* in y axis*/
 	/*f = (fx, fy)*/
-	Eigen::MatrixXd dExternalForceX;
-	Eigen::MatrixXd dExternalForceY;
+	Eigen::MatrixXd m_dExternalForceX;
+	Eigen::MatrixXd m_dExternalForceY;
+
+	Eigen::MatrixXd m_dVelocityXBoundaryCondition;
+	Eigen::MatrixXd m_dVelocityYBoundaryCondition;
+
 	int m_nMatrixOrder;
 
 	int m_nTime;
@@ -108,29 +112,35 @@ private:
 
 public:
 #if WRAP_PYTHON_NS
-	int NavierStokesPython(PyObject* dBoundaryConditions,
-					  PyObject* dNonHomogeneity,
-					  bool bDirichletOrNeumann,
-					  bool bSparseOrNot,
-					  const int nMatrixOrder
-					  );
+	int NavierStokesPython(
+			PyObject* dVelocityXBoundaryCondition,
+			PyObject* dVelocityYBoundaryCondition,
+			PyObject* dExternalForceX,
+			PyObject* dExternalForceY,
+			double dMi, double dRho,
+			const int nMatrixOrder
+			);
+
 	template<typename Derived>
-	void NavierStokesInit(const Eigen::MatrixBase<Derived>& dBoundaryConditions_,
-			 	 	const Eigen::MatrixBase<Derived>& dNonHomogeneity_,
-			 	 	bool bDirichletOrNeumann,
-			 	 	bool bSparseOrNot
+	void NavierStokesInit(
+					const Eigen::MatrixBase<Derived>& dVelocityXBoundaryCondition_,
+			 	 	const Eigen::MatrixBase<Derived>& dVelocityYBoundaryCondition_,
+			 	 	const Eigen::MatrixBase<Derived>& dExternalForceX_,
+			 	 	const Eigen::MatrixBase<Derived>& dExternalForceY_
 			 	 	);
 #else
-	NavierStokes(Eigen::MatrixXd dBoundaryConditions,
-			Eigen::MatrixXd dNonHomogeneity,
-			bool bDirichletOrNeumann,
-			bool bSparseOrNot
+	NavierStokes(
+			Eigen::MatrixXd dVelocityXBoundaryCondition,
+			Eigen::MatrixXd dVelocityYBoundaryCondition,
+			Eigen::MatrixXd dExternalForceX,
+			Eigen::MatrixXd dExternalForceY,
+			double dMi, double dRho
 			);
 #endif
 	virtual ~NavierStokes();
 
 #if WRAP_PYTHON_NS
-	void saveSolution(PyObject* pyArraySolution);
+	void move(PyObject* pyArraySolution); //function to move to python variable
 	template<typename Derived>
 	void changeArray(const Eigen::MatrixBase<Derived>& dPyArray);
 #else
