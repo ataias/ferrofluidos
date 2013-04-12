@@ -29,6 +29,10 @@ add_library(fooclass SHARED poisson2py.cpp)
 target_link_libraries(fooclass ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
 install (TARGETS fooclass DESTINATION bin)
 
+add_library(navierstokes SHARED NavierStokes.cpp)
+target_link_libraries(navierstokes ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+install (TARGETS navierstokes DESTINATION bin)
+
 add_library(poisson SHARED Poisson.cpp)
 target_link_libraries(poisson ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
 install (TARGETS poisson DESTINATION bin)

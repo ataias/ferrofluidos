@@ -81,4 +81,61 @@ using namespace boost::python;
 				     +dVelocityY(i,j)[nTime]
 #endif /* VELOCITY_Y_NO_PRESSURE */
 
+class NavierStokes {
+private:
+
+	Eigen::MatrixXd *dVelocityX;
+	Eigen::MatrixXd *dVelocityY;
+
+	Eigen::MatrixXd dVelocityXNoPressure; 	/*term of velocity* in x axis*/
+	Eigen::MatrixXd dVelocityYNoPressure; 	/*term of velocity* in y axis*/
+	/*f = (fx, fy)*/
+	Eigen::MatrixXd dExternalForceX;
+	Eigen::MatrixXd dExternalForceY;
+	int m_nMatrixOrder;
+
+	int m_nTime;
+	const double m_dDeltaX = 1.0/(m_nMatrixOrder-1);
+	const double m_dDeltaX2 = m_dDeltaX*m_dDeltaX;
+	double m_dDeltaT;
+
+	/*nu = mi/rho = kinematic viscosity*/
+	double m_dMi; /*mi-> dynamic viscosity coefficient*/
+	double m_dRho; /*rho-> fluid density*/
+
+	void NavierStokesSolver();
+	void VelocityNoPressure();
+
+public:
+#if WRAP_PYTHON_NS
+	int NavierStokesPython(PyObject* dBoundaryConditions,
+					  PyObject* dNonHomogeneity,
+					  bool bDirichletOrNeumann,
+					  bool bSparseOrNot,
+					  const int nMatrixOrder
+					  );
+	template<typename Derived>
+	void NavierStokesInit(const Eigen::MatrixBase<Derived>& dBoundaryConditions_,
+			 	 	const Eigen::MatrixBase<Derived>& dNonHomogeneity_,
+			 	 	bool bDirichletOrNeumann,
+			 	 	bool bSparseOrNot
+			 	 	);
+#else
+	NavierStokes(Eigen::MatrixXd dBoundaryConditions,
+			Eigen::MatrixXd dNonHomogeneity,
+			bool bDirichletOrNeumann,
+			bool bSparseOrNot
+			);
+#endif
+	virtual ~NavierStokes();
+
+#if WRAP_PYTHON_NS
+	void saveSolution(PyObject* pyArraySolution);
+	template<typename Derived>
+	void changeArray(const Eigen::MatrixBase<Derived>& dPyArray);
+#else
+	Eigen::MatrixXd ReturnMatrix();
+#endif
+};
+
 #endif /* NAVIERSTOKES_HPP_ */

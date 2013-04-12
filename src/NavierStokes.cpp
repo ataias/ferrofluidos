@@ -34,61 +34,49 @@
  -\nabla p+\mu\nabla^2\textbf{v}+\textbf{f}\f$
  */
 
-#include<NavierStokes.hpp>
+#include<../include/NavierStokes.hpp>
 
-class NavierStokes
+#if WRAP_PYTHON_NS
+template<typename Derived>
+void NavierStokes::NavierStokesInit(const Eigen::MatrixBase<Derived>& dBoundaryConditions_,
+						 const Eigen::MatrixBase<Derived>& dNonHomogeneity_,
+						 bool bDirichletOrNeumann,
+						 bool bSparseOrNot)
 {
+#else
+Poisson::Poisson(Eigen::MatrixXd dBoundaryConditions,
+				 Eigen::MatrixXd dNonHomogeneity,
+				 bool bDirichletOrNeumann,
+				 bool bSparseOrNot
+				 ) {
+#endif
+/*
+void NavierStokes::VelocityNoPressure()
+	//Computes velocity ignoring pressure
+	//only for time t+DeltaT
+	{
+	double dVelocityYAverage(0); 		//Auxiliary variable in the calculation of u*
+	double dVelocityYSum(0); 		//Auxiliary variable in the calculation of v*
+	double dVelocityXAverage(0);
+	double dVelocityXSum(0);
 
-private:
-		dMatrix *dVelocityX;
-		dMatrix *dVelocityY;
-
-		dMatrix *dVelocityXNoPressure; 	/*term of velocity* in x axis*/
-		dMatrix *dVelocityYNoPressure; 	/*term of velocity* in y axis*/
-		/*f = (fx, fy)*/
-		dMatrix *dExternalForceX;
-		dMatrix *dExternalForceY;
-
-		int nTime;
-		const double dDeltaX = 1.0/(MATRIX_ORDER-1);
-		double dDeltaT;
-
-		/*nu = mi/rho = kinematic viscosity*/
-		double m_dMi; /*mi-> dynamic viscosity coefficient*/
-		double m_dRho; /*rho-> fluid density*/
-
-		void VelocityNoPressure()
+	for(int i=1; i<m_nMatrixOrder-1; i++)
 		{
-			double dVelocityYAverage(0); 		/*Auxiliary variable in the calculation of u* */
-			double dVelocityYSum(0); 		/*Auxiliary variable in the calculation of v* */
-			double dVelocityXAverage(0);
-			double dVelocityXSum(0);
-
-			for(int i=1; i<MATRIX_ORDER-1; i++)
+			for(int j=1; j<m_nMatrixOrder-1; j++)
 			{
-				for(int j=1; j<MATRIX_ORDER-1; j++)
-				{
+			//These are additional variables to help the calculation of velocities
+			dVelocityXSum = VELOCITY_X_SUM;
+			dVelocityYSum = VELOCITY_Y_SUM;
+			dVelocityXAverage = VELOCITY_X_AVERAGE;
+			dVelocityYAverage = VELOCITY_Y_AVERAGE;
+			//m_dNu = m_dMi/m_dRho = Kinematic Viscosity
+			double m_dNu = m_dMi/m_dRho;
 
-				/*These are additional variables to help the calculation of velocities*/
-				dVelocityXSum = VELOCITY_X_SUM;
-				dVelocityYSum = VELOCITY_Y_SUM;
-				dVelocityXAverage = VELOCITY_X_AVERAGE;
-				dVelocityYAverage = VELOCITY_Y_AVERAGE;
-
-				/*m_dNu = m_dMi/m_dRho = Kinematic Viscosity*/
-				double m_dNu = m_dMi/m_dRho;
-
-				/*Calculation of Velocity in X and Y without considering the term of pressure*/
-				dVelocityXNoPressure = VELOCITY_X_NO_PRESSURE;
-				dVelocityYNoPressure = VELOCITY_Y_NO_PRESSURE;
-				}
+			//Calculation of Velocity in X and Y without considering the term of pressure
+			dVelocityXNoPressure = VELOCITY_X_NO_PRESSURE;
+			dVelocityYNoPressure = VELOCITY_Y_NO_PRESSURE;
 			}
-		} /*VelocityNoPressure()*/
-
-public:
-		NavierStokes(double dMi=1.0, double dRho=1.0){
-			m_dMi = dMi;
-			m_dRho = dRho;
 		}
-};
+	} /*VelocityNoPressure()*/
 
+*/
