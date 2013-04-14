@@ -31,15 +31,16 @@
 
 #if WRAP_PYTHON_NS
 template<typename Derived>
-void NavierStokes::NavierStokesInit(
+int NavierStokes::NavierStokesInit(
 		const Eigen::MatrixBase<Derived>& dVelocityXBoundaryCondition_,
  	 	const Eigen::MatrixBase<Derived>& dVelocityYBoundaryCondition_,
  	 	const Eigen::MatrixBase<Derived>& dExternalForceX_,
- 	 	const Eigen::MatrixBase<Derived>& dExternalForceY_
+ 	 	const Eigen::MatrixBase<Derived>& dExternalForceY_,
+ 	 	double dMi, double dRho, double dDeltaT
  	 	)
 {
 #else
-	NavierStokes(
+	NavierStokes::NavierStokes(
 			Eigen::MatrixXd dVelocityXBoundaryCondition,
 			Eigen::MatrixXd dVelocityYBoundaryCondition,
 			Eigen::MatrixXd dExternalForceX,
@@ -84,16 +85,19 @@ void NavierStokes::NavierStokesInit(
 		m_dVelocityYBoundaryCondition = dVelocityYBoundaryCondition;
 		m_dExternalForceX = dExternalForceX;
 		m_dExternalForceY = dExternalForceY;
+		m_dMi = dMi;
+		m_dRho = dRho;
+		m_dDeltaT = dDeltaT;
 #if WRAP_PYTHON_NS
 		return(0);
 #endif
 }
-/*
+
 void NavierStokes::VelocityNoPressure()
 	//Computes velocity ignoring pressure
 	//only for time t+DeltaT
 	{
-	double dVelocityYAverage(0); 		//Auxiliary variable in the calculation of u*
+/*	double dVelocityYAverage(0); 		//Auxiliary variable in the calculation of u*
 	double dVelocityYSum(0); 		//Auxiliary variable in the calculation of v*
 	double dVelocityXAverage(0);
 	double dVelocityXSum(0);
@@ -114,7 +118,7 @@ void NavierStokes::VelocityNoPressure()
 			dVelocityXNoPressure = VELOCITY_X_NO_PRESSURE;
 			dVelocityYNoPressure = VELOCITY_Y_NO_PRESSURE;
 			}
-		}
+		}*/
 	} /*VelocityNoPressure()*/
 
 #if WRAP_PYTHON_NS
@@ -124,14 +128,60 @@ int NavierStokes::NavierStokesPython(
 		PyObject* dExternalForceX,
 		PyObject* dExternalForceY,
 		double dMi, double dRho,
-		const int nMatrixOrder
+		const int nMatrixOrder,
+		const double dDeltaT
 		)
 {
+	/**
+		 * NavierStokes::NavierStokesPython
+		 * Esta função tem só como função mapear matrizes numéricas do numpy em MatrixXd da Eigen.
+		 * Ela já está totalmente funcional.
+		 */
 	Eigen::Map<Eigen::MatrixXd> _dVelocityXBoundaryCondition((double *) PyArray_DATA(dVelocityXBoundaryCondition),nMatrixOrder,nMatrixOrder);
 	Eigen::Map<Eigen::MatrixXd> _dVelocityYBoundaryCondition((double *) PyArray_DATA(dVelocityYBoundaryCondition),nMatrixOrder,nMatrixOrder);
 	Eigen::Map<Eigen::MatrixXd> _dExternalForceX((double *) PyArray_DATA(dExternalForceX),nMatrixOrder,nMatrixOrder);
 	Eigen::Map<Eigen::MatrixXd> _dExternalForceY((double *) PyArray_DATA(dExternalForceY),nMatrixOrder,nMatrixOrder);
 
-    return NavierStokesInit(_dVelocityXBoundaryCondition, _dVelocityYBoundaryCondition, _dExternalForceX, _dExternalForceY);
+    return(
+    		NavierStokesInit(_dVelocityXBoundaryCondition,
+    						_dVelocityYBoundaryCondition,
+    						_dExternalForceX,
+    						_dExternalForceY,
+    						dMi, dRho, dDeltaT
+    	                    )
+    	);
+}
+#endif
+
+void NavierStokes::NavierStokesSolver(){
+	std::cout << "Em construção.\n";
+}
+
+#if WRAP_PYTHON_NS
+void NavierStokes::move(PyObject* pyArraySolutionX, PyObject* pyArraySolutionY){
+	Eigen::Map<Eigen::MatrixXd> _pyArraySolutionX((double *) PyArray_DATA(pyArraySolutionX),m_nMatrixOrder,m_nMatrixOrder);
+	Eigen::Map<Eigen::MatrixXd> _pyArraySolutionY((double *) PyArray_DATA(pyArraySolutionY),m_nMatrixOrder,m_nMatrixOrder);
+	_pyArraySolutionX = m_dNavierStokesSolutionX;
+	_pyArraySolutionY = m_dNavierStokesSolutionY;
+}
+#endif
+
+#if WRAP_PYTHON_NS
+BOOST_PYTHON_MODULE(libnavierstokes)
+{
+	class_<NavierStokes>("NavierStokes")
+		.def("set", &NavierStokes::NavierStokesPython,
+				(arg("dVelocityXBoundaryCondition"),
+				 arg("dVelocityYBoundaryCondition"),
+				 arg("dExternalForceX"),
+				 arg("dExternalForceY"),
+				 arg("dMi"),
+				 arg("dRho"),
+				 arg("nMatrixOrder"),
+				 arg("dDeltaT")),
+				 "This function takes important values required to solve the Navier Stokes problem on a square.")
+		.def("solve", &NavierStokes::NavierStokesSolver, "Solves the Poisson problem on a square, with previous given conditions.")
+		.def("move", &NavierStokes::move, (arg("pyArraySolutionX"),arg("pyArraySolutionY")), "Saves the solution of NS problem in pyArraySolutionX and Y objects.")
+	;
 }
 #endif

@@ -96,21 +96,26 @@ private:
 	Eigen::MatrixXd m_dVelocityXBoundaryCondition;
 	Eigen::MatrixXd m_dVelocityYBoundaryCondition;
 
+	Eigen::MatrixXd m_dNavierStokesSolutionX;
+	Eigen::MatrixXd m_dNavierStokesSolutionY;
+
 	int m_nMatrixOrder;
 
 	int m_nTime;
-	const double m_dDeltaX = 1.0/(m_nMatrixOrder-1);
-	const double m_dDeltaX2 = m_dDeltaX*m_dDeltaX;
+//	const double m_dDeltaX = 1.0/(m_nMatrixOrder-1);
+//	const double m_dDeltaX2 = m_dDeltaX*m_dDeltaX;
 	double m_dDeltaT;
 
 	/*nu = mi/rho = kinematic viscosity*/
 	double m_dMi; /*mi-> dynamic viscosity coefficient*/
 	double m_dRho; /*rho-> fluid density*/
 
-	void NavierStokesSolver();
 	void VelocityNoPressure();
+	void PressureSolver();
+	void NextStep();
 
 public:
+	void NavierStokesSolver();
 #if WRAP_PYTHON_NS
 	int NavierStokesPython(
 			PyObject* dVelocityXBoundaryCondition,
@@ -118,15 +123,17 @@ public:
 			PyObject* dExternalForceX,
 			PyObject* dExternalForceY,
 			double dMi, double dRho,
-			const int nMatrixOrder
+			const int nMatrixOrder,
+			const double dDeltaT
 			);
 
 	template<typename Derived>
-	void NavierStokesInit(
+	int NavierStokesInit(
 					const Eigen::MatrixBase<Derived>& dVelocityXBoundaryCondition_,
 			 	 	const Eigen::MatrixBase<Derived>& dVelocityYBoundaryCondition_,
 			 	 	const Eigen::MatrixBase<Derived>& dExternalForceX_,
-			 	 	const Eigen::MatrixBase<Derived>& dExternalForceY_
+			 	 	const Eigen::MatrixBase<Derived>& dExternalForceY_,
+			 	 	double dMi, double dRho, double dDeltaT
 			 	 	);
 #else
 	NavierStokes(
@@ -140,7 +147,7 @@ public:
 	virtual ~NavierStokes();
 
 #if WRAP_PYTHON_NS
-	void move(PyObject* pyArraySolution); //function to move to python variable
+	void move(PyObject* pyArraySolutionX, PyObject* pyArraySolutionY); //function to move to python variable
 	template<typename Derived>
 	void changeArray(const Eigen::MatrixBase<Derived>& dPyArray);
 #else
