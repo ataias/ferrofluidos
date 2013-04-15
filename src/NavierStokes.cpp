@@ -45,7 +45,7 @@ int NavierStokes::NavierStokesInit(
 			Eigen::MatrixXd dVelocityYBoundaryCondition,
 			Eigen::MatrixXd dExternalForceX,
 			Eigen::MatrixXd dExternalForceY,
-			double dMi, double dRho
+			double dMi, double dRho, double dDeltaT
 			);
 #endif
 
@@ -88,6 +88,7 @@ int NavierStokes::NavierStokesInit(
 		m_dMi = dMi;
 		m_dRho = dRho;
 		m_dDeltaT = dDeltaT;
+		m_nTime = 0;
 #if WRAP_PYTHON_NS
 		return(0);
 #endif
