@@ -9,17 +9,14 @@
 #ifndef POISSON_HPP_
 #define POISSON_HPP_
 
-
-#define WRAP_PYTHON 1
-#include<stdheader.hpp>
-#if WRAP_PYTHON
+#include <stdheader.hpp>
 #include <boost/python/detail/wrap_python.hpp>
 #include <boost/python.hpp>
 #include <numpy/arrayobject.h>
 #include <boost/python/module.hpp>
 #include <boost/python/def.hpp>
 using namespace boost::python;
-#endif
+
 
 #define DIRICHLET 0
 #define NEUMANN 1
@@ -139,7 +136,6 @@ private:
 	void PoissonDirichletNoSparseSolver();
 	void PoissonNeumannNoSparseSolver();
 public:
-#if WRAP_PYTHON
 	int PoissonPython(PyObject* dBoundaryConditions,
 					  PyObject* dNonHomogeneity,
 					  bool bDirichletOrNeumann,
@@ -152,22 +148,11 @@ public:
 			 	 	bool bDirichletOrNeumann,
 			 	 	bool bSparseOrNot
 			 	 	);
-#else
-	Poisson(Eigen::MatrixXd dBoundaryConditions,
-			Eigen::MatrixXd dNonHomogeneity,
-			bool bDirichletOrNeumann,
-			bool bSparseOrNot
-			);
-#endif
+
 	virtual ~Poisson();
 	void PoissonSolver();
-#if WRAP_PYTHON
 	void saveSolution(PyObject* pyArraySolution);
-	template<typename Derived>
-	void changeArray(const Eigen::MatrixBase<Derived>& dPyArray);
-#else
-	Eigen::MatrixXd ReturnMatrix();
-#endif
+
 };
 
 #endif /* POISSON_HPP_ */

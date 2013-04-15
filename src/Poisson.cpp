@@ -6,20 +6,12 @@
 
 #include "../include/Poisson.hpp"
 
-#if WRAP_PYTHON
 template<typename Derived>
 int Poisson::PoissonInit(const Eigen::MatrixBase<Derived>& dBoundaryConditions_,
 						 const Eigen::MatrixBase<Derived>& dNonHomogeneity_,
 						 bool bDirichletOrNeumann,
 						 bool bSparseOrNot)
 {
-#else
-Poisson::Poisson(Eigen::MatrixXd dBoundaryConditions,
-				 Eigen::MatrixXd dNonHomogeneity,
-				 bool bDirichletOrNeumann,
-				 bool bSparseOrNot
-				 ) {
-#endif
 	/**
 		 * Construtor da classe Poisson
 		 * É obrigatória a entrada da matriz de condições de contorno,
@@ -35,10 +27,9 @@ Poisson::Poisson(Eigen::MatrixXd dBoundaryConditions,
 		 * Outro detalhe, as matrizes devem ser quadradas!
 		 */
 
-#if WRAP_PYTHON
 		Eigen::MatrixXd dBoundaryConditions = dBoundaryConditions_;
 		Eigen::MatrixXd dNonHomogeneity = dNonHomogeneity_;
-#endif
+
 		bool bCheckSquareBoundaryConditions = dBoundaryConditions.rows() == dBoundaryConditions.cols();
 
 		bool bCheckSquareNonHomogeneity = dNonHomogeneity.rows() == dNonHomogeneity.cols();
@@ -65,9 +56,7 @@ Poisson::Poisson(Eigen::MatrixXd dBoundaryConditions,
 		m_dNeumannSolution = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
 		m_bCheckIfSolved = false;
 		m_bSparseOrNot = bSparseOrNot;
-#if WRAP_PYTHON
 		return(0);
-#endif
 }
 
 Poisson::~Poisson() {
@@ -232,7 +221,7 @@ void Poisson::PoissonNeumannSparseSolver()
 
 void Poisson::PoissonNeumannNoSparseSolver(){
 	bool STOP=false;
-	//When passing from numpy to eigen, needs tranpose()
+	//When passing from numpy to eigen, needs transpose()
 //	m_dBoundaryConditions.transposeInPlace();
 //	m_dNonHomogeneity.transposeInPlace();
 
@@ -343,21 +332,14 @@ void Poisson::PoissonSolver(){
 	}
 	m_bCheckIfSolved = true;
 }
-#if WRAP_PYTHON
+
 void Poisson::saveSolution(PyObject* pyArraySolution){
 	Eigen::Map<Eigen::MatrixXd> _pyArraySolution((double *) PyArray_DATA(pyArraySolution),m_nMatrixOrder,m_nMatrixOrder);
 	if(!m_bDirichletOrNeumann) _pyArraySolution = m_dDirichletSolution;
 	else if(m_bDirichletOrNeumann) _pyArraySolution = m_dNeumannSolution;
 }
-#else
-Eigen::MatrixXd Poisson::ReturnMatrix(){
-	if(!m_bDirichletOrNeumann) return(m_dDirichletSolution);
-	else if(m_bDirichletOrNeumann) return(m_dNeumannSolution);
 
-	return(Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder));
-}
-#endif
-#if WRAP_PYTHON
+
 int Poisson::PoissonPython(PyObject* dBoundaryConditions,
 		  	  	  	  	   PyObject* dNonHomogeneity,
 		  	  	  	  	   bool bDirichletOrNeumann,
@@ -369,9 +351,8 @@ int Poisson::PoissonPython(PyObject* dBoundaryConditions,
 		Eigen::Map<Eigen::MatrixXd> _dNonHomogeneity((double *) PyArray_DATA(dNonHomogeneity),nMatrixOrder,nMatrixOrder);
         return PoissonInit(_dBoundaryConditions, _dNonHomogeneity, bDirichletOrNeumann, bSparseOrNot);
 }
-#endif
 
-#if WRAP_PYTHON
+
 BOOST_PYTHON_MODULE(libpoisson)
 {
 	class_<Poisson>("Poisson")
@@ -386,4 +367,3 @@ BOOST_PYTHON_MODULE(libpoisson)
 		.def("saveSolution", &Poisson::saveSolution, (arg("pyArraySolution")), "Saves the solution of Poisson problem in pyArraySolution object.")
 	;
 }
-#endif
