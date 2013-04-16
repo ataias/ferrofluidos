@@ -157,10 +157,10 @@ int NavierStokes::NavierStokesPython(
 	Eigen::Map<Eigen::MatrixXd> _dExternalForceY((double *) PyArray_DATA(dExternalForceY),nMatrixOrder,nMatrixOrder);
 
     return(
-    		NavierStokesInit(_dVelocityXBoundaryCondition,
-    						_dVelocityYBoundaryCondition,
-    						_dExternalForceX,
-    						_dExternalForceY,
+    		NavierStokesInit((Eigen::MatrixXd)_dVelocityXBoundaryCondition,
+    						 (Eigen::MatrixXd)_dVelocityYBoundaryCondition,
+    						 (Eigen::MatrixXd)_dExternalForceX,
+    						 (Eigen::MatrixXd)_dExternalForceY,
     						dMi, dRho, dDeltaT
     	                    )
     	);

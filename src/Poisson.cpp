@@ -98,7 +98,15 @@ Poisson::Poisson(Eigen::MatrixXd dBoundaryConditions_,
 }
 
 Poisson::Poisson(){
-
+	//Teste bobo
+	m_nMatrixOrder = 0;
+	m_dNonHomogeneity = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+	m_dBoundaryConditions = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+	m_bDirichletOrNeumann = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+	m_dDirichletSolution = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+	m_dNeumannSolution = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+	m_bCheckIfSolved = false;
+	m_bSparseOrNot = false;
 }
 
 Poisson::~Poisson() {
@@ -391,7 +399,7 @@ int Poisson::PoissonPython(PyObject* dBoundaryConditions,
 {
 		Eigen::Map<Eigen::MatrixXd> _dBoundaryConditions((double *) PyArray_DATA(dBoundaryConditions),nMatrixOrder,nMatrixOrder);
 		Eigen::Map<Eigen::MatrixXd> _dNonHomogeneity((double *) PyArray_DATA(dNonHomogeneity),nMatrixOrder,nMatrixOrder);
-        return PoissonInit(_dBoundaryConditions, _dNonHomogeneity, bDirichletOrNeumann, bSparseOrNot);
+        return PoissonInit((Eigen::MatrixXd)_dBoundaryConditions, (Eigen::MatrixXd)_dNonHomogeneity, bDirichletOrNeumann, bSparseOrNot);
 }
 
 
