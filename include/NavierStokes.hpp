@@ -86,6 +86,26 @@ using namespace boost::python;
 								)/m_dDeltaT
 #endif /*NON_HOMOGENEITY_NAVIER*/
 
+#ifndef POISSON_BOUNDARY_CONDITIONS_NAVIER_LEFT
+#define POISSON_BOUNDARY_CONDITIONS_NAVIER_LEFT -m_dRho*m_dNu*(-5*u(i,j+1)+4*u(i,j+2)-u(i,j+3))/m_dDeltaX \
+											- (m_dExternalForceX(i,j)+m_dExternalForceX(i,j+1))/(2.0*m_dDeltaX)
+#endif /*NON_HOMOGENEITY_NAVIER_LEFT*/
+
+#ifndef POISSON_BOUNDARY_CONDITIONS_NAVIER_RIGHT
+#define POISSON_BOUNDARY_CONDITIONS_NAVIER_RIGHT -m_dRho*m_dNu*(-5*u(i,j-1)+4*u(i,j-2)-u(i,j-3))/m_dDeltaX \
+											- (m_dExternalForceX(i,j)+m_dExternalForceX(i,j-1))/(2.0*m_dDeltaX)
+#endif /*NON_HOMOGENEITY_NAVIER_RIGHT*/
+
+#ifndef POISSON_BOUNDARY_CONDITIONS_NAVIER_TOP
+#define POISSON_BOUNDARY_CONDITIONS_NAVIER_TOP -m_dRho*m_dNu*(-5*u(i+1,j)+4*u(i+2,j)-u(i+3,j))/m_dDeltaX \
+											- (m_dExternalForceX(i,j)+m_dExternalForceX(i+1,j))/(2.0*m_dDeltaX)
+#endif /*NON_HOMOGENEITY_NAVIER_TOP*/
+
+#ifndef POISSON_BOUNDARY_CONDITIONS_NAVIER_BOTTOM
+#define POISSON_BOUNDARY_CONDITIONS_NAVIER_BOTTOM -m_dRho*m_dNu*(-5*u(i-1,j)+4*u(i-2,j)-u(i-3,j))/m_dDeltaX \
+											- (m_dExternalForceX(i,j)+m_dExternalForceX(i-1,j))/(2.0*m_dDeltaX)
+#endif /*NON_HOMOGENEITY_NAVIER_RIGHT*/
+
 class NavierStokes {
 private:
 
