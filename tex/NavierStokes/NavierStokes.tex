@@ -1,0 +1,74 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+
+\title{}
+\author{Ataias Reis}
+
+\begin{document}
+
+\section{Equações Discretizadas para Navier Stokes}
+
+\paragraph{} Quer-se resolver a seguinte equação:
+\begin{eqnarray}
+\rho\left( \frac{\partial \textbf{v}}{\partial t}+\textbf{v}\cdot\nabla\textbf{v}\right)=-\nabla p+\mu\nabla^2\textbf{v}+\textbf{f}\\
+\nabla\cdot \textbf{v}=0
+\end{eqnarray}
+\subsection{1º Passo}
+\paragraph{} Desconsiderando $\nabla p$ por agora, e notando que a parte da diferente é avaliada no tempo atual, não no futuro, tem-se:
+
+\begin{eqnarray}
+\textbf{v}_{ij}^s=(u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1},v_{i+1j}+v_{i-1j}+v_{ij+1}+v_{ij-1})\\
+\textbf{v}_{ij}^t=\frac{1}{4}(u_{ij}+u_{i-1j}+u_{i-1j-1}+u_{ij+1},v_{ij}+v_{i-1j}+v_{i-1j-1}+v_{ij+1})\\
+u_{ij}^{*}=\left[\frac{\mu}{\rho}\left(\frac{u_{ij}^s-4u_{ij}}{\Delta x^2}\right)+\frac{f_{x,ij}}{\rho}-u_{ij}\frac{u_{i+1j}-u_{i-1j}}{2\Delta x}-v_{ij}^t\frac{u_{ij+1}-u_{ij-1}}{2\Delta x}\right]\Delta t + u_{ij}\\
+v_{ij}^{*}=\left[\frac{\mu}{\rho}\left(\frac{v_{ij}^s-4v_{ij}}{\Delta x^2}\right)+\frac{f_{y,ij}}{\rho}-u_{ij}^t\frac{v_{i+1j}-v_{i-1j}}{2\Delta x}-v_{ij}\frac{v_{ij+1}-v_{ij-1}}{2\Delta x}\right]\Delta t + v_{ij}
+\end{eqnarray}
+
+\paragraph{} Com isto, tem-se \[\textbf{v}^{*}=(u^*,v^*)\]
+\subsection{2º Passo}
+\paragraph{} Tirando o divergente das equações vetoriais, tem-se a seguinte equação:
+\begin{equation}
+\nabla^2 p = \frac{\rho}{\Delta t} \nabla\cdot \textbf{v}^*=\frac{\rho}{\Delta t} 
+\left( \frac{\partial u^*}{\partial x}+\frac{\partial v^*}{\partial y} \right)
+\end{equation}
+\paragraph{} Dado ter-se um sistema resolvendo a equação de poisson, basta-se calcular o termo da direita e colocar como não-homogeneidade.
+\begin{equation}
+f_{ij}=\frac{\rho}{\Delta t}\left( \frac{u_{i+1j}^*-u_{i-1j}^*}{2\Delta x}+\frac{v_{ij+1}^*-v_{ij-1}^*}{2\Delta x}\right)
+\end{equation}
+\paragraph{} As condições de contorno são todas de Neumann. Para pontos internos à malha, tem-se:
+\begin{equation}
+p_{ijk}=\frac{1}{4}[(p_{i+1j}+p_{i-1j}+p_{ij+1}+p_{ij-1})-\Delta x^2 f_{ij}]
+\end{equation}
+\paragraph{} Para pontos nas fronteiras, essa equação muda. Os superescritos \textbf{w}, \textbf{e}, \textbf{n} e \textbf{s} serão usados para indicar as fronteiras \textit{West}, \textit{East}, \textit{North} e \textit{South}. A matrix $g$ tem nas suas fronteiras as condições de fronteira para o problema, que no caso são os valores do fluxo em cada fronteira, tem-se uma matriz com valores de fluxo e o interior dela não é utilizado. Os índices $i$ e $j$ correspondem aos eixos x e y aqui, respectivamente.
+\begin{eqnarray}
+p_{0j}^{\textbf{w}}=\frac{1}{4}[(2p_{1j}+2\Delta x g_{0j}+p_{0j+1}+p_{0j-1})-\Delta x^2 f_{0j}]\\
+p_{N-1j}^{\textbf{e}}=\frac{1}{4}[(2p_{N-2j}+2\Delta x g_{N-1j}+p_{N-1j+1}+p_{N-1j-1})-\Delta x^2 f_{N-1j}]\\
+p_{i0}^{\textbf{n}}=\frac{1}{4}[(p_{i+1\,0}+p_{i-1\,0}+2p_{i1}+2\Delta x g_{i0})-\Delta x^2 f_{i0}]\\
+p_{iN-1}^{\textbf{s}}=\frac{1}{4}[(p_{i+1N-1}+p_{i-1N-1}+2p_{iN-2}-2\Delta x g_{iN-1})-\Delta x^2 f_{iN-1}]
+\end{eqnarray}
+\subsection{3º Passo}
+\paragraph{} Finalmente, tem-se:
+\begin{equation}
+\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}=-\frac{1}{\rho}\nabla p
+\end{equation}
+\paragraph{} Expandindo para as equações escalares, tem-se:
+\begin{eqnarray}
+u^{n+1}=u^*-\frac{\Delta t}{\rho}\frac{\partial p}{\partial x}\\
+v^{n+1}=v^*-\frac{\Delta t}{\rho}\frac{\partial p}{\partial y}
+\end{eqnarray}
+\paragraph{} Basta discretizar os termos das derivadas parciais agora:
+
+\begin{eqnarray}
+p_{x,ij}=\frac{p_{i+1j}-p_{i-1j}}{2\Delta x}\\
+p_{y,ij}=\frac{p_{ij+1}-p_{ij+1}}{2\Delta x}
+\end{eqnarray}
+
+\paragraph{} E finalmente tem-se a solução para o tempo $n+1$ a partir do tempo passado $n$:
+
+\begin{eqnarray}
+u^{n+1}=u^*-\frac{\Delta t}{\rho}p_x\\
+v^{n+1}=v^*-\frac{\Delta t}{\rho}p_y
+\end{eqnarray}
+\paragraph{} Cada uma das varíaveis acima é uma matriz.
+\end{document}
