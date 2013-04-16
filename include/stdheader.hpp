@@ -68,6 +68,9 @@
 	#include<python2.7/Python.h>
 	/*---------------------------------------------*/
 
+	#include <../include/NavierStokes.hpp>
+	#include <../include/Poisson.hpp>
+
 	#define PENTADIAGONAL 5
 	#define READ 0
 	#define WRITE 1

@@ -59,6 +59,48 @@ int Poisson::PoissonInit(const Eigen::MatrixBase<Derived>& dBoundaryConditions_,
 		return(0);
 }
 
+Poisson::Poisson(Eigen::MatrixXd dBoundaryConditions_,
+			 	Eigen::MatrixXd dNonHomogeneity_,
+			 	bool bDirichletOrNeumann,
+			 	bool bSparseOrNot
+			 	)
+{
+		Eigen::MatrixXd dBoundaryConditions = dBoundaryConditions_;
+		Eigen::MatrixXd dNonHomogeneity = dNonHomogeneity_;
+
+		bool bCheckSquareBoundaryConditions = dBoundaryConditions.rows() == dBoundaryConditions.cols();
+
+		bool bCheckSquareNonHomogeneity = dNonHomogeneity.rows() == dNonHomogeneity.cols();
+
+		bool bCheckSameOrderRow = dBoundaryConditions.rows()== dNonHomogeneity.rows();
+
+		bool bCheckSameOrderColumn = dBoundaryConditions.cols() == dNonHomogeneity.cols();
+
+		bool bCompatibleMatrices = bCheckSquareBoundaryConditions &&
+								   bCheckSquareNonHomogeneity &&
+								   bCheckSameOrderRow &&
+								   bCheckSameOrderColumn;
+		if(!bCompatibleMatrices)
+		{
+			exit(EXIT_FAILURE);
+		}
+
+		/*It could have been used rows() or columns() of any of the matrix of parameters*/
+		m_nMatrixOrder = dNonHomogeneity.rows();
+		m_dNonHomogeneity = dNonHomogeneity;
+		m_dBoundaryConditions = dBoundaryConditions;
+		m_bDirichletOrNeumann = bDirichletOrNeumann;
+		m_dDirichletSolution = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+		m_dNeumannSolution = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+		m_bCheckIfSolved = false;
+		m_bSparseOrNot = bSparseOrNot;
+
+}
+
+Poisson::Poisson(){
+
+}
+
 Poisson::~Poisson() {
 	// TODO Auto-generated destructor stub
 }

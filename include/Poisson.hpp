@@ -136,6 +136,14 @@ private:
 	void PoissonDirichletNoSparseSolver();
 	void PoissonNeumannNoSparseSolver();
 public:
+	Poisson(Eigen::MatrixXd dBoundaryConditions_,
+				 	Eigen::MatrixXd dNonHomogeneity_,
+				 	bool bDirichletOrNeumann,
+				 	bool bSparseOrNot
+				 	);
+
+	Poisson();
+
 	int PoissonPython(PyObject* dBoundaryConditions,
 					  PyObject* dNonHomogeneity,
 					  bool bDirichletOrNeumann,

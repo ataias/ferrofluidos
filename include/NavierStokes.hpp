@@ -79,6 +79,13 @@ using namespace boost::python;
 				     +m_dVelocityY(i,j)
 #endif /* VELOCITY_Y_NO_PRESSURE */
 
+#ifndef NON_HOMOGENEITY_NAVIER
+#define NON_HOMOGENEITY_NAVIER m_dRho*(\
+								(m_dVelocityXNoPressure(i+1,j)-m_dVelocityXNoPressure(i-1,j))/(2*m_dDeltaX)\
+								-(m_dVelocityXNoPressure(i+1,j)-m_dVelocityXNoPressure(i-1,j))/(2*m_dDeltaX)\
+								)/m_dDeltaT
+#endif /*NON_HOMOGENEITY_NAVIER*/
+
 class NavierStokes {
 private:
 

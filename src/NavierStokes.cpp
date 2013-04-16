@@ -28,6 +28,7 @@
  */
 
 #include <../include/NavierStokes.hpp>
+#include <../include/Poisson.hpp>
 
 template<typename Derived>
 int NavierStokes::NavierStokesInit(
@@ -116,10 +117,18 @@ void NavierStokes::VelocityNoPressure()
 			dVelocityYNoPressure(i,j) = VELOCITY_Y_NO_PRESSURE;
 			}
 		}
+	m_dVelocityXNoPressure = dVelocityXNoPressure;
+	m_dVelocityYNoPressure = dVelocityYNoPressure;
 	std::cout << "VelocityNoPressure\n";
 	} /*VelocityNoPressure()*/
 
 void NavierStokes::PressureSolver(){
+	Eigen::MatrixXd dNonHomogeneityNavier = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+	for(int i=1; i<m_nMatrixOrder-1; i++)
+		for(int j=1; j<m_nMatrixOrder-1; j++)
+			dNonHomogeneityNavier(i,j) = NON_HOMOGENEITY_NAVIER;
+
+//	Poisson::Poisson m_dPoissonNavier();
 	std::cout << "PressureSolver\n";
 }
 
