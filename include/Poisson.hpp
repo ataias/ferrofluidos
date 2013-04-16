@@ -17,9 +17,13 @@
 #include <boost/python/def.hpp>
 using namespace boost::python;
 
-
+#ifndef DIRICHLET
 #define DIRICHLET 0
+#endif /*DIRICHLET*/
+
+#ifndef NEUMANN
 #define NEUMANN 1
+#endif /*NEUMANN*/
 
 #define CORRECT_CORNERS_DIRICHLET \
 	m_dDirichletSolution(0,0) = 0.5*(m_dDirichletSolution(0,1)+m_dDirichletSolution(1,0));\
@@ -105,21 +109,45 @@ using namespace boost::python;
 	(i>0) && (i<(m_nMatrixOrder-1)) && \
 	(j>0) && (j<(m_nMatrixOrder-1))
 
+#ifndef WEST_POINT
 #define WEST_POINT \
 		(j==0) && (i>0) &&\
 		(i<(m_nMatrixOrder-1))
+#endif /*WEST_POINT*/
 
+#ifndef LEFT_POINT
+#define LEFT_POINT WEST_POINT
+#endif /*LEFT POINT*/
+
+#ifndef EAST_POINT
 #define EAST_POINT \
 	(j==(m_nMatrixOrder-1)) && \
 	(i>0) && (i<(m_nMatrixOrder-1))
+#endif /*EAST_POINT*/
 
+#ifndef RIGHT_POINT
+#define RIGHT_POINT EAST_POINT
+#endif /*RIGHT_POINT*/
+
+#ifndef NORTH_POINT
 #define NORTH_POINT \
 	(i==0) && (j>0) &&\
 	(j<(m_nMatrixOrder-1))
+#endif /*NORTH_POINT*/
 
+#ifndef TOP_POINT
+#define TOP_POINT NORTH_POINT
+#endif /*TOP_POINT*/
+
+#ifndef SOUTH_POINT
 #define SOUTH_POINT \
 		(i==(m_nMatrixOrder-1)) && (j>0) \
 		&& (j<(m_nMatrixOrder-1))
+#endif /*SOUTH_POINT*/
+
+#ifndef BOTTOM_POINT
+#define BOTTOM_POINT SOUTH_POINT
+#endif /*BOTTOM_POINT*/
 
 class Poisson {
 private:

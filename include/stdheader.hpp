@@ -69,7 +69,7 @@
 	/*---------------------------------------------*/
 
 	#include "Poisson.hpp"
-	#include "NavierStokes.hpp";
+	#include "NavierStokes.hpp"
 
 	#define PENTADIAGONAL 5
 	#define READ 0

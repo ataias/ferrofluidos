@@ -102,7 +102,7 @@ Poisson::Poisson(){
 	m_nMatrixOrder = 0;
 	m_dNonHomogeneity = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
 	m_dBoundaryConditions = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
-	m_bDirichletOrNeumann = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+	m_bDirichletOrNeumann = false;
 	m_dDirichletSolution = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
 	m_dNeumannSolution = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
 	m_bCheckIfSolved = false;
