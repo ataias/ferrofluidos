@@ -8,14 +8,14 @@
 
 \begin{document}
 
-\section{Equações Discretizadas para Navier Stokes}
-
-\paragraph{} Quer-se resolver a seguinte equação:
+\section{Navier Stokes}
+Quer-se resolver a seguinte equação:
 \begin{eqnarray}
 \rho\left( \frac{\partial \textbf{v}}{\partial t}+\textbf{v}\cdot\nabla\textbf{v}\right)=-\nabla p+\mu\nabla^2\textbf{v}+\textbf{f}\\
 \nabla\cdot \textbf{v}=0
 \end{eqnarray}
-\subsection{1º Passo}
+\subsection{Resolução Numérica}
+\subsubsection{Desconsiderando a pressão}
 \paragraph{} Desconsiderando $\nabla p$ por agora, e notando que a parte da diferente é avaliada no tempo atual, não no futuro, tem-se:
 
 \begin{eqnarray}
@@ -26,7 +26,7 @@ v_{ij}^{*}=\left[\frac{\mu}{\rho}\left(\frac{v_{ij}^s-4v_{ij}}{\Delta x^2}\right
 \end{eqnarray}
 
 \paragraph{} Com isto, tem-se \[\textbf{v}^{*}=(u^*,v^*)\]
-\subsection{2º Passo}
+\subsubsection{Obter a pressão}
 \paragraph{} Tirando o divergente das equações vetoriais, tem-se a seguinte equação:
 \begin{equation}
 \nabla^2 p = \frac{\rho}{\Delta t} \nabla\cdot \textbf{v}^*=\frac{\rho}{\Delta t} 
@@ -38,16 +38,38 @@ f_{ij}=\frac{\rho}{\Delta t}\left( \frac{u_{i+1j}^*-u_{i-1j}^*}{2\Delta x}+\frac
 \end{equation}
 \paragraph{} As condições de contorno são todas de Neumann. Para pontos internos à malha, tem-se:
 \begin{equation}
-p_{ijk}=\frac{1}{4}[(p_{i+1j}+p_{i-1j}+p_{ij+1}+p_{ij-1})-\Delta x^2 f_{ij}]
+p_{ij}=\frac{1}{4}[(p_{i+1j}+p_{i-1j}+p_{ij+1}+p_{ij-1})-\Delta x^2 f_{ij}]
 \end{equation}
-\paragraph{} Para pontos nas fronteiras, essa equação muda. Os superescritos \textbf{w}, \textbf{e}, \textbf{n} e \textbf{s} serão usados para indicar as fronteiras \textit{West}, \textit{East}, \textit{North} e \textit{South}. A matrix $g$ tem nas suas fronteiras as condições de fronteira para o problema, que no caso são os valores do fluxo em cada fronteira, tem-se uma matriz com valores de fluxo e o interior dela não é utilizado. Os índices $i$ e $j$ correspondem aos eixos x e y aqui, respectivamente.
+\paragraph{} A rotina para Poisson com Neumann já está implementada. Falta agora
+as condições de contorno nas fronteiras. Como obtê-las?
+\paragraph{} Primeiramente, considere-se novamente a equação de Navier Stokes:
+\[\rho\left( \frac{\partial \textbf{v}}{\partial t}+\textbf{v}\cdot\nabla\textbf{v}\right)=-\nabla p+\mu\nabla^2\textbf{v}+\textbf{f}\]
+\[\nabla\cdot\textbf{v}=0\]
+\paragraph{} Destrinchando a equação para duas coordenadas, tem-se:
 \begin{eqnarray}
-p_{0j}^{\textbf{w}}=\frac{1}{4}[(2p_{1j}+2\Delta x g_{0j}+p_{0j+1}+p_{0j-1})-\Delta x^2 f_{0j}]\\
-p_{N-1j}^{\textbf{e}}=\frac{1}{4}[(2p_{N-2j}+2\Delta x g_{N-1j}+p_{N-1j+1}+p_{N-1j-1})-\Delta x^2 f_{N-1j}]\\
-p_{i0}^{\textbf{n}}=\frac{1}{4}[(p_{i+1\,0}+p_{i-1\,0}+2p_{i1}+2\Delta x g_{i0})-\Delta x^2 f_{i0}]\\
-p_{iN-1}^{\textbf{s}}=\frac{1}{4}[(p_{i+1N-1}+p_{i-1N-1}+2p_{iN-2}-2\Delta x g_{iN-1})-\Delta x^2 f_{iN-1}]
+\frac{\partial u}{\partial t}+u\frac{\partial u}{\partial x}+v\frac{\partial
+u}{\partial y}=-\frac{1}{\rho}\frac{\partial p}{\partial
+x}+\nu\left(\frac{\partial^2 u}{\partial^2 x}+\frac{\partial^2 u}{\partial^2
+y}\right)+f_x\\
+\frac{\partial v}{\partial t}+u\frac{\partial v}{\partial x}+v\frac{\partial
+v}{\partial y}=-\frac{1}{\rho}\frac{\partial p}{\partial
+y}+\nu\left(\frac{\partial^2 v}{\partial^2 x}+\frac{\partial^2 v}{\partial^2
+y}\right)+f_y
 \end{eqnarray}
-\subsection{3º Passo}
+\paragraph{} Se fizermos uma análise dos pontos na parede da esquerda ou
+direita, e aplicarmos as condições de impenetrabilidade e não-deslizamento, que
+dizem que $u=0$ e $v=0$ na parede, temos a simplificação da equação, pois vários
+termos se tornam zero. As equações para as duas paredes verticais é a seguinte:
+\begin{equation}
+\frac{\partial p}{\partial x}\Bigg|_{\textrm{parede}}=\rho\nu\frac{\partial^2
+u}{\partial x^2}\Bigg|_{\textrm{parede}}+\rho f_x
+\end{equation}
+\paragraph{} Para as paredes que ficam na horizontal tem-se:
+\begin{equation}
+\frac{\partial p}{\partial y}\Bigg|_{\textrm{parede}}=\rho\nu\frac{\partial^2
+v}{\partial y^2}\Bigg|_{\textrm{parede}}+\rho f_y
+\end{equation}
+\subsubsection{Resolver para o passo $t+\Delta t$}
 \paragraph{} Finalmente, tem-se:
 \begin{equation}
 \frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}=-\frac{1}{\rho}\nabla p
