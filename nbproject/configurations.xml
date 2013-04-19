@@ -10,7 +10,6 @@
       <df name="src">
         <in>NavierStokes.cpp</in>
         <in>Poisson.cpp</in>
-        <in>poisson2py.cpp</in>
       </df>
     </df>
     <logicalFolder name="ExternalFiles"
@@ -70,13 +69,6 @@
         <ccTool>
           <preprocessorList>
             <Elem>poisson_EXPORTS</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="src/poisson2py.cpp" ex="false" tool="1" flavor2="0">
-        <ccTool>
-          <preprocessorList>
-            <Elem>fooclass_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
       </item>
