@@ -28,7 +28,6 @@
  */
 
 #include <../include/NavierStokes.hpp>
-#include <../include/Poisson.hpp>
 
 template<typename Derived>
 int NavierStokes::NavierStokesInit(
@@ -85,9 +84,11 @@ int NavierStokes::NavierStokesInit(
 		m_nTime = 0;
 		m_dDeltaX = 1.0/(m_nMatrixOrder-1);
 		m_dDeltaX2 = m_dDeltaX*m_dDeltaX;
+                m_dPressureNonHomogeneity = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+                m_dPressureBoundaryConditions = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);               
 		return(0);
 
-}
+} /*NavierStokesInit()*/
 
 void NavierStokes::VelocityNoPressure()
 	//Computes velocity ignoring pressure
@@ -125,32 +126,105 @@ void NavierStokes::VelocityNoPressure()
 	std::cout << "VelocityNoPressure\n";
 	} /*VelocityNoPressure()*/
 
-void NavierStokes::PressureSolver(){
-	Eigen::MatrixXd dNonHomogeneityNavier = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
-	Eigen::MatrixXd dBoundaryConditionsNavier = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
-	for(int i=0; i<=m_nMatrixOrder-1; i++)
-		for(int j=0; j<=m_nMatrixOrder-1; j++){
-			if(LEFT_POINT){
-				dBoundaryConditionsNavier(i,j) = POISSON_BOUNDARY_CONDITIONS_NAVIER_LEFT;
-				continue;
-			} else if(RIGHT_POINT) {
-				dBoundaryConditionsNavier(i,j) = POISSON_BOUNDARY_CONDITIONS_NAVIER_RIGHT;
-				continue;
-			} else if(TOP_POINT) {
-				dBoundaryConditionsNavier(i,j) = POISSON_BOUNDARY_CONDITIONS_NAVIER_TOP;
-				continue;
-			} else if(BOTTOM_POINT){
-				dBoundaryConditionsNavier(i,j) = POISSON_BOUNDARY_CONDITIONS_NAVIER_BOTTOM;
-				continue;
-			} else if(INTERNAL_POINT){
-				dNonHomogeneityNavier(i,j) = NON_HOMOGENEITY_NAVIER;
-			}
+void NavierStokes::MakePressureConditions(){
+    Eigen::MatrixXd dPressureNonHomogeneity = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+    Eigen::MatrixXd dPressureBoundaryConditions = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+        
+//  INTERNAL POINTS - NON HOMOGENEITY
+	for(int i=1; i<m_nMatrixOrder-1; i++)
+		for(int j=1; j<m_nMatrixOrder-1; j++){
+            NON_HOMOGENEITY_NAVIER_PRESSURE;
 		}
-	/*Aqui, falta resolver ainda a equação da pressão
-	 * criar objeto e resolver a equação de Poisson*/
+        
+//  LEFT BOUNDARY CONDITIONS
+    for(int i=1; i<m_nMatrixOrder-1; i++){
+        POISSON_NAVIER_LEFT_BOUNDARY_CONDITION;
+    }
+//  RIGHT BOUNDARY CONDITIONS
+    for(int i=1; i<m_nMatrixOrder-1; i++){
+        POISSON_NAVIER_RIGHT_BOUNDARY_CONDITION;
+    }
+//  TOP BOUNDARY CONDITIONS
+    for(int j=1; j<m_nMatrixOrder-1; j++){
+        POISSON_NAVIER_TOP_BOUNDARY_CONDITION;
+    }
+//  BOTTOM BOUNDARY CONDITIONS
+    for(int j=1; j<m_nMatrixOrder-1; j++){
+        POISSON_NAVIER_BOTTOM_BOUNDARY_CONDITION;
+    }
 
-//	Poisson::Poisson m_dPoissonNavier();
-	std::cout << "PressureSolver\n";
+    m_dPressureNonHomogeneity = dPressureNonHomogeneity;
+    m_dPressureBoundaryConditions = dPressureBoundaryConditions;
+	std::cout << "MakePressureConditions\n";
+} /*MakePressureConditions()*/
+
+void NavierStokes::compute_dError(){
+    		  //Derivative tests
+		  for(int i = 0; i<m_nMatrixOrder; i++)
+			  for(int j = 0; j<m_nMatrixOrder; j++){
+		          //QUINAS
+		          if(i==0 && j==0)
+		        	  continue;
+		          if(i==0 && j==m_nMatrixOrder-1)
+		        	  continue;
+		          if(i==m_nMatrixOrder-1 && j==0)
+		        	  continue;
+		          if(i==m_nMatrixOrder-1 && j==m_nMatrixOrder-1)
+		              continue;
+
+		          if(i==0)        //NORTH POINT
+		        	  PRESSURE_NORTH_DERIVATIVE
+		          else if(i==m_nMatrixOrder-1) //SOUTH POINT
+		        	  PRESSURE_SOUTH_DERIVATIVE
+		          else if (j==0)      //WEST POINT
+		        	  PRESSURE_WEST_DERIVATIVE
+		          else if(j==m_nMatrixOrder-1) //EAST POINT
+		        	  PRESSURE_EAST_DERIVATIVE
+		          else //INTERNAL POINT
+		        	  POISSON_EQUATION_INTERNAL_POINT
+			  }
+		  //End derivative tests
+}
+void NavierStokes::PressureSolver(){
+	bool bStopCondition=false;
+	Eigen::MatrixXd dPressure = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+    Eigen::MatrixXd dPressureOld = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+	Eigen::MatrixXd dError = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+	int k=0;
+	int nMatrixIterations=0;
+	do{
+      if (nMatrixIterations == ITERATION_LIMIT) bStopCondition=true;
+	  nMatrixIterations++;
+
+    for(int i = 0; i<m_nMatrixOrder; i++)
+        for(int j = 0; j<m_nMatrixOrder; j++){
+            if(INTERNAL_POINT){
+                PRESSURE_INTERNAL_POINTS;
+            } else if(LEFT_POINT){
+                POISSON_NAVIER_LEFT;
+            } else if(RIGHT_POINT) {
+                POISSON_NAVIER_RIGHT;
+            } else if(TOP_POINT) {
+                POISSON_NAVIER_TOP;			
+            } else if(BOTTOM_POINT){
+                POISSON_NAVIER_BOTTOM;				
+            }
+		}
+
+		  double dMinimumValue = dPressure.minCoeff();
+		  dPressure = dPressure - Eigen::MatrixXd::Constant(m_nMatrixOrder, m_nMatrixOrder, dMinimumValue);
+		  dError = Eigen::MatrixXd::Zero(m_nMatrixOrder, m_nMatrixOrder);
+          NavierStokes::compute_dError();
+		  double d_error = dError.norm();
+		  if(d_error < 1e-13) bStopCondition=true; //Condição de parada
+
+		  dPoissonNoSparseOld = dPoissonNoSparse;
+		  std::cout << "N = " << N << " " << d_error << "\n";
+	}while(!STOP);
+
+	//Corners
+	m_dNeumannSolution = dPoissonNoSparse;
+	CORRECT_CORNERS_NEUMANN
 }
 
 void NavierStokes::NextStep(){

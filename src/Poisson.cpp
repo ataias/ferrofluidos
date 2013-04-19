@@ -274,7 +274,7 @@ void Poisson::PoissonNeumannNoSparseSolver(){
 	//When passing from numpy to eigen, needs transpose()
 //	m_dBoundaryConditions.transposeInPlace();
 //	m_dNonHomogeneity.transposeInPlace();
-
+        
 	Eigen::MatrixXd dPoissonNoSparse = m_dBoundaryConditions;
 	Eigen::MatrixXd dPoissonNoSparseOld = m_dBoundaryConditions;
 	Eigen::MatrixXd dError = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
