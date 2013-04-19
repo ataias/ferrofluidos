@@ -62,7 +62,9 @@ int NavierStokes::NavierStokesInit(
 		bool bCompatibleMatrices   = bCheckSquareVelocityX &&
 								     bCheckSquareVelocityY &&
 								     bCheckSquareForceX &&
-								     bCheckSquareForceY;
+								     bCheckSquareForceY &&
+                                                                     bCheckSameOrderRow &&
+                                                                     bCheckSameOrderColumn;
 		if(!bCompatibleMatrices)
 		{
 			exit(EXIT_FAILURE);
