@@ -151,7 +151,7 @@ void Poisson::PoissonDirichletSparseSolver()
 	//---------------------
 	for(i = 1; i<= (m_nMatrixOrder-2); i++)
 	    for(j=1; j<=(m_nMatrixOrder-2); j++){
-	    	/*ind has the indexes of U in a matrix with two columns*/
+	    	/*dAuxiliaryIndexes has the indexes of U in a matrix with two columns*/
 	    	dAuxiliaryIndexes(j+(i-1)*(m_nMatrixOrder-2)-1,0)= j;
 	    	dAuxiliaryIndexes(j+(i-1)*(m_nMatrixOrder-2)-1,1)= i;
 	    }
@@ -240,7 +240,7 @@ void Poisson::PoissonNeumannSparseSolver()
 
 	for(i = 1; i<= (m_nMatrixOrder-2); i++)
 	    for(j=1; j<=(m_nMatrixOrder-2); j++){
-	    	/*ind has the indexes of U in a matrix with two columns*/
+	    	/*dAuxiliaryIndexes has the indexes of U in a matrix with two columns*/
 	    	dAuxiliaryIndexes(j+(i-1)*(m_nMatrixOrder-2)-1,0)= j+1;
 	    	dAuxiliaryIndexes(j+(i-1)*(m_nMatrixOrder-2)-1,1)= i+1;
 	    }
