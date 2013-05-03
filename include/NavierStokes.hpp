@@ -235,18 +235,20 @@ m_dPressure(0,m_nMatrixOrder-1) = 0.5*(m_dPressure(0,m_nMatrixOrder-2)+\
 m_dPressure(m_nMatrixOrder-1,1));
 #endif
 
+#ifndef PRESSURE_DIFF_X
+#define PRESSURE_DIFF_X (m_dPressure(i+1,j)-m_dPressure(i-1,j))/(2*m_dDeltaX)
+#endif
+
+#ifndef PRESSURE_DIFF_Y
+#define PRESSURE_DIFF_Y (m_dPressure(i,j+1)-m_dPressure(i,j-1))/(2*m_dDeltaX)
+#endif
+
 #ifndef ITERATION_LIMIT
 #define ITERATION_LIMIT 30000
 #endif
 
 class NavierStokes {
 private:
-
-    Eigen::MatrixXd m_dVelocityX;
-    Eigen::MatrixXd m_dVelocityY;
-
-    Eigen::MatrixXd m_dVelocityXNextStep;
-    Eigen::MatrixXd m_dVelocityYNextStep;
 
     Eigen::MatrixXd m_dVelocityXNoPressure; 	/*term of velocity* in x axis*/
     Eigen::MatrixXd m_dVelocityYNoPressure; 	/*term of velocity* in y axis*/
@@ -257,11 +259,14 @@ private:
     Eigen::MatrixXd m_dPressureNonHomogeneity;
     Eigen::MatrixXd m_dPressureBoundaryConditions;
 
+    Eigen::MatrixXd m_dVelocityX;
+    Eigen::MatrixXd m_dVelocityY;
+
+    Eigen::MatrixXd m_dVelocityXNextStep;
+    Eigen::MatrixXd m_dVelocityYNextStep;
+
     Eigen::MatrixXd m_dVelocityXBoundaryCondition;
     Eigen::MatrixXd m_dVelocityYBoundaryCondition;
-
-    Eigen::MatrixXd m_dNavierStokesSolutionX;
-    Eigen::MatrixXd m_dNavierStokesSolutionY;
 
     Eigen::MatrixXd m_dPressure;
     Eigen::MatrixXd m_dError;
@@ -283,7 +288,6 @@ private:
     void PressureSolver();
     void compute_dError();
     void VelocityNextStep();
-    void NextStep();
 
 public:
     void NavierStokesSolver();
@@ -308,7 +312,7 @@ public:
 //    virtual ~NavierStokes();
 
     void move(PyObject* pyArraySolutionX, PyObject* pyArraySolutionY); //function to move to python variable
-
+    void NextStep();
 };
 
 #endif /* NAVIERSTOKES_HPP_ */

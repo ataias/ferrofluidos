@@ -243,11 +243,26 @@ void NavierStokes::PressureSolver(){
 }
 
 void NavierStokes::VelocityNextStep(){
+	Eigen::MatrixXd dPressureDiffX = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+	Eigen::MatrixXd dPressureDiffY = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+	//Computing gradient of pressure
+	//in X
+	for(int i=1; i<m_nMatrixOrder-1; i++){
+		for(int j=1; j<m_nMatrixOrder-1; j++){
+			dPressureDiffX(i,j)=PRESSURE_DIFF_X;
+			dPressureDiffY(i,j)=PRESSURE_DIFF_Y;
+		}
+	}
+	m_dVelocityXNextStep = m_dVelocityXNoPressure - (m_dDeltaT / m_dRho)*dPressureDiffX;
+	m_dVelocityYNextStep = m_dVelocityYNoPressure - (m_dDeltaT / m_dRho)*dPressureDiffY;
+	//Compute next step
+
 	std::cout << "VelocityNextStep\n";
 }
 
 void NavierStokes::NextStep(){
-
+	m_dVelocityX = m_dVelocityXNextStep;
+	m_dVelocityY = m_dVelocityYNextStep;
 	std::cout << "NextStep\n";
 }
 
@@ -285,7 +300,7 @@ int NavierStokes::NavierStokesPython(
 void NavierStokes::NavierStokesSolver(){
 	NavierStokes::VelocityNoPressure();
 	NavierStokes::PressureSolver();
-	NavierStokes::NextStep();
+	NavierStokes::VelocityNextStep();
 	std::cout << "Em construção.\n";
 }
 
@@ -293,8 +308,8 @@ void NavierStokes::NavierStokesSolver(){
 void NavierStokes::move(PyObject* pyArraySolutionX, PyObject* pyArraySolutionY){
 	Eigen::Map<Eigen::MatrixXd> _pyArraySolutionX((double *) PyArray_DATA(pyArraySolutionX),m_nMatrixOrder,m_nMatrixOrder);
 	Eigen::Map<Eigen::MatrixXd> _pyArraySolutionY((double *) PyArray_DATA(pyArraySolutionY),m_nMatrixOrder,m_nMatrixOrder);
-	_pyArraySolutionX = m_dNavierStokesSolutionX;
-	_pyArraySolutionY = m_dNavierStokesSolutionY;
+	_pyArraySolutionX = m_dVelocityXNextStep;
+	_pyArraySolutionY = m_dVelocityYNextStep;
 }
 
 
