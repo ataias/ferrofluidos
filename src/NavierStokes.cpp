@@ -27,7 +27,7 @@
  -\nabla p+\mu\nabla^2\textbf{v}+\textbf{f}\f$
  */
 
-#include <../include/NavierStokes.hpp>
+#include "../include/NavierStokes.hpp"
 
 template<typename Derived>
 int NavierStokes::NavierStokesInit(
@@ -84,8 +84,13 @@ int NavierStokes::NavierStokesInit(
 		m_nTime = 0;
 		m_dDeltaX = 1.0/(m_nMatrixOrder-1);
 		m_dDeltaX2 = m_dDeltaX*m_dDeltaX;
-                m_dPressureNonHomogeneity = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
-                m_dPressureBoundaryConditions = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);               
+		m_dPressureNonHomogeneity = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+		m_dPressureBoundaryConditions = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+		m_dPressure = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+		m_dError = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+	    m_dVelocityXNextStep = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+	    m_dVelocityYNextStep = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+
 		return(0);
 
 } /*NavierStokesInit()*/
@@ -109,8 +114,16 @@ void NavierStokes::VelocityNoPressure()
 			for(int j=1; j<m_nMatrixOrder-1; j++)
 			{
 			//These are additional variables to help the calculation of velocities
-			dVelocityXSum = VELOCITY_X_SUM;
-			dVelocityYSum = VELOCITY_Y_SUM;
+			dVelocityXSum = VELOCITY_X_SUM; /*!< VELOCITY_X_SUM
+			 * This part stands for the sum of velocities in the X axis.
+			 * @f[\textbf{v}^s=(u^s, v^s) @f]
+			 * The 's' stands for 'sum'
+			 * @f[ u_{ij}^s=u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1}@f]*/
+
+			dVelocityYSum = VELOCITY_Y_SUM; /*!<This part stands for the sum of velocities in the Y axis.
+			 * @f[\textbf{v}^s=(u^s, v^s) @f]
+			 * The 's' stands for 'sum'
+			 * @f[ v_{ij}^s=v_{i+1j}+v_{i-1j}+v_{ij+1}+v_{ij-1}@f]*/
 			dVelocityXAverage = VELOCITY_X_AVERAGE;
 			dVelocityYAverage = VELOCITY_Y_AVERAGE;
 			//m_dNu = m_dMi/m_dRho = Kinematic Viscosity
@@ -159,31 +172,34 @@ void NavierStokes::MakePressureConditions(){
 } /*MakePressureConditions()*/
 
 void NavierStokes::compute_dError(){
-    		  //Derivative tests
-		  for(int i = 0; i<m_nMatrixOrder; i++)
-			  for(int j = 0; j<m_nMatrixOrder; j++){
-		          //QUINAS
-		          if(i==0 && j==0)
-		        	  continue;
-		          if(i==0 && j==m_nMatrixOrder-1)
-		        	  continue;
-		          if(i==m_nMatrixOrder-1 && j==0)
-		        	  continue;
-		          if(i==m_nMatrixOrder-1 && j==m_nMatrixOrder-1)
-		              continue;
+	Eigen::MatrixXd dError = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+	//Derivative tests
+	for(int i = 0; i<m_nMatrixOrder; i++)
+		for(int j = 0; j<m_nMatrixOrder; j++){
+			//QUINAS
+			if(i==0 && j==0)
+				continue;
+			if(i==0 && j==m_nMatrixOrder-1)
+				continue;
+			if(i==m_nMatrixOrder-1 && j==0)
+				continue;
+			if(i==m_nMatrixOrder-1 && j==m_nMatrixOrder-1)
+				continue;
 
-		          if(i==0)        //NORTH POINT
-		        	  PRESSURE_NORTH_DERIVATIVE
-		          else if(i==m_nMatrixOrder-1) //SOUTH POINT
-		        	  PRESSURE_SOUTH_DERIVATIVE
-		          else if (j==0)      //WEST POINT
-		        	  PRESSURE_WEST_DERIVATIVE
-		          else if(j==m_nMatrixOrder-1) //EAST POINT
-		        	  PRESSURE_EAST_DERIVATIVE
-		          else //INTERNAL POINT
-		        	  POISSON_EQUATION_INTERNAL_POINT
-			  }
-		  //End derivative tests
+			if(i==0){        //NORTH POINT
+				PRESSURE_NORTH_DERIVATIVE
+			} else if(i==m_nMatrixOrder-1){ //SOUTH POINT
+				PRESSURE_SOUTH_DERIVATIVE
+			} else if (j==0){      //WEST POINT
+				PRESSURE_WEST_DERIVATIVE
+			} else if(j==m_nMatrixOrder-1){ //EAST POINT
+				PRESSURE_EAST_DERIVATIVE
+			} else { //INTERNAL POINT
+				PRESSURE_EQUATION_INTERNAL_POINT
+			}
+		}
+	m_dError = dError;
+	//End derivative tests
 }
 void NavierStokes::PressureSolver(){
 	bool bStopCondition=false;
@@ -213,21 +229,25 @@ void NavierStokes::PressureSolver(){
 
 		  double dMinimumValue = dPressure.minCoeff();
 		  dPressure = dPressure - Eigen::MatrixXd::Constant(m_nMatrixOrder, m_nMatrixOrder, dMinimumValue);
-		  dError = Eigen::MatrixXd::Zero(m_nMatrixOrder, m_nMatrixOrder);
           NavierStokes::compute_dError();
-		  double d_error = dError.norm();
+		  double d_error = m_dError.norm();
 		  if(d_error < 1e-13) bStopCondition=true; //Condição de parada
 
-		  dPoissonNoSparseOld = dPoissonNoSparse;
-		  std::cout << "N = " << N << " " << d_error << "\n";
-	}while(!STOP);
+		  dPressureOld = dPressure;
+		  std::cout << "N = " << nMatrixIterations << " " << d_error << "\n";
+	}while(!bStopCondition);
 
 	//Corners
-	m_dNeumannSolution = dPoissonNoSparse;
-	CORRECT_CORNERS_NEUMANN
+	m_dPressure = dPressure;
+	CORRECT_CORNERS_PRESSURE
+}
+
+void NavierStokes::VelocityNextStep(){
+	std::cout << "VelocityNextStep\n";
 }
 
 void NavierStokes::NextStep(){
+
 	std::cout << "NextStep\n";
 }
 

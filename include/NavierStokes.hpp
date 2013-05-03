@@ -1,5 +1,6 @@
-/*
- * NavierStokes.hpp
+/**
+ * @file NavierStokes.hpp
+ * @author Ataias Pereira Reis
  *
  *  Created on: Dec 29, 2012
  *      Author: ataias
@@ -8,7 +9,7 @@
 #ifndef NAVIERSTOKES_HPP_
 #define NAVIERSTOKES_HPP_
 
-#include<stdheader.hpp>
+#include "stdheader.hpp"
 #include <boost/python/detail/wrap_python.hpp>
 #include <boost/python.hpp>
 #include <numpy/arrayobject.h>
@@ -17,26 +18,28 @@
 #include <boost/python/def.hpp>
 using namespace boost::python;
 
-/**This part stands for the sum of velocities in the X axis.
+/** @defgroup group1 The First Group
+ *  This is the first group
+ *  @{
+ */
+
+#ifndef VELOCITY_X_SUM
+#define VELOCITY_X_SUM /*!< VELOCITY_X_SUM
+ * This part stands for the sum of velocities in the X axis.
  * @f[\textbf{v}^s=(u^s, v^s) @f]
  * The 's' stands for 'sum'
- * @f[ u_{ij}^s=u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1}@f]
- * */
-#ifndef VELOCITY_X_SUM
-#define VELOCITY_X_SUM \
+ * @f[ u_{ij}^s=u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1}@f]*/ \
 m_dVelocityX(i+1,j)+\
 m_dVelocityX(i-1,j)\
 +m_dVelocityX(i,j+1)+\
 m_dVelocityX(i,j-1)
 #endif /* VELOCITY_X_SUM */
 
-/**This part stands for the sum of velocities in the Y axis.
+#ifndef VELOCITY_Y_SUM
+#define VELOCITY_Y_SUM /*!<This part stands for the sum of velocities in the Y axis.
  * @f[\textbf{v}^s=(u^s, v^s) @f]
  * The 's' stands for 'sum'
- * @f[ v_{ij}^s=v_{i+1j}+v_{i-1j}+v_{ij+1}+v_{ij-1}@f]
- * */
-#ifndef VELOCITY_Y_SUM
-#define VELOCITY_Y_SUM \
+ * @f[ v_{ij}^s=v_{i+1j}+v_{i-1j}+v_{ij+1}+v_{ij-1}@f]*/ \
 m_dVelocityY(i+1,j)+\
 m_dVelocityY(i-1,j)\
 +m_dVelocityY(i,j+1)+\
@@ -93,6 +96,8 @@ m_dVelocityY(i-1,j-1))
 +m_dVelocityY(i,j)
 #endif /* VELOCITY_Y_NO_PRESSURE */
 
+/** @}*/
+
 #ifndef NON_HOMOGENEITY_NAVIER_PRESSURE
 #define NON_HOMOGENEITY_NAVIER_PRESSURE \
 dPressureNonHomogeneity(i,j) =\
@@ -104,7 +109,8 @@ m_dRho*(\
 
 #ifndef POISSON_NAVIER_LEFT_BOUNDARY_CONDITION
 #define POISSON_NAVIER_LEFT_BOUNDARY_CONDITION \
-dPressureBoundaryConditions(i,0) = \
+int j = 0; \
+dPressureBoundaryConditions(i,0) =	\
 -m_dRho*m_dNu*(-5*m_dVelocityXNoPressure(i,j+1)\
 +4*m_dVelocityXNoPressure(i,j+2)\
 -m_dVelocityXNoPressure(i,j+3))/m_dDeltaX2 \
@@ -113,6 +119,7 @@ dPressureBoundaryConditions(i,0) = \
 
 #ifndef POISSON_NAVIER_RIGHT_BOUNDARY_CONDITION
 #define POISSON_NAVIER_RIGHT_BOUNDARY_CONDITION \
+int j = m_nMatrixOrder - 1; \
 dPressureBoundaryConditions(i,m_nMatrixOrder-1)= \
 -m_dRho*m_dNu*(-5*m_dVelocityXNoPressure(i,j-1)\
 +4*m_dVelocityXNoPressure(i,j-2)\
@@ -122,6 +129,7 @@ dPressureBoundaryConditions(i,m_nMatrixOrder-1)= \
 
 #ifndef POISSON_NAVIER_TOP_BOUNDARY_CONDITION
 #define POISSON_NAVIER_TOP_BOUNDARY_CONDITION \
+int i = 0;\
 dPressureBoundaryConditions(0,j)= \
 -m_dRho*m_dNu*(-5*m_dVelocityXNoPressure(i+1,j)\
 +4*m_dVelocityXNoPressure(i+2,j)\
@@ -131,7 +139,8 @@ dPressureBoundaryConditions(0,j)= \
 
 #ifndef POISSON_NAVIER_BOTTOM_BOUNDARY_CONDITION
 #define POISSON_NAVIER_BOTTOM_BOUNDARY_CONDITION \
-dPressureBoundaryConditions(m_nMatrixOrder,j)= \
+int i = m_nMatrixOrder - 1; \
+dPressureBoundaryConditions(i,j)= \
 -m_dRho*m_dNu*(-5*m_dVelocityXNoPressure(i-1,j)\
 +4*m_dVelocityXNoPressure(i-2,j)\
 -m_dVelocityXNoPressure(i-3,j))/m_dDeltaX2 \
@@ -140,65 +149,90 @@ dPressureBoundaryConditions(m_nMatrixOrder,j)= \
 
 #ifndef PRESSURE_INTERNAL_POINTS
 #define PRESSURE_INTERNAL_POINTS \
-dPressure(i,j) = -0.25*dDeltaX2*m_dPressureNonHomogeneity(i,j) +\
-0.25*(dPressure(i-1,j)+dPressure(i+1,j)+\
-dPressure(i,j-1)+dPressure(i,j+1))
+dPressure(i,j) = -0.25*m_dDeltaX2*m_dPressureNonHomogeneity(i,j) +\
+0.25*(dPressureOld(i-1,j)+dPressureOld(i+1,j)+\
+dPressureOld(i,j-1)+dPressureOld(i,j+1))
 #endif
 
+/*nessa parte, eu estou na dúvida se tem sinais errados*/
 #ifndef POISSON_NAVIER_LEFT
 #define POISSON_NAVIER_LEFT \
-dPressure(i,j) = dPressure(i,j+1) - m_dDeltaX*m_dPressureBoundaryConditions(i,j)
+dPressure(i,j) = dPressureOld(i,j+1) - m_dDeltaX*m_dPressureBoundaryConditions(i,j)
 #endif
 
 #ifndef POISSON_NAVIER_RIGHT
 #define POISSON_NAVIER_RIGHT \
-dPressure(i,j) = dPressure(i,j-1) - m_dDeltaX*m_dPressureBoundaryConditions(i,j)
+dPressure(i,j) = dPressureOld(i,j-1) - m_dDeltaX*m_dPressureBoundaryConditions(i,j)
 #endif
 
 #ifndef POISSON_NAVIER_TOP
 #define POISSON_NAVIER_TOP \
-dPressure(i,j) = dPressure(i+1,j) - m_dDeltaX*m_dPressureBoundaryConditions(i,j)
+dPressure(i,j) = dPressureOld(i+1,j) - m_dDeltaX*m_dPressureBoundaryConditions(i,j)
 #endif
 
 #ifndef POISSON_NAVIER_BOTTOM
 #define POISSON_NAVIER_BOTTOM \
-dPressure(i,j) = dPressure(i-1,j) - m_dDeltaX*m_dPressureBoundaryConditions(i,j)
+dPressure(i,j) = dPressureOld(i-1,j) - m_dDeltaX*m_dPressureBoundaryConditions(i,j)
 #endif
 
-#ifndef PRESSURE_NORTH_DERIVATIVE
+#ifndef PRESSURE_NORTH_DERIVATIVE //assert i == 0
 #define PRESSURE_NORTH_DERIVATIVE \
-dError(i,j) =  \
-(-1.5*dPressure(i,j)+\
-2*dPressure(i+1,j)-\
-0.5*dPressure(i+2,j))/m_dDeltaX\
-+m_dBoundaryConditions(i,j);
+dError(i,j) = (\
+m_dPressure(i+1,j)\
+-m_dPressure(i,j))\
+/m_dDeltaX\
++m_dPressureBoundaryConditions(i,j);
 #endif
 
-#ifndef PRESSURE_SOUTH_DERIVATIVE
+#ifndef PRESSURE_SOUTH_DERIVATIVE //assert i == m_nMatrixOrder-1
 #define PRESSURE_SOUTH_DERIVATIVE \
-dError(i,j) =  \
-( 1.5*dPoissonNoSparse(i,j)\
--2*dPoissonNoSparse(i-1,j)\
-+0.5*dPoissonNoSparse(i-2,j))/dDeltaX\
-+m_dBoundaryConditions(i,j);
+dError(i,j) =  (\
+m_dPressure(i,j)\
+-m_dPressure(i-1,j))\
+/m_dDeltaX\
+-m_dPressureBoundaryConditions(i,j);
 #endif
 
-#ifndef PRESSURE_WEST_DERIVATIVE
+#ifndef PRESSURE_WEST_DERIVATIVE // assert j == 0
 #define PRESSURE_WEST_DERIVATIVE \
-dError(i,j) =  \
-(-1.5*dPoissonNoSparse(i,j)\
-+2*dPoissonNoSparse(i,j+1)\
--0.5*dPoissonNoSparse(i,j+2))/dDeltaX\
-+m_dBoundaryConditions(i,j);
+dError(i,j) =  (\
+m_dPressure(i,j)\
+-m_dPressure(i,j+1))\
+/m_dDeltaX\
++m_dPressureBoundaryConditions(i,j);
 #endif
 
-#ifndef PRESSURE_EAST_DERIVATIVE
+#ifndef PRESSURE_EAST_DERIVATIVE // assert j == m_nMatrixOrder - 1
 #define PRESSURE_EAST_DERIVATIVE \
-dError(i,j) =  \
-( 1.5*dPoissonNoSparse(i,j)\
--2*dPoissonNoSparse(i,j-1)\
-+0.5*dPoissonNoSparse(i,j-2))/dDeltaX\
-+m_dBoundaryConditions(i,j);
+dError(i,j) = (\
+m_dPressure(i,j)\
+-m_dPressure(i,j-1))\
+/m_dDeltaX\
+-m_dPressureBoundaryConditions(i,j);
+#endif
+
+#ifndef PRESSURE_EQUATION_INTERNAL_POINT
+#define PRESSURE_EQUATION_INTERNAL_POINT \
+dError(i,j) = \
+(m_dPressure(i-1,j)\
++m_dPressure(i+1,j)\
++m_dPressure(i,j-1)\
++m_dPressure(i,j+1)\
+-4*m_dPressure(i,j))/m_dDeltaX2\
+-m_dPressureNonHomogeneity(i,j);
+#endif
+
+#ifndef CORRECT_CORNERS_PRESSURE
+#define CORRECT_CORNERS_PRESSURE \
+m_dPressure(0,0) = 0.5*(m_dPressure(0,1)+m_dPressure(1,0));\
+m_dPressure(m_nMatrixOrder-1,0) = 0.5*(m_dPressure(m_nMatrixOrder-2,0)+\
+m_dPressure(m_nMatrixOrder-1,1));\
+\
+m_dPressure(m_nMatrixOrder-1,m_nMatrixOrder-1) = 0.5*(m_dPressure(m_nMatrixOrder-2,m_nMatrixOrder-1)+\
+m_dPressure(m_nMatrixOrder-1,m_nMatrixOrder-2));\
+\
+m_dPressure(0,m_nMatrixOrder-1) = 0.5*(m_dPressure(0,m_nMatrixOrder-2)+\
+m_dPressure(m_nMatrixOrder-1,1));
 #endif
 
 #ifndef ITERATION_LIMIT
@@ -210,6 +244,9 @@ private:
 
     Eigen::MatrixXd m_dVelocityX;
     Eigen::MatrixXd m_dVelocityY;
+
+    Eigen::MatrixXd m_dVelocityXNextStep;
+    Eigen::MatrixXd m_dVelocityYNextStep;
 
     Eigen::MatrixXd m_dVelocityXNoPressure; 	/*term of velocity* in x axis*/
     Eigen::MatrixXd m_dVelocityYNoPressure; 	/*term of velocity* in y axis*/
@@ -225,6 +262,9 @@ private:
 
     Eigen::MatrixXd m_dNavierStokesSolutionX;
     Eigen::MatrixXd m_dNavierStokesSolutionY;
+
+    Eigen::MatrixXd m_dPressure;
+    Eigen::MatrixXd m_dError;
 
     int m_nMatrixOrder;
 
@@ -242,6 +282,7 @@ private:
     void MakePressureConditions();
     void PressureSolver();
     void compute_dError();
+    void VelocityNextStep();
     void NextStep();
 
 public:
