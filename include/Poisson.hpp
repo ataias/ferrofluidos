@@ -9,7 +9,7 @@
 #ifndef POISSON_HPP_
 #define POISSON_HPP_
 
-#include <stdheader.hpp>
+#include "stdheader.hpp"
 #include <boost/python/detail/wrap_python.hpp>
 #include <boost/python.hpp>
 #include <numpy/arrayobject.h>
