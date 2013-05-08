@@ -2,7 +2,7 @@
 # Packages needed for PIBIC files
 ######################################################################################
 
-set(CMAKE_C_FLAGS "-Wall -g -fopenmp ${CMAKE_CPP_FLAGS}")
+set(CMAKE_C_FLAGS "-fopenmp -Wcpp ${CMAKE_CPP_FLAGS}")
 INCLUDE_DIRECTORIES(/home/ataias/workspace/ff/include)
 
 IF(USING_PYTHON)

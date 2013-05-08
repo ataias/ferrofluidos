@@ -46,7 +46,7 @@ ENDIF()
 #Python and wrapping
 IF(USING_PYTHON)
 find_package(PythonLibs 2.7 REQUIRED)
-set(PYTHON_LIBRARIES "/usr/lib/python2.7/config/libpython2.7.so")
+#set(PYTHON_LIBRARIES "/usr/lib/python2.7/config/libpython2.7.so")
 INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIRS})
 message("Include dirs of Python: " ${PYTHON_INCLUDE_DIRS} )
 message("Libs of Python: " ${PYTHON_LIBRARIES} )
