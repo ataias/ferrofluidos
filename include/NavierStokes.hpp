@@ -54,9 +54,9 @@ m_dVelocityY(i,j-1)
 #ifndef VELOCITY_X_AVERAGE
 #define VELOCITY_X_AVERAGE \
 0.25*(m_dVelocityX(i,j)+\
-m_dVelocityX(i-1,j)\
-+m_dVelocityX(i,j+1)+\
-m_dVelocityX(i-1,j-1))
+m_dVelocityX(i+1,j)\
++m_dVelocityX(i+1,j-1)+\
+m_dVelocityX(i,j-1))
 #endif /* VELOCITY_X_AVERAGE */
 
 /**This part stands for the average of velocities in the X axis.
@@ -68,8 +68,8 @@ m_dVelocityX(i-1,j-1))
 #define VELOCITY_Y_AVERAGE \
 0.25*(m_dVelocityY(i,j)+\
 m_dVelocityY(i-1,j)\
-+m_dVelocityY(i,j+1)+\
-m_dVelocityY(i-1,j-1))
++m_dVelocityY(i-1,j+1)+\
+m_dVelocityY(i,j+1))
 #endif /* VELOCITY_Y_AVERAGE */
 
 /** This part stand for the velocity obtained by Navier Stokes equation without considering the pressure
@@ -78,7 +78,7 @@ m_dVelocityY(i-1,j-1))
  * */
 #ifndef VELOCITY_X_NO_PRESSURE
 #define VELOCITY_X_NO_PRESSURE \
-(m_dNu*(dVelocityXSum-4*m_dVelocityX(i,j))/m_dDeltaX2+m_dExternalForceX(i,j)/m_dRho\
+(m_dNu*(dVelocityXSum-4*m_dVelocityX(i,j))/m_dDeltaX2+((m_dExternalForceX(i,j)+m_dExternalForceX(i-1,j))/(2.*m_dRho))\
 -m_dVelocityX(i,j)*(m_dVelocityX(i+1,j)-m_dVelocityX(i-1,j))/(2*m_dDeltaX)\
 -dVelocityYAverage*(m_dVelocityX(i,j+1)-m_dVelocityX(i,j-1))/(2*m_dDeltaX))*m_dDeltaT\
 +m_dVelocityX(i,j)
@@ -90,7 +90,7 @@ m_dVelocityY(i-1,j-1))
  * */
 #ifndef VELOCITY_Y_NO_PRESSURE
 #define VELOCITY_Y_NO_PRESSURE \
-(m_dNu*(dVelocityYSum-4*m_dVelocityY(i,j))/m_dDeltaX2+m_dExternalForceY(i,j)/m_dRho\
+(m_dNu*(dVelocityYSum-4*m_dVelocityY(i,j))/m_dDeltaX2+((m_dExternalForceY(i,j)+m_dExternalForceY(i,j-1))/(2.*m_dRho))\
 -dVelocityXAverage*(m_dVelocityY(i+1,j)-m_dVelocityY(i-1,j))/(2*m_dDeltaX)\
 -m_dVelocityY(i,j)*(m_dVelocityY(i,j+1)-m_dVelocityY(i,j-1))/(2*m_dDeltaX))*m_dDeltaT\
 +m_dVelocityY(i,j)
@@ -102,8 +102,8 @@ m_dVelocityY(i-1,j-1))
 #define NON_HOMOGENEITY_NAVIER_PRESSURE \
 dPressureNonHomogeneity(i,j) =\
 m_dRho*(\
-(m_dVelocityXNoPressure(i+1,j)-m_dVelocityXNoPressure(i-1,j))/(2*m_dDeltaX)\
--(m_dVelocityXNoPressure(i+1,j)-m_dVelocityXNoPressure(i-1,j))/(2*m_dDeltaX)\
+(m_dVelocityXNoPressure(i+1,j)-m_dVelocityXNoPressure(i,j))/m_dDeltaX\
++(m_dVelocityYNoPressure(i,j+1)-m_dVelocityYNoPressure(i,j))/m_dDeltaX\
 )/m_dDeltaT
 #endif /*NON_HOMOGENEITY_NAVIER*/
 

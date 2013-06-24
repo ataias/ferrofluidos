@@ -23,18 +23,18 @@ p+\mu\nabla^2\textbf{v}+\textbf{f}\\
 
 \begin{eqnarray}
 \textbf{v}_{ij}^s=(u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1},v_{i+1j}+v_{i-1j}+v_{ij+1}+v_{ij-1})\\
-\textbf{v}_{ij}^t=\frac{1}{4}(u_{ij}+u_{i-1j}+u_{i-1j-1}+u_{ij+1},v_{ij}+v_{i-1j}+v_{i-1j-1}+v_{ij+1})
+\textbf{v}_{ij}^t=\frac{1}{4}(u_{ij}+u_{i+1j}+u_{i+1j-1}+u_{ij-1},v_{ij}+v_{i-1j}+v_{i-1j+1}+v_{ij+1})
 \end{eqnarray}
 \begin{eqnarray}
 u_{ij}^{*}&=&\left[\frac{\mu}{\rho}\left(\frac{u_{ij}^s-4u_{ij}}{\Delta
-x^2}\right)+\frac{f_{x,ij}}{\rho}\right] + u_{ij}\nonumber \\
+x^2}\right)+\frac{1}{\rho}\frac{f_{x,ij}+f_{x,i-1j}}{2}\right] + u_{ij}\nonumber \\
 &-&\left[u_{ij}\frac{u_{i+1j}-u_{i-1j}}{2\Delta
 x}-v_{ij}^t\frac{u_{ij+1}-u_{ij-1}}{2\Delta x}\right]\Delta t
 \end{eqnarray}
 
 \begin{eqnarray}
 v_{ij}^{*}&=&\left[\frac{\mu}{\rho}\left(\frac{v_{ij}^s-4v_{ij}}{\Delta
-x^2}\right)+\frac{f_{y,ij}}{\rho}\right] + v_{ij}\nonumber \\
+x^2}\right)+\frac{1}{\rho}\frac{f_{y,ij}+f_{y,ij-1}}{2}\right] + v_{ij}\nonumber \\
 &-&\left[u_{ij}^t\frac{v_{i+1j}-v_{i-1j}}{2\Delta
 x}-v_{ij}\frac{v_{ij+1}-v_{ij-1}}{2\Delta x}\right]\Delta t
 \end{eqnarray}
@@ -48,7 +48,7 @@ x}-v_{ij}\frac{v_{ij+1}-v_{ij-1}}{2\Delta x}\right]\Delta t
 \end{equation}
 \paragraph{} Dado ter-se um sistema resolvendo a equação de poisson, basta-se calcular o termo da direita e colocar como não-homogeneidade.
 \begin{equation}
-f_{ij}=\frac{\rho}{\Delta t}\left( \frac{u_{i+1j}^*-u_{i-1j}^*}{2\Delta x}+\frac{v_{ij+1}^*-v_{ij-1}^*}{2\Delta x}\right)
+DIV_{ij}=\frac{\rho}{\Delta t}\left( \frac{u_{i+1j}^*-u_{ij}^*}{\Delta x}+\frac{v_{ij+1}^*-v_{ij}^*}{\Delta x}\right)
 \end{equation}
 \paragraph{} As condições de contorno são todas de Neumann. Para pontos internos à malha, tem-se:
 \begin{equation}
@@ -110,8 +110,8 @@ v^{n+1}=v^*-\frac{\Delta t}{\rho}\frac{\partial p}{\partial y}
 \paragraph{} Basta discretizar os termos das derivadas parciais agora:
 
 \begin{eqnarray}
-p_{x,ij}=\frac{p_{i+1j}-p_{i-1j}}{2\Delta x}\\
-p_{y,ij}=\frac{p_{ij+1}-p_{ij+1}}{2\Delta x}
+p_{x,ij}=\frac{p_{ij}-p_{i-1j}}{\Delta x}\\
+p_{y,ij}=\frac{p_{ij}-p_{ij-1}}{\Delta x}
 \end{eqnarray}
 
 \paragraph{} E finalmente tem-se a solução para o tempo $n+1$ a partir do tempo passado $n$:
