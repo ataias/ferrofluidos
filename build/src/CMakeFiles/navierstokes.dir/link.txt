@@ -1,1 +1,0 @@
-/usr/bin/c++  -fPIC    -shared -Wl,-soname,libnavierstokes.so -o libnavierstokes.so CMakeFiles/navierstokes.dir/NavierStokes.cpp.o -lboost_filesystem -lboost_system -lboost_date_time -lboost_python -lpython2.7 

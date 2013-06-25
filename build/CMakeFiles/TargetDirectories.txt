@@ -1,2 +1,0 @@
-/home/ataias/git/ff/build/src/CMakeFiles/navierstokes.dir
-/home/ataias/git/ff/build/src/CMakeFiles/poisson.dir
