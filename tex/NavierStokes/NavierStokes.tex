@@ -52,7 +52,7 @@ DIV_{ij}=\frac{\rho}{\Delta t}\left( \frac{u_{i+1j}^*-u_{ij}^*}{\Delta x}+\frac{
 \end{equation}
 \paragraph{} As condições de contorno são todas de Neumann. Para pontos internos à malha, tem-se:
 \begin{equation}
-p_{ij}=\frac{1}{4}[(p_{i+1j}+p_{i-1j}+p_{ij+1}+p_{ij-1})-\Delta x^2 f_{ij}]
+p_{ij}=\frac{1}{4}[(p_{i+1j}+p_{i-1j}+p_{ij+1}+p_{ij-1})-\Delta x^2 DIV_{ij}]
 \end{equation}
 \paragraph{} A rotina para Poisson com Neumann já está implementada. Falta agora
 as condições de contorno nas fronteiras. Como obtê-las?

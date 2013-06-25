@@ -214,9 +214,7 @@ void NavierStokes::PressureSolver(){
 
     for(int i = 0; i<m_nMatrixOrder; i++)
         for(int j = 0; j<m_nMatrixOrder; j++){
-            if(INTERNAL_POINT){
-                PRESSURE_INTERNAL_POINTS;
-            } else if(LEFT_POINT){
+            if(LEFT_POINT){
                 POISSON_NAVIER_LEFT;
             } else if(RIGHT_POINT) {
                 POISSON_NAVIER_RIGHT;
@@ -224,6 +222,26 @@ void NavierStokes::PressureSolver(){
                 POISSON_NAVIER_TOP;			
             } else if(BOTTOM_POINT){
                 POISSON_NAVIER_BOTTOM;				
+            }
+		}
+
+    for(int i = 0; i<m_nMatrixOrder; i++)
+        for(int j = 0; j<m_nMatrixOrder; j++){
+        	if(INTERNAL_POINT){
+        		PRESSURE_INTERNAL_POINTS;
+        	 }
+		}
+
+    for(int i = 0; i<m_nMatrixOrder; i++)
+        for(int j = 0; j<m_nMatrixOrder; j++){
+            if(LEFT_POINT){
+                POISSON_NAVIER_LEFT;
+            } else if(RIGHT_POINT) {
+                POISSON_NAVIER_RIGHT;
+            } else if(TOP_POINT) {
+                POISSON_NAVIER_TOP;
+            } else if(BOTTOM_POINT){
+                POISSON_NAVIER_BOTTOM;
             }
 		}
 
@@ -299,8 +317,21 @@ int NavierStokes::NavierStokesPython(
 
 void NavierStokes::NavierStokesSolver(){
 	NavierStokes::VelocityNoPressure();
+	NavierStokes::MakePressureConditions();
 	NavierStokes::PressureSolver();
 	NavierStokes::VelocityNextStep();
+	std::cout << "Velocity in X given" << std::endl;
+	std::cout << m_dVelocityX << "\n\n";
+	std::cout << "Velocity in Y given" << std::endl;
+	std::cout << m_dVelocityY << std::endl;
+	std::cout << "Pressure Boundary Conditions" << "\n";
+	std::cout << m_dPressureBoundaryConditions << "\n\n";
+	std::cout << "Pressure Non-Homogeneity" << "\n";
+    std::cout << m_dPressureNonHomogeneity << "\n\n";
+    std::cout << "VelocityXNoPressure" << "\n";
+    std::cout << m_dVelocityXNoPressure << "\n\n";
+    std::cout << "VelocityYNoPressure" << "\n";
+    std::cout << m_dVelocityYNoPressure << "\n\n";
 	std::cout << "Em construção.\n";
 }
 
@@ -311,7 +342,6 @@ void NavierStokes::move(PyObject* pyArraySolutionX, PyObject* pyArraySolutionY){
 	_pyArraySolutionX = m_dVelocityXNextStep;
 	_pyArraySolutionY = m_dVelocityYNextStep;
 }
-
 
 BOOST_PYTHON_MODULE(libnavierstokes)
 {
