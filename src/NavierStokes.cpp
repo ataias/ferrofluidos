@@ -212,8 +212,9 @@ void NavierStokes::PressureSolver(){
       if (nMatrixIterations == ITERATION_LIMIT) bStopCondition=true;
 	  nMatrixIterations++;
 
-    for(int i = 0; i<m_nMatrixOrder; i++)
-        for(int j = 0; j<m_nMatrixOrder; j++){
+    for(int i = -1; i<=m_nMatrixOrder; i++)
+        for(int j = -1; j<=m_nMatrixOrder; j++){
+        	//Agora vai de -1 até N, por causa da malha escalonada!
             if(LEFT_POINT){
                 POISSON_NAVIER_LEFT;
             } else if(RIGHT_POINT) {
@@ -232,8 +233,8 @@ void NavierStokes::PressureSolver(){
         	 }
 		}
 
-    for(int i = 0; i<m_nMatrixOrder; i++)
-        for(int j = 0; j<m_nMatrixOrder; j++){
+    for(int i = -1; i<=m_nMatrixOrder; i++)
+        for(int j = -1; j<=m_nMatrixOrder; j++){
             if(LEFT_POINT){
                 POISSON_NAVIER_LEFT;
             } else if(RIGHT_POINT) {
