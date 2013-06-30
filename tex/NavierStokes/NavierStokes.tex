@@ -2,7 +2,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
-
+\usepackage{tikz}
 \title{Navier Stokes}
 \author{Ataias Reis}
 
@@ -54,6 +54,10 @@ DIV_{ij}=\frac{\rho}{\Delta t}\left( \frac{u_{i+1j}^*-u_{ij}^*}{\Delta x}+\frac{
 \begin{equation}
 p_{ij}=\frac{1}{4}[(p_{i+1j}+p_{i-1j}+p_{ij+1}+p_{ij-1})-\Delta x^2 DIV_{ij}]
 \end{equation}
+\paragraph{} Quais pontos são internos à malha? São os pontos $x_{ij}$ em $D$ que é definido da seguinte maneira:
+\begin{equation}
+D = \{x_{ij}\,|\, 0\le i < N \textrm{ e } 0\le j < N \}
+\end{equation}
 \paragraph{} A rotina para Poisson com Neumann já está implementada. Falta agora
 as condições de contorno nas fronteiras. Como obtê-las?
 \paragraph{} Primeiramente, considere-se novamente a equação de Navier Stokes:
@@ -87,15 +91,81 @@ v}{\partial y^2}\Bigg|_{\textrm{parede}}+\rho f_y
 sequência, para as fronteiras da esquerda, direita, baixo e topo da matriz são
 as seguintes:
 \begin{eqnarray}
-\frac{p_{0j}-p_{-1j}}{\Delta x}=\frac{\rho\nu}{\Delta x}(2u_{ij}-5u_{i+1j}+4u_{i+2j}-u_{i+3j})+\frac{\rho\Delta
-x}{2}(f_{ij}+f_{i+1j})\\
-\frac{p_{nj}-p_{n-1j}}{\Delta x}=\frac{\rho\nu}{\Delta x}(2u_{ij}-5u_{i-1j}+4u_{i-2j}-u_{i-3j})+\frac{\rho\Delta
-x}{2}(f_{ij}+f_{i-1j})\\
-\frac{p_{i0}-p_{i-1}}{\Delta y}=\frac{\rho\nu}{\Delta y}(2v_{ij}-5v_{ij+1}+4v_{ij+2}-v_{ij+3})-\frac{\rho\Delta
-y}{2}(f_{ij}+f_{ij-1})\\
-\frac{p_{in}-p_{in-1}}{\Delta y}=\frac{\rho\nu}{\Delta y}(2v_{ij}-5v_{ij-1}+4v_{ij-2}-v_{ij-3})-\frac{\rho\Delta
-y}{2}(f_{ij}+f_{ij-1})
+\frac{p_{0j}-p_{-1j}}{\Delta x}=\frac{\rho\nu}{\Delta x^2}(2u_{ij}-5u_{i+1j}+4u_{i+2j}-u_{i+3j})+\frac{\rho}{2}(f_{ij}+f_{i+1j})\\
+\frac{p_{nj}-p_{n-1j}}{\Delta x}=\frac{\rho\nu}{\Delta x^2}(2u_{ij}-5u_{i-1j}+4u_{i-2j}-u_{i-3j})+\frac{\rho}{2}(f_{ij}+f_{i-1j})\\
+\frac{p_{i0}-p_{i-1}}{\Delta y}=\frac{\rho\nu}{\Delta y^2}(2v_{ij}-5v_{ij+1}+4v_{ij+2}-v_{ij+3})+\frac{\rho}{2}(f_{ij}+f_{ij-1})\\
+\frac{p_{in}-p_{in-1}}{\Delta y}=\frac{\rho\nu}{\Delta y^2}(2v_{ij}-5v_{ij-1}+4v_{ij-2}-v_{ij-3})+\frac{\rho}{2}(f_{ij}+f_{ij-1})
 \end{eqnarray}
+\paragraph{} Agora, tem-se as equações que serão utilizadas no domínio em questão, na malha escalonada, para resolver a equação da pressão em Navier Stokes. Abaixo tem-se o nosso domínio.
+
+\tikzstyle{help lines}+=[dashed]% aaarghhh!!!
+\begin{tikzpicture}
+%\draw (0,0) -- (xyz cs:x=3);
+%\draw (0,0) -- (xyz cs:y=3);
+
+\draw[->] (0,5) -- (xyz cs:y=6);
+\draw (0,6.3) node {$y(j)$};
+\draw[->] (5,0) -- (xyz cs:x=6);
+\draw (6.5,0) node {$x(i)$};
+\draw (-0.18,-0.18) node {$O$};
+
+\draw[style=help lines] (-1,-1) grid +(7,7);
+\draw (0,0) grid +(5,5);
+%\fill (canvas cs:x=-0.5cm,y=-0.5cm) circle (2pt);
+\draw (0.5,-0.5) circle (2pt);
+\draw (1.5,-0.5) circle (2pt);
+\draw (2.5,-0.5) circle (2pt);
+\draw (3.5,-0.5) circle (2pt);
+\draw (4.5,-0.5) circle (2pt);
+%\fill (canvas cs:x=5.5cm,y=-0.5cm) circle (2pt);
+\draw (-0.5,0.5) circle (2pt);
+\fill (canvas cs:x=0.5cm,y=0.5cm) circle (2pt);
+\fill (canvas cs:x=1.5cm,y=0.5cm) circle (2pt);
+\fill (canvas cs:x=2.5cm,y=0.5cm) circle (2pt);
+\fill (canvas cs:x=3.5cm,y=0.5cm) circle (2pt);
+\fill (canvas cs:x=4.5cm,y=0.5cm) circle (2pt);
+\draw (5.5,1.5) circle (2pt);
+\draw (5.5,0.5) circle (2pt);
+\draw (-0.5,1.5) circle (2pt);
+\fill (canvas cs:x=0.5cm,y=1.5cm) circle (2pt);
+\fill (canvas cs:x=1.5cm,y=1.5cm) circle (2pt);
+\fill (canvas cs:x=2.5cm,y=1.5cm) circle (2pt);
+\fill (canvas cs:x=3.5cm,y=1.5cm) circle (2pt);
+\fill (canvas cs:x=4.5cm,y=1.5cm) circle (2pt);
+\draw (-0.5,2.5) circle (2pt);
+\fill (canvas cs:x=0.5cm,y=2.5cm) circle (2pt);
+\fill (canvas cs:x=1.5cm,y=2.5cm) circle (2pt);
+\fill (canvas cs:x=2.5cm,y=2.5cm) circle (2pt);
+\fill (canvas cs:x=3.5cm,y=2.5cm) circle (2pt);
+\fill (canvas cs:x=4.5cm,y=2.5cm) circle (2pt);
+\draw (5.5,2.5) circle (2pt);
+\draw (-0.5,3.5) circle (2pt);
+\fill (canvas cs:x=0.5cm,y=3.5cm) circle (2pt);
+\fill (canvas cs:x=1.5cm,y=3.5cm) circle (2pt);
+\fill (canvas cs:x=2.5cm,y=3.5cm) circle (2pt);
+\fill (canvas cs:x=3.5cm,y=3.5cm) circle (2pt);
+\fill (canvas cs:x=4.5cm,y=3.5cm) circle (2pt);
+\draw (5.5,3.5) circle (2pt);
+\draw (-0.5,4.5) circle (2pt);
+\fill (canvas cs:x=0.5cm,y=4.5cm) circle (2pt);
+\fill (canvas cs:x=1.5cm,y=4.5cm) circle (2pt);
+\fill (canvas cs:x=2.5cm,y=4.5cm) circle (2pt);
+\fill (canvas cs:x=3.5cm,y=4.5cm) circle (2pt);
+\fill (canvas cs:x=4.5cm,y=4.5cm) circle (2pt);
+\draw (5.5,4.5) circle (2pt);
+%\fill (canvas cs:x=-0.5cm,y=5.5cm) circle (2pt);
+\draw (0.5,5.5) circle (2pt);
+\draw (1.5,5.5) circle (2pt);
+\draw (2.5,5.5) circle (2pt);
+\draw (3.5,5.5) circle (2pt);
+\draw (4.5,5.5) circle (2pt);
+%\fill (canvas cs:x=5.5cm,y=5.5cm) circle (2pt);
+%\draw[style=help lines] (0.7,0.5) rectangle (2.3,2.5);
+%\draw (0,0) rectangle (1.5,1.5);
+%\draw[style=help lines] (0.5,0.7) rectangle (2.5,2.3);
+\end{tikzpicture}
+
+\paragraph{} Cada um dos pontos pretos são pontos internos, e nestes pontos precisamos saber os valores das derivadas, de forma a obter a matriz $DIV$, para então utilizar na resolução da equação de Navier, que estamos originalmente interessados. Com a malha extendida, com a fronteira imaginária adicionada, ela fica no ``ponto'' para obter o gradiente de pressão usando derivadas centrais em cada um dos pontos, agora internos, da nossa malha extendida.
 
 \subsubsection{Resolver para o passo $t+\Delta t$}
 \paragraph{} Finalmente, tem-se:
