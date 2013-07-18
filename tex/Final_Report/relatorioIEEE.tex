@@ -1,0 +1,136 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+
+\usepackage{ae}
+% \usepackage[brazilian]{babel}
+\usepackage{hyphenat}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{cite}
+\usepackage[pdftex]{hyperref}
+\usepackage[pdftex]{color,graphicx}
+
+\usepackage[cmex10]{amsmath}
+
+\usepackage{array}
+
+\usepackage{mdwmath}
+\usepackage{mdwtab}
+\usepackage{url}
+
+\hyphenation{op-tical net-works semi-conduc-tor con-si-de-ram}
+
+\begin{document}
+\title{Um Estudo da Instabilidade de Saffman-Taylor com Fluido Magnético e, ou Anisotrópico}
+
+% author names and IEEE memberships
+% note positions of commas and nonbreaking spaces ( ~ ) LaTeX will not break
+% a structure at a ~ so this keeps an author's name from being broken across
+% two lines.
+% use \thanks{} to gain access to the first footnote area
+% a separate \thanks must be used for each paragraph as LaTeX2e's \thanks
+% was not built to handle multiple paragraphs
+
+\author{Ataias~Pereira~Reis, Yuri~Dumaresq~Sobral, Francisco~Ricardo~da~Cunha\\Universidade de Brasília\\Departamento de Matemática\\Brasília, Brasil\\ataiasreis@gmail.com}
+
+% The paper headers
+\markboth{ProIC, Julho~2013}%
+{Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for Journals}
+
+\maketitle
+
+
+\begin{abstract}
+%\boldmath
+Criação de algoritmos para resolver equações diferenciais parciais. Uso de diferenças finitas para resolver as equações de Laplace e Poisson, usando método ímplicito e explícito, usando bibliotecas de álgebra linear de código aberto. Análise da diferença de tempo de resolução entre os métodos implícito e explícito, e no caso do método explícito. Uso do método iterativo e de resolução direta de sistema linear. 
+\end{abstract}
+% IEEEtran.cls defaults to using nonbold math in the Abstract.
+% This preserves the distinction between vectors and scalars. However,
+% if the journal you are submitting to favors bold math in the abstract,
+% then you can use LaTeX's standard command \boldmath at the very start
+% of the abstract to achieve this. Many IEEE journals frown on math
+% in the abstract anyway.
+
+% Note that keywords are not normally used for peerreview papers.
+\begin{IEEEkeywords}
+Ferrofluidos, Navier~Stokes, EDP, Poisson, Laplace, Diferenças~finitas, Eigen
+\end{IEEEkeywords}
+
+% For peer review papers, you can put extra information on the cover
+% page as needed:
+% \ifCLASSOPTIONpeerreview
+% \begin{center} \bfseries EDICS Category: 3-BBND \end{center}
+% \fi
+%
+% For peerreview papers, this IEEEtran command inserts a page break and
+% creates the second title. It will be ignored for other modes.
+\IEEEpeerreviewmaketitle
+
+\section{Introdução}
+A instabilidade de Saffman-Taylor, o endedamento, ou \textit{fingering}, ocorre na superfície de contato entre dois fluidos. Ocorre quando um fluido menos viscoso é injetado para deslocar um outro mais viscoso (na situação inversa, do fluido mais viscoso usado para movimentar o outro, a interface é estavel, não ocorre o endedamento). Também pode ocorrer movida pela gravidade, ao invés de injeção de um fluido em outro. Neste caso, se a interface separando os fluidos de diferentes densidades está direcionada na horizontal, e o mais pesado em cima do outro. Este tipo de problema ocorre com a injeção de água em tubos de petrolíferas marítimas, para fazer o óleo subir. Este tipo de efeito é negativo na extração do petróleo, pois ocorrem bolhas de um líquido no outro que causam problemas para se obter somente o óleo.
+
+Para o estudo dessa instabilidade, que não é nada trivial, precisa-se de ferramentas númericas. A equação de Navier Stokes deve ser discretizada e então resolvida numericamente. Ela é uma equação diferencial parcial altamente não-linear e de difícil resolução. No caso da instabilidade de Saffman-Taylor, a fronteira se movimenta, que é a interface entre os dois fluidos, então também precisa-se de um método que lide bem com isso. 
+
+Tais ferramentas numéricas e decisão de métodos/algoritmos a se utilizar são a primeira etapa neste projeto. A apresentação no resto deste relatório mostrará até onde se alcançou na codificação dos algoritmos para resolução do problema proposto, que inicia-se com o estudo de equações diferenciais parciais e de diferenças finitas, o método utilizado para discretização, e o uso em partes da equações de Navier Stokes até chegar em sua totalidade.
+\section{Metodologia}
+A metologia aqui proposta tenta-se seguir uma ordem mais ou menos cronológica das tarefas e do que estava sendo utilizado ou não.
+\begin{enumerate}
+  \item Equação de Laplace
+  \item Ferramenta
+  \item Método Explícito
+  \item Método Implícito
+  \item git e python
+  \item Navier Stokes
+\end{enumerate}
+\subsection{Equação de Laplace}
+\subsubsection{Forma contínua}
+Primeiramente, teve-se a familiarização do aluno com a resolução de equações diferenciais parciais, realizando um curso na UnB, onde foram vistas principalmente a equação de Laplace, Poisson, Calor e Onda. O método de resolução aprendido foi por separação de variáveis, o método de Fourier. Após isso, o primeiro problema proposto foi resolver uma destas equações numericamente, a escolhida foi a equação de Laplace em duas dimensões, que segue abaixo:
+\begin{equation}
+\nabla^2 u=\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}=0\label{laplace}
+\end{equation}
+
+A primeira etapa na resolução desta equação de maneira numérica é discretizá-la, e isto quer dizer limitar o domínio, escolher um número de pontos em cada dimensão, e representar a equação como operações mais simples que o computador possa entender, diferentes da derivada. O escolhido foi utilizar as diferenças finitas.
+\subsubsection{Forma discreta - explícito}
+Para a discretização da equação \ref{laplace}, usa-se o método mencionado antes, que são as diferenças finitas. Este método basicamente faz a seguinte aproximação para a derivada:
+\begin{equation}
+f'(x)=\lim_{h\rightarrow 0}\frac{f(x+h)-f(x)}{h}=\frac{d}{dx}f(x)\approx \frac{f_i-f_{i-1}}{\Delta x}
+\end{equation}
+Os valores de $f_i$ são valores discretizados da função $f(x)$, ou seja, $f_i=f(i\Delta x)$. Agora a distância entre dois pontos passa a ser de $\Delta x$, e daí a derivada se calcula como a diferença entre um ponto e outro, dividida pela distância entre eles. Há vários tipos de diferenças: progressivas, regressivas, centrais e podem ter mais pontos, e diferentes ordens de erro podem ser obtidas dependendo dos valores de $\Delta x$ e do número de pontos usados nos cálculos. Para Laplace, utilizou-se diferenças centrais de segunda ordem. Neste caso, o erro é da ordem de $\Delta x^2$.
+\begin{equation}
+f''(x)\approx \frac{f(x+\Delta x)-2f(x)-f(x-\Delta x)}{\Delta x^2}
+\end{equation}
+Utilizando essa equação para laplace, chegamos na seguinte discretização, considerando $\Delta x=\Delta y$ e que a variável $x$ varia com pontos indicados pelo indice $i$ e a variável $y$ com o índice $j$:
+\begin{equation}
+\frac{u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1}-4u_{ij}}{\Delta x^2}=0
+\end{equation}
+Reordenando essa equação:
+\begin{equation}
+  u_{ij}=\frac{u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1}}{4}
+\end{equation}
+Esta é a forma explícita, na qual um ponto se obtém a partir de outros pontos, mas como quando se muda o valor de um ponto, ele influencia no cálculo de outros, esta fórmula deve ser aplicada muitas vezes, até se alcançar a convergência do domínio.
+\section{Resultados}
+\newpage
+\subsection{Programas\label{exemplos}}
+\newpage
+
+\subsection{Acessar dois Kinects}
+
+
+\section{Conclusão}
+
+% use section* for acknowledgement
+\section*{Agradecimentos}
+
+
+The authors would like to thank...
+
+\begin{thebibliography}{4}
+  
+\bibitem{ubuntu} \href{ftp://ftp.fisio.cinvestav.mx/Manuales/linux/Getting\%20Started\%20with\%20Ubuntu\%2010.10.pdf}{Getting Started with Ubuntu 10.10}
+\bibitem{openkinect} \href{http://openkinect.org/wiki/Main_Page}{OpenKinect}
+\end{thebibliography}
+
+\end{document}

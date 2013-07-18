@@ -1,0 +1,22 @@
+Orientador(a): Ricardo Lopes de Queiroz 
+Título do Projeto: Isolamento de Participantes de Teleconferência com Auxílio de 
+Mapas de Profundidade 
+Título do Plano de Trabalho: Captura de Imagens de Cor e Profundidade utilizando aparelho Kinect e um PC
+Aluno: Ataias Pereira Reis 
+1 - INTRODUÇÃO
+
+A captura e uso de imagens é, sem dúvida, um processo que ocorre sempre no cotidiano. A despeito da imensa utilidade, é possível que imagens sejam ainda mais vantajosas com a adaptação de outras características, ou a obtenção de outras características do ambiente numa imagem. Uma característica importante que se poderia adicionar numa imagem é a profundidade, há alguns dispositivos disponíveis no mercado atualmente que permitem obter essas informações de profundidade. Um deles é o Microsoft Kinect. Tendo em vista este dispositivo mencionado, o problema posto é de obter os dados externos com um Kinect conectado no computador, e posteriormente com mais de um Kinect, e analisando a viabilidade de sincronização de imagens obtidas de diferentes origens. 
+
+2 - METODOLOGIA
+A proposta inicial foi do sistema operacional utilizado foi GNU/Linux Ubuntu 11.04. A Microsoft tem drivers para Windows, mas não para Linux. Assim, pesquisou-se se existiam drivers para o sistema, e como foram achados, não houve necessidade de programá-los. Nesse ambiente, foi usada linguagem de programação C e C++, compilador g++ (Ubuntu/Linaro 4.5.2-8ubuntu4) 4.5.2. Foi utilizado o Microsoft Kinect, e para seu uso na plataforma GNU/Linux foi usada a biblioteca libfreenect, encontrada na internet. Foi feito um experimento para relacionar profundidade com distância, e alguns experimentos para analisar a viabilidade de múltiplos Kinects. O primeiro foi realizado com obtenção de várias imagens de profundidade de um objeto a diferentes distâncias. Os outros foram feitos com Kinects em diferentes posições e ângulos entre si para analisar a viabilidade. O programa MATLAB R2011a foi também utilizado, para tratamento de funções experimentais obtidas.
+
+3 - RESULTADOS
+Foi estudado o programa glview da biblioteca para se iniciar a compreensão de como utilizar a biblioteca de acesso ao kinect. Assim, teve-se a capacidade de se obter os valores de profundidade e imagens rgb do sistema. Após isso, tem-se que os primeiros resultados aqui apresentados são de um experimento feito para analisar-se a relação entre a matriz de profundidade e as distâncias reais, em metros, entre o Kinect e um ponto. Para isso, posicionou-se o Kinect  numa mesa e então pôs-se uma cadeira com uma caixa plana na sua frente e se foi distanciando a cadeira de forma a descobrir a profundidade que o kinect respondia para diferentes posições da cadeira. Para dois ou mais kinects, foi descoberto que há interferência de um sinal infravermelho de um e outros em certos casos, impossibilitando dados confiáveis de serem obtidos.
+
+4 - CONCLUSÃO
+O Kinect pode ser conectado com sucesso num ambiente GNU/Linux e além do mais se puderam obter imagens de profundidade. Com um experimento se pode ver que existe uma relação entre a profundidade obtida num ponto e distância do Kinect a um objeto. Um outro fato ao qual se chegou foi da possibilidade de interferência no uso de mais um Kinect, e que ainda está sendo estudada melhor, e que será melhor explanada no relatório final. A viabilidade de múltiplos Kinects ainda está sendo desenvolvida também, e os resultados e conclusões finais serão apresentados depois. 
+
+5 - PALAVRAS-CHAVE
+Kinect, imagem bidimensional, imagem tridimensional, profundidade, rgb, linux, libfreenect, c
+
+6 - COLABORADORES
