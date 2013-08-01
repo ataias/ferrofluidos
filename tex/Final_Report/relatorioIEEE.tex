@@ -20,6 +20,7 @@
 \usepackage{mdwmath}
 \usepackage{mdwtab}
 \usepackage{url}
+\usepackage{tikz}
 
 \hyphenation{op-tical net-works semi-conduc-tor con-si-de-ram}
 
@@ -108,10 +109,43 @@ Utilizando essa equação para laplace, chegamos na seguinte discretização, co
 \end{equation}
 Reordenando essa equação:
 \begin{equation}
-  u_{ij}=\frac{u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1}}{4}
+  u_{ij}=\frac{u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1}}{4} \label{laplace_discreta}
 \end{equation}
-Esta é a forma explícita, na qual um ponto se obtém a partir de outros pontos, mas como quando se muda o valor de um ponto, ele influencia no cálculo de outros, esta fórmula deve ser aplicada muitas vezes, até se alcançar a convergência do domínio.
+\subsubsection{Domínio}
+A equação da fórmula \ref{laplace_discreta} está na forma explícita, na qual um ponto se obtém a partir de outros pontos, mas como quando se muda o valor de um ponto, ele influencia no cálculo de outros, esta fórmula deve ser aplicada muitas vezes, até se alcançar a convergência em todos os pontos do domínio. Entretanto, se apenas aplica-se essa equação a todos os pontos do domínio, já se vê um problema, pois ela sempre pede mais pontos para os lados. Por isso, além da equação, necessita-se das condições de contorno para o problema, onde-se são determinados os valores nas fronteiras do domínio, de forma direta ou indireta, dependendo se as condições são de Dirichlet, Neumann ou uma mistura. O domínio escolhido é um quadrado, e abaixo tem-se o exemplo de uma malha 6x6.
+
+\begin{tikzpicture}
+%grid
+\draw (0,0) grid +(5,5);
+
+%axes
+\draw[->] (0,0) -- (xyz cs:x=0, y=5.2);
+\draw (0,5.5) node {$y,j$};
+
+\draw[->] (0,0) -- (xyz cs:x=5.2,y=0);
+\draw (5.6,0) node {$x,i$};
+\draw (-0.18,-0.18) node {$O$};
+
+\draw (0.3,0.2) node {$x_{00}$};
+\draw (0,0) circle (2pt);
+
+\draw (5.3,5.2) node {$x_{55}$};
+\draw (5,5) circle (2pt);
+
+\draw (1.3,2.2) node {$x_{12}$};
+\draw (1,2) circle (2pt);
+\end{tikzpicture}
+
+Cada cruzamento de linha indica um ponto no domínio, e a equação \ref{laplace_discreta} será aplicada em quase todos estes postos, com exceção dos de fronteira. O valor dos pontos de fronteira deste primeiro problema foi escolhido fixo, utilizando condições de Dirichlet. 
+
+Pelo fato do método ser iterativo, com um \textit{loop} sendo repetido muitas vezes, até a convergência, é natural escolher um método de parada. Isto poderia ser escolher um tempo limite de execução, ou ver a diferença entre duas matrizes após uma iteração completa em seus pontos internos, para analisar se a diferença entre elas é desprezível e se pode mudar o valor, ou ainda calcular os valores das derivadas nos pontos, que seria o melhor a se fazer, e analisar se a equação está dentro de uma faixa de erro desejada. A segunda maneira de se fazer isto foi escolhida na primeira parte, e foi difícil escolher qual utilizar, pois ainda não se via a diferença que poderia ter entre os dois últimos, principalmente, ou não se pensava claramente como por o último em prática.
 \section{Resultados}
+\subsection{Laplace - Método Iterativo}
+Foram realizados vários testes utilizando as seguintes condições:
+\begin{eqnarray}
+\nabla^2 u=0\\
+u_{}
+\end{eqnarray}
 \newpage
 \subsection{Programas\label{exemplos}}
 \newpage

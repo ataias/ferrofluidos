@@ -84,10 +84,13 @@ int NavierStokes::NavierStokesInit(
 		m_nTime = 0;
 		m_dDeltaX = 1.0/(m_nMatrixOrder-1);
 		m_dDeltaX2 = m_dDeltaX*m_dDeltaX;
-		m_dPressureNonHomogeneity = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
-		m_dPressureBoundaryConditions = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
-		m_dPressure = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
-		m_dError = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+		//---------------------Ordem da matriz de pressão é uma a mais que de Navier stokes -----------------------
+		const int n_ExtraOrder = 2;
+		m_dPressureNonHomogeneity = Eigen::MatrixXd::Zero(m_nMatrixOrder+n_ExtraOrder,m_nMatrixOrder+n_ExtraOrder);
+		m_dPressureBoundaryConditions = Eigen::MatrixXd::Zero(m_nMatrixOrder+n_ExtraOrder,m_nMatrixOrder+n_ExtraOrder);
+		m_dPressure = Eigen::MatrixXd::Zero(m_nMatrixOrder+n_ExtraOrder,m_nMatrixOrder+n_ExtraOrder);
+		m_dError = Eigen::MatrixXd::Zero(m_nMatrixOrder+n_ExtraOrder,m_nMatrixOrder+n_ExtraOrder);
+		//---------------------------------------------end pressure-------------------------------------------------
 	    m_dVelocityXNextStep = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
 	    m_dVelocityYNextStep = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
 
@@ -140,17 +143,18 @@ void NavierStokes::VelocityNoPressure()
 	} /*VelocityNoPressure()*/
 
 void NavierStokes::MakePressureConditions(){
-    Eigen::MatrixXd dPressureNonHomogeneity = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
-    Eigen::MatrixXd dPressureBoundaryConditions = Eigen::MatrixXd::Zero(m_nMatrixOrder,m_nMatrixOrder);
+	const int n_ExtraOrder = 2;
+    Eigen::MatrixXd dPressureNonHomogeneity = Eigen::MatrixXd::Zero(m_nMatrixOrder+n_ExtraOrder,m_nMatrixOrder+n_ExtraOrder);
+    Eigen::MatrixXd dPressureBoundaryConditions = Eigen::MatrixXd::Zero(m_nMatrixOrder+n_ExtraOrder,m_nMatrixOrder+n_ExtraOrder);
         
 //  INTERNAL POINTS - NON HOMOGENEITY
-	for(int i=1; i<m_nMatrixOrder-1; i++)
-		for(int j=1; j<m_nMatrixOrder-1; j++){
+	for(int i=1; i<=m_nMatrixOrder; i++)
+		for(int j=1; j<=m_nMatrixOrder; j++){
             NON_HOMOGENEITY_NAVIER_PRESSURE;
 		}
         
 //  LEFT BOUNDARY CONDITIONS
-    for(int i=1; i<m_nMatrixOrder-1; i++){
+    for(int j=1; j<=m_nMatrixOrder; j++){
         POISSON_NAVIER_LEFT_BOUNDARY_CONDITION;
     }
 //  RIGHT BOUNDARY CONDITIONS

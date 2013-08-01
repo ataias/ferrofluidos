@@ -109,7 +109,7 @@ m_dRho*(\
 
 #ifndef POISSON_NAVIER_LEFT_BOUNDARY_CONDITION
 #define POISSON_NAVIER_LEFT_BOUNDARY_CONDITION \
-int j = 0; \
+int i = 0; \
 dPressureBoundaryConditions(i,0) =	\
 -m_dRho*m_dNu*(-5*m_dVelocityXNoPressure(i,j+1)\
 +4*m_dVelocityXNoPressure(i,j+2)\
