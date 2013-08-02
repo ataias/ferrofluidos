@@ -86,6 +86,11 @@ A metologia aqui proposta resume as tarefas realizadas, não seguindo um ordem c
   \item[B.] Equação de Laplace
   \item[C.] Equação de Poisson
   \item[D.] Navier Stokes
+  \begin{enumerate}
+  \item[1.] Desconsiderando a pressão
+  \item[2.] Obtendo a pressão
+  \item[3.] Avançando no tempo
+  \end{enumerate}
 \end{enumerate}
 \subsection{Programação}
 O fato do problema numérico em questão ser difícil torna o tempo uma questão fundamental na escolha da linguagem de programação a ser utilizada. De início a ferramenta e linguagem de programação utilizada era o MATLAB\textregistered. O MATLAB inclui uma infinidade de algoritmos já prontos disponíveis para uso, ferramentas para plotagem de gráficos embutidas, ótimos sistemas de referências de funções, mas tem a desvantagem de ser muito caro, proprietário e consumir muita memória e processamento só de estar aberto, sem executar o próprio programa para resolver nossas equações em questão. Como o tempo é um fator crítico, como já mencionado, o custo de memória de um programa como o MATLAB, sendo executado por muitas horas ou dias, pode ser algo muito complicado, preferiu-se tomar outro rumo para o desenvolvimento dos nossos códigos.
@@ -227,7 +232,54 @@ Observando o padrão de formação da matriz $A$ pentadiagonal e sabendo-se tamb
 Como se nota, a resolução é muito mais direta, mas o algoritmo para se resolver este sistema linear pode ser muito mais complexo. Não se preocupou em criar um algoritmo para isso, mas sim em utilizar um pronto da biblioteca Eigen. Mas há um problema para este método, que um sistema pode ficar extremamente grande com um $n$ relativamente pequeno, tão grande, ao ponto de necessitar de mais memória do que o computador tem. Isso se resolve utilizando matrizes esparsas, que só salvam na memória elementos diferentes de zero. A matriz $A$ é uma matriz esparsa, na qual a maioria de seus elementos é igual a 0. Também utilizaram-se métodos prontos para resolução de sistemas esparsos provenientes da Eigen.
 \subsection{Equação de Poisson}
 
+A equação de Poisson é muito similar a de Laplace, mas com uma diferença, que é a de haver uma função forçamento existente no lado direito da equação.
+\begin{equation}
+  \nabla^2 u=\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}=f(x,y)\label{poisson}
+\end{equation}
 
+Este foi o segundo problema proposto, e o fato de ter essa função $f(x,y)$ complica o problema porque muita coisa que antes era desconsiderada com o $0$ na equação de Laplace não é mais ignorado, mas sim levado em consideração. No caso explícito, tem-se a seguinte discretização obtida:
+\begin{equation}
+u_{ij}=\frac{1}{4}[(u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1})-\Delta x^2 f_{ij}] \label{poisson_discreta}
+\end{equation}
+
+O algoritmo iterativo para este caso é o mesmo anterior, substituindo a equação \ref{laplace_discreta} por \ref{poisson_discreta} no algoritmo.
+
+Para o caso implícito, o problema é muito similar, bastando mudar o vetor $b$, que passa a apresentar termos $\Delta x^2 f_{ij}$.
+\subsection{Navier Stokes}
+
+Após resolver-se as equações de Laplace e Poisson com condições de Dirichlet, pelos métodos explícito e implícito, tem-se já uma base para partir para a próxima etapa: Navier Stokes. Essa equação tem muitas complicações, e está levando ainda certo tempo para ter-se um programa que a resolva, e esteja de fato livre de bugs. A complexidade do programa é maior, tem muitas etapas, e tem ainda uma evolução no tempo que não foi lidada no problema de Poisson. A equação de Navier Stokes é a seguinte:
+
+\begin{eqnarray}
+\rho\left( \frac{\partial \textbf{v}}{\partial
+t}+\textbf{v}\cdot\nabla\textbf{v}\right)=-\nabla
+p+\mu\nabla^2\textbf{v}+\textbf{f} \label{ns}\\
+ \nabla\cdot \textbf{v}=0 \nonumber
+\end{eqnarray}
+
+Esta equação é altamente não-linear, e o processo de resolução escolhido consiste de três etapas.
+\subsubsection{Desconsiderando a pressão}
+A primeira etapa consiste literalmente de desconsiderar a pressão. Há um termo de pressão na equação \ref{ns} que é $\nabla p$. A partir dessa simplificação, faz-se a discretização da equação. Alguns termos foram incluídos nas equações a seguir de forma a tornar algumas das equações menos extensas.
+
+A discretização não é simples
+\begin{eqnarray}
+\textbf{v}_{ij}^s=(u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1})\textbf{i} 
+\nonumber \\+(v_{i+1j}+v_{i-1j}+v_{ij+1}+v_{ij-1})\textbf{j}\\
+\textbf{v}_{ij}^t=0.25(u_{ij}+u_{i+1j}+u_{i+1j-1}+u_{ij-1})\textbf{i}\nonumber \\
++0.25(v_{ij}+v_{i-1j}+v_{i-1j+1}+v_{ij+1})\textbf{j}
+\end{eqnarray}
+\begin{eqnarray}
+u_{ij}^{*}&=&\left[\frac{\mu}{\rho}\left(\frac{u_{ij}^s-4u_{ij}}{\Delta
+x^2}\right)+\frac{1}{\rho}\frac{f_{x,ij}+f_{x,i-1j}}{2}\right] + u_{ij}\nonumber \\
+&-&\left[u_{ij}\frac{u_{i+1j}-u_{i-1j}}{2\Delta
+x}-v_{ij}^t\frac{u_{ij+1}-u_{ij-1}}{2\Delta x}\right]\Delta t
+\end{eqnarray}
+
+\begin{eqnarray}
+v_{ij}^{*}&=&\left[\frac{\mu}{\rho}\left(\frac{v_{ij}^s-4v_{ij}}{\Delta
+x^2}\right)+\frac{1}{\rho}\frac{f_{y,ij}+f_{y,ij-1}}{2}\right] + v_{ij}\nonumber \\
+&-&\left[u_{ij}^t\frac{v_{i+1j}-v_{i-1j}}{2\Delta
+x}-v_{ij}\frac{v_{ij+1}-v_{ij-1}}{2\Delta x}\right]\Delta t
+\end{eqnarray}
 \section{Resultados}
 \subsection{Laplace - Método Iterativo}
 Foram realizados vários testes utilizando as seguintes condições:
@@ -235,12 +287,6 @@ Foram realizados vários testes utilizando as seguintes condições:
 \nabla^2 u=0\\
 u_{}
 \end{eqnarray}
-\newpage
-\subsection{Programas\label{exemplos}}
-\newpage
-
-\subsection{Acessar dois Kinects}
-
 
 \section{Conclusão}
 
