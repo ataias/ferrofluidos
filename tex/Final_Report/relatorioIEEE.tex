@@ -46,7 +46,7 @@
 
 \begin{abstract}
 %\boldmath
-Criação de algoritmos para resolver equações diferenciais parciais. Uso de diferenças finitas para resolver as equações de Laplace e Poisson, usando método ímplicito e explícito, usando bibliotecas de álgebra linear de código aberto. Análise da diferença de tempo de resolução entre os métodos implícito e explícito, e no caso do método explícito. Uso do método iterativo e de resolução direta de sistema linear. 
+Criação de algoritmos para resolver equações diferenciais parciais. Uso de diferenças finitas para resolver as equações de Laplace e Poisson, usando método ímplicito e explícito, usando bibliotecas de álgebra linear de código aberto. Análise da diferença de tempo de resolução entre os métodos implícito e explícito. Uso do método iterativo e de resolução direta de sistema linear. 
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
@@ -71,14 +71,15 @@ Ferrofluidos, Navier~Stokes, EDP, Poisson, Laplace, Diferenças~finitas, Eigen
 \IEEEpeerreviewmaketitle
 
 \section{Introdução}
-A instabilidade de Saffman-Taylor, o endedamento, ou \textit{fingering}, ocorre na superfície de contato entre dois fluidos. Ocorre quando um fluido menos viscoso é injetado para deslocar um outro mais viscoso (na situação inversa, do fluido mais viscoso usado para movimentar o outro, a interface é estavel, não ocorre o endedamento). Também pode ocorrer movida pela gravidade, ao invés de injeção de um fluido em outro. Neste caso, se a interface separando os fluidos de diferentes densidades está direcionada na horizontal, e o mais pesado em cima do outro. Este tipo de problema ocorre com a injeção de água em tubos de petrolíferas marítimas, para fazer o óleo subir. Este tipo de efeito é negativo na extração do petróleo, pois ocorrem bolhas de um líquido no outro que causam problemas para se obter somente o óleo.
+A instabilidade de Saffman-Taylor, também chamada de endedamento, ou \textit{fingering}, é um fenômeno que ocorre na superfície de contato entre dois fluidos sob circunstâncias específicas. Esse fenômeno ocorre quando um fluido menos viscoso é injetado para deslocar um outro mais viscoso (na situação inversa, do fluido mais viscoso usado para movimentar o outro, a interface é estavel, não ocorrendo o endedamento). Também pode ocorrer movida pela gravidade, ao invés de injeção de um fluido em outro. Neste caso, a interface separando os fluidos de diferentes densidades está direcionada na horizontal, e o mais pesado está em cima do outro. Este tipo de fenômeno é um problema ocorrente em petrolíferas marítimas. Em tais petrolíferas, ocorre a injeção de água nos tubos de extração de petróleo, no objetivo do óleo subir. Na interface entre água e petróleo, o endedamento ocorre, originando bolhas de óleo dentro de água, que tem um efeito negativo na extração do petróleo, causando perca de óleo quando a água é jogada fora.
 
-Para o estudo dessa instabilidade, que não é nada trivial, precisa-se de ferramentas númericas. A equação de Navier Stokes deve ser discretizada e então resolvida numericamente. Ela é uma equação diferencial parcial altamente não-linear e de difícil resolução. No caso da instabilidade de Saffman-Taylor, a fronteira se movimenta, que é a interface entre os dois fluidos, então também precisa-se de um método que lide bem com isso. 
+Para o estudo dessa instabilidade, que não é nada trivial, a solução se dá por meio de métodos numéricos auxiliados por computador. A equação de Navier Stokes deve ser discretizada e então resolvida numericamente. Ela é uma equação diferencial parcial altamente não-linear e de difícil resolução. No caso da instabilidade de Saffman-Taylor, no qual a fronteira está em movimento, que é a interface entre os dois fluidos, faz-se necessário algoritmos numéricos capazes de lidar com este movimento sem causar complicações extremas que impossibilitem a obtenção de soluções práticas. 
 
-Tais ferramentas numéricas e decisão de métodos/algoritmos a se utilizar são a primeira etapa neste projeto. A apresentação no resto deste relatório mostrará até onde se alcançou na codificação dos algoritmos para resolução do problema proposto, que inicia-se com o estudo de equações diferenciais parciais e de diferenças finitas, o método utilizado para discretização, e o uso em partes da equações de Navier Stokes até chegar em sua totalidade.
+Tais ferramentas numéricas e decisão de métodos/algoritmos a se utilizar são a primeira etapa neste projeto, para então, após se ter tais ferramentas, estudar a física do problema e propor soluções para o problema com a utilização de um ferrofluido. A apresentação no resto deste relatório mostrará até onde se alcançou na codificação dos algoritmos numéricos para resolução do problema proposto, que inicia-se com o estudo de equações diferenciais parciais e de diferenças finitas na forma contínua, e só então na forma discreta. Após isso, estuda-se em específico a equação de Navier Stokes, que é dividida em etapas, para facilitar a busca de resultados.
 \section{Metodologia}
-A metologia aqui proposta tenta-se seguir uma ordem mais ou menos cronológica das tarefas e do que estava sendo utilizado ou não.
+A metologia aqui proposta resume as tarefas realizadas, não seguindo um ordem cronológica, mas sim uma mais organizada, para estar bem divididas as seções.
 \begin{enumerate}
+  \item Programação
   \item Equação de Laplace
   \item Ferramenta
   \item Método Explícito
@@ -86,6 +87,16 @@ A metologia aqui proposta tenta-se seguir uma ordem mais ou menos cronológica d
   \item git e python
   \item Navier Stokes
 \end{enumerate}
+\subsection{Programação}
+O fato do problema numérico em questão ser difícil torna o tempo uma questão fundamental na escolha da linguagem de programação a ser utilizada. De início a ferramenta e linguagem de programação utilizada era o MATLAB\textregistered. O MATLAB inclui uma infinidade de algoritmos já prontos disponíveis para uso, ferramentas para plotagem de gráficos embutidas, ótimos sistemas de referências de funções, mas tem a desvantagem de ser muito caro, proprietário e consumir muita memória e processamento só de estar aberto, sem executar o próprio programa para resolver nossas equações em questão. Como o tempo é um fator crítico, como já mencionado, o custo de memória de um programa como o MATLAB, sendo executado por muitas horas ou dias, pode ser algo muito complicado, preferiu-se tomar outro rumo para o desenvolvimento dos nossos códigos.
+
+Tais problemas levaram a uma escolha de uma linguagem de programação compilada e rápida, o C++. O fato do aluno ter experiência em C inicialmente, aliado ao fato de se haver encontrado uma biblioteca de álgebra linear chamada Eigen que evita a necessidade de criação de inúmeros algoritmos básicos, e que é feita em C++, influenciou na escolha de tal linguagem.
+
+A Eigen\footnote{Eigen: http://eigen.tuxfamily.org/} inclui algoritmos para resolução de sistemas lineares, criação de matrizes e alocação de memória, operações básicas de matrizes, resolução de sistemas de matrizes esparsas e vários outros algoritmos não explorados que estão à disposição, isso tudo de graça, pois é código aberto e gratuito. 
+
+Apesar de se ter escolhido o C++ e a Eigen, isto só não traz todas as ferramentas necessárias ao trabalho em questão. A plotagem de gráficos diretamente em C++ não é algo trivial, não foram encontradas bibliotecas de fácil uso que pudessem ser utilizadas de uma forma tão simples como o MATLAB. Após muita pesquisa, foi decidido utilizar o python, e suas bibliotecas de plotagem de gráficos. Os códigos em C++ passarem a ser compilados não em programas, mas em bibliotecas, e executados de dentro do ambiente Python, bem mais leve que o MATLAB, e então com o Python, que possui poderosos recursos para salvar arquivos, plotar gráficos e tudo de fácil estudo para uso, completou-se o arsenal de ferramentas de programação que são utilizadas no presente trabalho.
+
+Além das ferramentas que lidam direto com código, é utilizado o CMake\footnote{Cmake: http://www.cmake.org/} para criação de Makefiles para compilar o código e o git\footnote{Git: http://git-scm.com/} é utilizado como gerenciador de versões do projeto, de forma a sempre se ter as versões antigas dos códigos salvas, e bem organizadas.
 \subsection{Equação de Laplace}
 \subsubsection{Forma contínua}
 Primeiramente, teve-se a familiarização do aluno com a resolução de equações diferenciais parciais, realizando um curso na UnB, onde foram vistas principalmente a equação de Laplace, Poisson, Calor e Onda. O método de resolução aprendido foi por separação de variáveis, o método de Fourier. Após isso, o primeiro problema proposto foi resolver uma destas equações numericamente, a escolhida foi a equação de Laplace em duas dimensões, que segue abaixo:
@@ -166,5 +177,4 @@ The authors would like to thank...
 \bibitem{ubuntu} \href{ftp://ftp.fisio.cinvestav.mx/Manuales/linux/Getting\%20Started\%20with\%20Ubuntu\%2010.10.pdf}{Getting Started with Ubuntu 10.10}
 \bibitem{openkinect} \href{http://openkinect.org/wiki/Main_Page}{OpenKinect}
 \end{thebibliography}
-
 \end{document}
