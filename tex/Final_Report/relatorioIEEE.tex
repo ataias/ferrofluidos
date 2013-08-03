@@ -87,6 +87,8 @@ A metologia aqui proposta resume as tarefas realizadas, não seguindo um ordem c
   \item[C.] Equação de Poisson
   \item[D.] Navier Stokes
   \begin{enumerate}
+  \item [0.1.] Discretização
+  \item[0.2.] Malha Escalonada
   \item[1.] Desconsiderando a pressão
   \item[2.] Obtendo a pressão
   \item[3.] Avançando no tempo
@@ -133,6 +135,8 @@ Reordenando essa equação:
 
 A equação da fórmula \ref{laplace_discreta} está na forma explícita, na qual um ponto central é obtido diretamente a partir dos pontos adjacentes. No entanto, quando a equação é aplicada ao ponto central, ele influencia no cálculo de outros, que faz com que esta fórmula deva ser aplicada muitas vezes, até se alcançar a convergência de todos os pontos do domínio. Entretanto, se apenas aplica-se essa equação a todos os pontos do domínio, já se vê um problema, pois ela sempre pede mais pontos para os lados. Por isso, além da equação, necessita-se das condições de contorno para o problema, onde-se são determinados os valores nas fronteiras do domínio, de forma direta ou indireta, dependendo se as condições são de Dirichlet, Neumann ou uma mistura. O domínio escolhido é um quadrado, e abaixo tem-se o exemplo de uma malha 6x6.
 
+\begin{figure}[!ht]
+\centering
 \begin{tikzpicture}
 %grid
 \draw (0,0) grid +(5,5);
@@ -154,7 +158,8 @@ A equação da fórmula \ref{laplace_discreta} está na forma explícita, na qua
 \draw (1.3,2.2) node {$x_{12}$};
 \draw (1,2) circle (2pt);
 \end{tikzpicture}
-
+\caption{Malha padrão para discretizar Laplace e Poisson\label{malha_poisson}}
+\end{figure}
 Cada cruzamento de linha indica um ponto no domínio, e a equação \ref{laplace_discreta} será aplicada em quase todos estes postos, com exceção dos de fronteira. O valor dos pontos de fronteira deste primeiro problema foi escolhido fixo, utilizando condições de Dirichlet. 
 
 Pelo fato do método ser iterativo, com um \textit{loop} sendo repetido muitas vezes, até a convergência, é natural escolher um método de parada. Isto poderia ser: (1) escolher um tempo limite de execução, (2) ver a diferença entre duas matrizes após uma iteração completa em seus pontos internos, para analisar se a diferença entre elas é desprezível e se indica convergência, ou ainda (3) pode-se calcular os valor da equação de Laplace em cada ponto interno, que seria o melhor a se fazer, e analisar se a equação está dentro de uma faixa de erro desejada. A segunda maneira de se fazer isto foi escolhida na primeira parte, e foi uma difícil decisão escolher qual utilizar, pois ainda não se compreendia como aplicar o terceiro método.
@@ -256,11 +261,35 @@ p+\mu\nabla^2\textbf{v}+\textbf{f} \label{ns}\\
  \nabla\cdot \textbf{v}=0 \nonumber
 \end{eqnarray}
 
-Esta equação é altamente não-linear, e o processo de resolução escolhido consiste de três etapas.
+A discretização não é simples e é um pouco diferente da que foi feita anteriormente no problema de Poisson. Primeiramente, tem-se de saber que a discretização de Navier Stokes que será feita aqui é a fórmulação em variáveis primitivas. Isso quer dizer que o problema será trabalhado com as variáveis originais de velocidade $u$, $v$ (em $x$ e $y$) e pressão $p$. Outra forma de resolver é usando uma formulação com a vorticidade, que não será trabalhada aqui.
+
+No que se aprendeu lendo um material em pdf que ensina o processo de resolução em variáveis primitivas, sabe-se que utilizando a malha da Figura \ref{malha_poisson}, ocorre modos espúrios de pressão que causa uma solução de velocidades que contém oscilações não esperadas no resultado do problema. O resultado desta forma não é satisfatório, e para resolver este problema usa-se uma malha escalonada.
+
+A malha escalonada é uma malha na qual um ponto não salva a informação que é exatamente do local onde o ponto se situa, mas de um local próximo. No ponto $P=(i,j)$ são salvos cinco valores: força horizontal, força vertical, pressão, velocidade horizontal e vertical. Essas são representadas pelos símbolos $f_x$, $f_y$, $p$, $u$ e $v$. Um elemento da malha escalonada é representado na figura a seguir, na qual as forças não estão mostradas, mas elas são localizadas nas mesmas posições que as velocidades.
+
+\begin{figure}[!ht]
+\centering
+\begin{tikzpicture}
+\draw (0,0) rectangle (2,2);
+\draw (1.35,1.2) node {$p_{i+\frac{1}{2}j+\frac{1}{2}}$};
+\draw[->] (1,-0.2) -- (1,0.2);
+\draw (1,-0.3) node {$v_{i+\frac{1}{2}j}$};
+\draw[->] (-0.2,1) -- (0.2,1);
+\draw (-0.5,1.3) node {$u_{ij+\frac{1}{2}}$};
+\draw (1,1) circle (2pt);
+
+\draw (0,0) circle (2pt);
+\draw (-0.25,-0.25) node {$ij$};
+\end{tikzpicture}
+\caption{Elemento de malha escalonada}
+\end{figure}
+
+Diferente dos problemas de Laplace e Poisson, no qual um elemento $u_{ij}$ que estava salvo no computador na posição $ij$ realmente é o elemento $u_{ij}$, agora o elemento $u_{ij}$ salvo na memória do computador é fisicamente o elemento $u_{ij+\frac{1}{2}}$, enquanto o elemento $v_{ij}$ se refere ao elemento $v_{i+\frac{1}{2}j}$. De maneira similar ocorre para as forças. Para a pressão, $p_{ij}$ corresponde ao ponto $p_{i+\frac{1}{2}j+\frac{1}{2}}$.
+
+
 \subsubsection{Desconsiderando a pressão}
 A primeira etapa consiste literalmente de desconsiderar a pressão. Há um termo de pressão na equação \ref{ns} que é $\nabla p$. A partir dessa simplificação, faz-se a discretização da equação. Alguns termos foram incluídos nas equações a seguir de forma a tornar algumas das equações menos extensas.
-
-A discretização não é simples
+ 
 \begin{eqnarray}
 \textbf{v}_{ij}^s=(u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1})\textbf{i} 
 \nonumber \\+(v_{i+1j}+v_{i-1j}+v_{ij+1}+v_{ij-1})\textbf{j}\\
