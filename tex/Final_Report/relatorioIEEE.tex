@@ -81,7 +81,7 @@ Ferrofluidos, Navier~Stokes, EDP, Poisson, Laplace, Diferenças~finitas, Eigen
 \IEEEpeerreviewmaketitle
 
 \section{Introdução}
-A instabilidade de Saffman-Taylor, ou \textit{fingering}, que pode ser visto na Figura \ref{finger}, é um fenômeno que ocorre na superfície de contato entre dois fluidos sob circunstâncias específicas. Esse fenômeno ocorre quando um fluido menos viscoso é injetado para deslocar um outro mais viscoso (na situação inversa, do fluido mais viscoso usado para movimentar o outro, a interface é estavel, não ocorrendo o endedamento). Também pode ocorrer movida pela gravidade, ao invés de injeção de um fluido em outro. Neste caso, a interface separando os fluidos de diferentes densidades está direcionada na horizontal, e o mais pesado está em cima do outro. Este tipo de fenômeno é um problema ocorrente em petrolíferas marítimas. Em tais petrolíferas, ocorre a injeção de água nos tubos de extração de petróleo, no objetivo do óleo subir. Na interface entre água e petróleo, o \textit{fingering} ocorre, originando bolhas de óleo dentro de água, que tem um efeito negativo na extração do petróleo, causando perca de óleo quando a água é jogada fora. Uma maneira de se controlar este fenômeno é usar fluidos magnéticos e a aplicação de campos magnéticos\cite{magnetic_fluids}.
+A instabilidade de Saffman-Taylor, ou \textit{fingering}\cite{fingering}, que pode ser visto na Figura \ref{finger}, é um fenômeno que ocorre na superfície de contato entre dois fluidos sob circunstâncias específicas. Esse fenômeno ocorre quando um fluido menos viscoso é injetado para deslocar um outro mais viscoso (na situação inversa, do fluido mais viscoso usado para movimentar o outro, a interface é estavel, não ocorrendo o endedamento). Também pode ocorrer movida pela gravidade, ao invés de injeção de um fluido em outro. Neste caso, a interface separando os fluidos de diferentes densidades está direcionada na horizontal, e o mais pesado está em cima do outro. Este tipo de fenômeno é um problema ocorrente em petrolíferas marítimas. Em tais petrolíferas, ocorre a injeção de água nos tubos de extração de petróleo, no objetivo do óleo subir. Na interface entre água e petróleo, o \textit{fingering} ocorre, originando bolhas de óleo dentro de água, que tem um efeito negativo na extração do petróleo, causando perca de óleo quando a água é jogada fora. Uma maneira de se controlar este fenômeno é usar fluidos magnéticos e a aplicação de campos magnéticos\cite{magnetic_fluids}.
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=6cm]{figures/fingergel.png}
@@ -293,9 +293,9 @@ Note que que conforme se aumenta o número de pontos, o gasto computacional cheg
 
 O uso de paralelismo ocorreu por causa do elevado custo computacional para malhas maiores e, sabendo-se que computadores atuais tem múltiplos threads, fez-se uso deste recurso para analisar a relação entre tempo e número de pontos\footnote{Pontos: o eixo de número de pontos nos gráficos do método explícito na verdade é a ordem da malha, que é a raiz quadrada do número de pontos.} com paralelismo em ação. Resultados similares foram obtidos no caso de múltiplos threads, mudando somente o tempo necessário para cada solução, e podem ser vistos nas Figuras \ref{malha5x5_4th}, \ref{malha40x40_4th}, \ref{malha200x200_4th} e \ref{malha500x500_4th}.
 
-No caso do método ímplicito, utilizando matrizes esparsas, os resultados foram espantosamente mais rápidos. Na maior malha que foi calculada no método explícito, foram gastas 10h\footnote{36083s} no cálculo com 1 thread e 2h40min\footnote{9610s} no cálculo com 4 threads. No método ímplicito com matrizes esparsas, o mesmo resultado foi obtido em menos de 1min. O método ímplicito não é utilizado em Navier Stokes devido ao problema da pressão nesta equação ter fronteiras de Neumann, e o método ímplicito se torna muito complicado. Os resultados para Poisson são similares, só mudando o tempo no caso do método explícito.
+No caso do método ímplicito, utilizando matrizes esparsas, os resultados foram espantosamente mais rápidos. Na maior malha que foi calculada no método explícito, foram gastas 10h no cálculo com 1 thread e 2h40min no cálculo com 4 threads. No método ímplicito com matrizes esparsas, o mesmo resultado foi obtido em menos de 1min. O método ímplicito não é utilizado em Navier Stokes devido ao problema da pressão nesta equação ter fronteiras de Neumann, e o método ímplicito se torna muito complicado. Os resultados para Poisson são similares, só mudando o tempo no caso do método explícito.
 
-Outra forma de se resolver o mesmo problema é substituir na Equação \ref{laplace_discreta_zero} os índices $(i,j)$ por números de fato, obtendo várias equações, e isolando na parte da direita os termos de fronteira. Assim, para um sistema $n\times n$, dos $n^2$ pontos da malha dos índices $(0,0)\rightarrow (n-1,n-1)$, $(n-1)^2$ pontos são internos, correspondendo aos índices de $(1,1)\rightarrow (n-2,n-2)$. As Equações \ref{first_implicit} a \ref{last_implicit} foram obtidas para um sistema $5\times 5$.
+Outra forma de se resolver o mesmo problema é substituir na Equação \ref{laplace_discreta_zero} os índices $(i,j)$ por números de fato, obtendo várias equações, e isolando na parte da direita os termos de fronteira. Assim, para um sistema $n\times n$, dos $n^2$ pontos da malha dos índices $(0,0)\rightarrow (n-1,n-1)$, $(n-1)^2$ pontos são internos, correspondendo aos índices de $(1,1)\rightarrow (n-2,n-2)$. A título de ilustração, são apresentadas as Equações \ref{first_implicit} a \ref{last_implicit} que foram obtidas para um sistema $5\times 5$.
 
 \begin{eqnarray}
 u_{12}+u_{21} -4u_{11}& = & -u_{01}-u_{10} \label{first_implicit} \\
@@ -324,29 +324,37 @@ O conjunto das Equações \ref{first_implicit} a \ref{last_implicit} é um siste
 
 Observando o padrão de formação da matriz $A$ pentadiagonal e sabendo-se também obter o vetor de valores conhecidos $b$, tem-se um sistema linear para obter os pontos internos $x$. A solução é $x=A^{-1}b$.
 
-Como se nota, a resolução é muito mais direta, mas o algoritmo para se resolver este sistema linear pode ser muito mais complexo. Mas há um problema para este método, que um sistema pode ficar extremamente grande com um $n$ relativamente pequeno, tão grande, ao ponto de necessitar de mais memória do que o computador tem. Isso se resolve utilizando matrizes esparsas, que só salvam na memória elementos diferentes de zero. A matriz $A$ é uma matriz esparsa, na qual a maioria de seus elementos é igual a 0. Também utilizaram-se métodos prontos para resolução de sistemas esparsos provenientes da Eigen.
+Como se nota, a resolução é direta, mas o algoritmo para se resolver este sistema linear pode ser muito mais complexo. Mas há um problema para este método, que um sistema pode ficar extremamente grande com um $n$ relativamente pequeno, tão grande, ao ponto de necessitar de mais memória do que o computador tem. Isso se resolve utilizando matrizes esparsas, que só salvam na memória elementos diferentes de zero. A matriz $A$ é uma matriz esparsa, na qual a maioria de seus elementos é igual a 0. Utilizaram-se métodos prontos para resolução de sistemas esparsos da biblioteca Eigen. A Figura \ref{pontos_vs_tempo_direto} mostra a relação entre tempo e número de pontos para o método direto. Note que o tempo é muito menor que nos métodos iterativos, nas Figuras \ref{pontos_vs_tempo_1th} e \ref{pontos_vs_tempo_4th}.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width = 0.5\textwidth]{figures/poisson_dirichlet_metodo_direto.png}
+\caption{Relação entre número de pontos e tempo para soluções da equação de Laplace - Método Direto\label{pontos_vs_tempo_direto}}
+\end{figure}
+
+
 \section{Equação de Poisson}
 
-A equação de Poisson é muito similar a de Laplace, mas com uma diferença, que é a de haver uma função forçamento existente no lado direito da equação.
+A equação de Poisson é muito similar à de Laplace, mas com uma diferença, que é a de haver uma função forçamento não homogênea existente no lado direito da equação.
 \begin{equation}
   \nabla^2 u=\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}=f(x,y)\label{poisson}
 \end{equation}
 
-Este foi o segundo problema proposto, e o fato de ter essa função $f(x,y)$ complica o problema porque muita coisa que antes era desconsiderada com o $0$ na equação de Laplace não é mais ignorado, mas sim levado em consideração. No caso explícito, tem-se a seguinte discretização obtida:
+Para este problema, a formulação descrita é dada por:
 \begin{equation}
 u_{ij}=\frac{1}{4}[(u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1})-\Delta x^2 f_{ij}] \label{poisson_discreta}
 \end{equation}
 
 O algoritmo iterativo para este caso é o mesmo anterior, substituindo a equação \ref{laplace_discreta} por \ref{poisson_discreta} no algoritmo.
 
-Para o caso implícito, o problema é muito similar, bastando mudar o vetor $b$, que passa a apresentar termos $\Delta x^2 f_{ij}$.
+Para o caso em que o sistema é resolvido diretamente, o problema é muito similar, bastando mudar o vetor $b$, que passa a apresentar termos $\Delta x^2 f_{ij}$.
 
-A equação de Poisson realmente complicou quando se preparou o algoritmo numa versão mais similar àquela que é utilizada em Navier Stokes. Esta versão resolve o problema de Poisson com as quatro fronteiras com condições de Neumann, isto é:
+A equação de Poisson tornou-se mais difícil de resolver quando foi adaptada com condições de contorno similares às da etapa onde se obtém a pressão na equação Navier Stokes. Neste caso, as condições de contorno são todas de Neumann, isto é:
 \begin{equation}
-\frac{\partial u}{\partial n} = f
+\frac{\partial u}{\partial n} = g(x,y)
 \end{equation}
 
-Isto resulta em maior processamento devido à esta equação gerar condições na fronteira que não são inicialmente fixas, mas que também são incógnitas. O problema foi resolvido e é apresentado na seção de resultados.
+Isto resulta em maior processamento devido à esta equação gerar condições na fronteira que levam a valores que não são fixos, e que também são incógnitas.
 
 A Equação \ref{poisson_problem_solved_neumann} foi resolvida. Note que se trata de uma equação de Poisson com condições de contorno de Neumann.
 \begin{eqnarray}
@@ -358,19 +366,19 @@ A Equação \ref{poisson_problem_solved_neumann} foi resolvida. Note que se trat
 As soluções da Equação \ref{poisson_problem_solved_neumann} são apresentadas nas Figuras \ref{poisson_neumann_contorno} e \ref{poisson_neumann}.
 \begin{figure}[ht!]
 \centering
-\includegraphics[width = 0.25\textwidth]{figures/poisson_neumann_02.png}
+\includegraphics[width = 0.4\textwidth]{figures/poisson_neumann_04.png}
 \caption{Poisson com 4 fronteiras de Neumann - Linhas de contorno\label{poisson_neumann_contorno}}
 \end{figure}
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[width = 0.4\textwidth]{figures/poisson_neumann_01.png}
-\caption{Poisson com 4 fronteiras de Neumann\label{poisson_neumann}}
+\includegraphics[width = 0.35\textwidth]{figures/poisson_neumann_03.png}
+\caption{Poisson com 4 fronteiras de Neumann - Resultado\label{poisson_neumann}}
 \end{figure}
 
 \section{Equação de Navier Stokes}
 \subsection*{Considerações gerais}
-Após resolver-se as equações de Laplace e Poisson com condições de Dirichlet, pelos métodos explícito e implícito, tem-se já uma base para partir para a próxima etapa: Navier Stokes. Essa equação tem muitas complicações, e está levando ainda certo tempo para ter-se um programa que a resolva, e esteja de fato livre de bugs. A complexidade do programa é muitas maior, tem várias etapas, e tem ainda uma evolução no tempo que não foi lidada nos problemas anteriores. A equação de Navier Stokes é a seguinte:
+Após obter as soluções das equações de Laplace e Poisson com condições de Dirichlet, pelos métodos direto e iterativo, a próxima etapa é a equação de Navier Stokes. Essa equação tem muitas complicações, e está levando ainda certo tempo para ter-se um programa que a resolva. A complexidade do programa é muito maior, sendo subdividido em várias etapas, e há ainda a evolução temporal, que não existe nos problemas resolvidos anteriormente. O método utilizado, que divide o processo de solução em várias etapas, é o \textit{time-splitting}\cite{time_splitting}. A equação de Navier Stokes é a seguinte:
 
 \begin{eqnarray}
 \rho\left( \frac{\partial \textbf{v}}{\partial
@@ -379,11 +387,11 @@ p+\mu\nabla^2\textbf{v}+\textbf{f} \label{ns}\\
  \nabla\cdot \textbf{v}=0 \label{divergente_zero}
 \end{eqnarray}
 
-A discretização não é simples e é um pouco diferente das que foram feitas anteriormente. Em primeiro lugar, tem-se de saber que a discretização de Navier Stokes que será feita aqui é a fórmulação em variáveis primitivas. Isso quer dizer que o problema será trabalhado com as variáveis originais de velocidade $u$, $v$ (em $x$ e $y$) e pressão $p$. Outra forma de resolver é usando uma formulação com a vorticidade, que não será trabalhada aqui.
+A discretização não é simples e é um pouco diferente das que foram feitas anteriormente. Em primeiro lugar, tem-se que saber que a discretização de Navier Stokes que será utilizada aqui é a fórmulação em variáveis primitivas\cite{notas_de_aula_john}. Isso quer dizer que o problema será trabalhado com as variáveis originais de velocidade $u$, $v$ (em $x$ e $y$) e pressão $p$. Outra forma de resolver é usando uma formulação com a vorticidade, que não será trabalhada aqui\cite{notas_de_aula_john}.
 
-No que se aprendeu lendo sobre tal formulação do processo de resolução em variáveis primitivas, sabe-se que utilizando uma malha como a da Figura \ref{malha_poisson}, ocorrem modos espúrios de pressão que causam um perfil de velocidades que contém oscilações não esperadas no resultado do problema. O resultado, obtido com tal malha, desta forma, não é satisfatório, e para resolver este problema usa-se uma malha escalonada.
+Se uma malha como a da Figura \ref{malha_poisson} for utilizada, ocorrem modos espúrios de pressão que causam um perfil de velocidades que contém oscilações não esperadas no resultado do problema\cite{notas_de_aula_john}. O resultado, obtido com tal malha, desta forma, não é satisfatório, e para resolver este problema usa-se uma malha escalonada\cite{notas_de_aula_john}.
 
-A malha escalonada é uma malha na qual valores guardados num ponto se referem à informação em um outro ponto, próximo. No ponto $P=(i,j)$ são salvos cinco valores: força horizontal, força vertical, pressão, velocidade horizontal e vertical. Essas são representadas pelos símbolos $f_x$, $f_y$, $p$, $u$ e $v$. Um elemento da malha escalonada é representado na figura a seguir, na qual as forças não estão mostradas, mas elas são localizadas nas mesmas posições que as velocidades.
+A malha escalonada é uma malha na qual valores guardados num ponto se referem à informação em um outro ponto, próximo. No ponto $(i,j)$ são salvos cinco valores: força horizontal, força vertical, pressão, velocidade horizontal e vertical. Essas são representadas pelos símbolos $f_x$, $f_y$, $p$, $u$ e $v$. Um elemento da malha escalonada é representado na figura a seguir, na qual as forças não estão mostradas, mas elas são localizadas nas mesmas posições que as velocidades.
 
 \begin{figure}[!ht]
 \centering
@@ -404,9 +412,7 @@ A malha escalonada é uma malha na qual valores guardados num ponto se referem �
 
 Diferente dos problemas de Laplace e Poisson, no qual um elemento $u_{ij}$ que estava salvo no computador na posição $ij$ realmente é o elemento $u_{ij}$, agora o elemento $u_{ij}$ salvo na memória do computador é fisicamente o elemento $u_{ij+\frac{1}{2}}$, enquanto o elemento $v_{ij}$ se refere ao elemento $v_{i+\frac{1}{2}j}$. De maneira similar ocorre para as forças. Para a pressão, $p_{ij}$ corresponde ao ponto $p_{i+\frac{1}{2}j+\frac{1}{2}}$. Isso influencia diretamente na discretização, e na posterior criação dos gráficos.
 
-Uma malha escalonada completa é apresentada na Figura a seguir:
-
-\begin{figure}
+\begin{figure}[!ht]
 \centering
 \tikzstyle{help lines}+=[dashed]% aaarghhh!!!
 \begin{tikzpicture}
@@ -460,9 +466,9 @@ Uma malha escalonada completa é apresentada na Figura a seguir:
 \caption{Malha escalonada. Círculos são pontos internos e de fronteira enquanto circunferências indicam fronteira imaginária adicionada\label{malha_escalonada}}
 \end{figure}
 
-Na malha escalonada da Figura \ref{malha_escalonada}, tem-se ainda uma nova adição: uma fronteira imaginária. Quando se discretiza a equação de Navier Stokes, faz-se ainda necessários outros pontos além do internos e fronteira. As equações apresentadas são discretizadas em domínios similares ao de cima, onde a única coisa que muda é o tamanho do domínio, que pode ser maior.
+Uma malha escalonada completa é apresentada na Figura \ref{malha_escalonada}, nela há ainda um outro detalhe: uma fronteira imaginária. Quando a equação de Navier Stokes é discretizada, são necessários outros pontos além do internos e da fronteira.
 
-O problema de Navier Stokes é trabalhado em três etapas principais:
+O problema de Navier Stokes é trabalhado em três etapas principais, resultantes do algoritmo de \textit{time-splitting}\cite{time_splitting}:
 
 \begin{enumerate}
   \item Desconsiderando a pressão
@@ -619,14 +625,14 @@ v^{n+1}=v^*-\frac{\Delta t}{\rho}p_y
 \end{eqnarray}
 Cada uma das varíaveis acima é uma matriz. Com isso, tem-se as fórmulas necessárias para resolver a equação de Navier Stokes. No entanto, mais processos são necessários computacionalmente, é necessário escolher uma boa condição de parada para as etapas que consideram convergência, trabalhar com arquivos para salvar os resultados, entre outras coisas, que realmente complicam a solução do problema.
 
-Não há resultados para a equação de Navier Stokes, pois está muito complicado descobrir os bugs ainda existentes no programa. Muita coisa já foi corrigida, mas não há resultado nenhum.
+Esta etapa encontra-se em desenvolvimento e esperamos ter novos resultados para apresentação no congresso.
 \section{Conclusão}
 
 O problema proposto inicialmente ainda não foi alcançado, que é trabalhar com a instabilidade de Saffman-Taylor com fluido magnético e, ou Anisotrópico. Antes de trabalhar com tal problema, teve-se uma etapa inicial que demandou um certo trabalho. Essa primeira etapa deste projeto consistiu então do estudo da resolução de equações diferenciais parciais, por meio de sua discretização e codificação em um programa de computador.
 
 Foi bem sucedida a resolução das equações de Laplace e Poisson numa malha quadrada, pelos métodos implícito e explícito, usando diferenças finitas. No caso de Poisson, ainda teve-se a resolução bem sucedida com condições de fronteira de Neumann, que seria essencial para trabalhar com a pressão na equação de Navier Stokes.
 
-Chegando na equação de Navier Stokes, houve muitas equações a serem discretizadas, e a malha escalonada foi algo difícil de ser plenamente entendido, tendo muitas vezes ocorrido erros no caminho por causa disso.
+A implementação do programa para resolver a equação de Navier Stokes na malha escalonada está sendo implementada é espera-se obter resultados nas etapas posteriores deste projeto.
 
 O trabalho foi um aprendizado razoavelmente complexo, e que teve muitas consequências positivas. As habilidades de programação de programas numéricos pelo aluno aumentaram bastante, na realidade, de qualquer programa, pelo fato de se ter treinado bastante o uso do git e da ferramenta de compilação cmake. Apesar da programação ainda ser um problema, pela complexidade do programa, o código\footnote{Código está acessível online em https://github.com/ataias/ff} está muito mais organizado do que se esperava, e pra isso ele foi refeito algumas vezes.
 
@@ -639,6 +645,8 @@ Primeiramente agradeço a Deus pela oportunidade de ter feito parte deste trabal
 \begin{thebibliography}{4}
 \bibitem{magnetic_fluids} Rosensweig, R.E. 1987. Magnetic Fluids. Annu. Rev. Fluid Mech. 19:437-461.
 \bibitem{immersed_boundary_methods} Mittal R, Iaccarino G. 2005. Immersed Boundary Methods. Annu. Rev. Fluid Mech. 37:239-61.
-\bibitem{notas_de_aula_john} Hinch, E.J. Lecture notes: Part I - A first problem. 
+\bibitem{notas_de_aula_john} Hinch, E.J. Lecture notes on Computational Fluid Dynamics: Part I - A first problem. 
+\bibitem{fingering} Babchin, A., Brailovsky, I. Gordon, P., Sivashinsky, G. Fingering instability in immiscible displacement. . Phys. Rev. E , 77, 026301, (2008).
+\bibitem{time_splitting} Chorin, A. J. A numerical method for solving incompressible viscous flow problems. J. Computational Physics, v. 2, 1967, p. 12
 \end{thebibliography}
 \end{document}
