@@ -51,7 +51,7 @@ def plot_dSolution(SIZE, dSolution):
     #pylab.savefig('plot3d.png')
     pylab.show()
 
-def calculateError():
+def calculateError(SIZE, dSolution, dNonHomogeneity):
     dError = np.array([[0 for j in range(0,SIZE)] for i in range(0,SIZE)],dtype=np.float64)
     dDeltaX = 1.0/(SIZE-1)
     dDeltaX2 = 1.0/(SIZE-1)**2
@@ -80,19 +80,12 @@ def calculateError():
                 dSolution[i,j-1]+dSolution[i,j+1]-4*dSolution[i,j])/dDeltaX2 - dNonHomogeneity[i,j]
     return LA.norm(dError)
 
-def solvePoisson(SIZE, dSolution, cMeshPoisson):
+def solvePoisson(SIZE, dSolution, cMeshPoisson, dNonHomogeneity, dBoundaryConditions):
     #Condições de Fronteira
     cMesh = cMeshPoisson;
-    dBoundaryConditions = np.array([[0 for j in range(0,SIZE)] for i in range(0,SIZE)],dtype=np.float64)
-    dBoundaryConditions[0,:]=[0 for j in range(0,SIZE)];
-    dBoundaryConditions[:,0]=[75 for j in range(0,SIZE)];
-    dBoundaryConditions[SIZE-1,:]=[50 for j in range(0,SIZE)];
-    dBoundaryConditions[:,SIZE-1]=[0 for j in range(0,SIZE)];
-    #Não homogeneidade
-    dNonHomogeneity = np.array([[0 for j in range(0,SIZE)] for i in range(0,SIZE)],dtype=np.float64)
     #Especificando o tipo de problema
     bDirichletOrNeumann = 0 #Indica que o método utilizado será de Dirichlet nas quatro fronteiras
-    bSparseOrNot = 0 #Indica que o método será direto
+    bSparseOrNot = 1 #Indica que o método será direto
     nMatrixOrder = SIZE #Indica ordem da matriz
     #Inicializando programa em C++
     cMesh.conditions(dBoundaryConditions,
