@@ -1,11 +1,17 @@
 \documentclass[journal]{IEEEtran}
 
+\usepackage[brazilian]{babel}
+
+\makeatletter
+\adddialect\l@BRAZILIAN\l@brazilian
+\makeatother
+
+
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 
 \usepackage{ae}
-% \usepackage[brazilian]{babel}
 \usepackage{hyphenat}
 \usepackage{fancyhdr}
 \usepackage{float}
@@ -22,10 +28,10 @@
 \usepackage{url}
 \usepackage{tikz}
 
-%Algoritmos
-\usepackage{algorithm2e}
-
 \hyphenation{op-tical net-works semi-conduc-tor con-si-de-ram fa-mi-lia-ri-za-ção}
+
+%Algoritmos
+\usepackage[portuguese]{algorithm2e}
 
 \begin{document}
 \title{Um Estudo da Instabilidade de Saffman-Taylor com Fluido Magnético e, ou Anisotrópico}
@@ -74,7 +80,13 @@ Ferrofluidos, Navier~Stokes, EDP, Poisson, Laplace, Diferenças~finitas, Eigen
 \IEEEpeerreviewmaketitle
 
 \section{Introdução}
-A instabilidade de Saffman-Taylor, também chamada de endedamento, ou \textit{fingering}, é um fenômeno que ocorre na superfície de contato entre dois fluidos sob circunstâncias específicas. Esse fenômeno ocorre quando um fluido menos viscoso é injetado para deslocar um outro mais viscoso (na situação inversa, do fluido mais viscoso usado para movimentar o outro, a interface é estavel, não ocorrendo o endedamento). Também pode ocorrer movida pela gravidade, ao invés de injeção de um fluido em outro. Neste caso, a interface separando os fluidos de diferentes densidades está direcionada na horizontal, e o mais pesado está em cima do outro. Este tipo de fenômeno é um problema ocorrente em petrolíferas marítimas. Em tais petrolíferas, ocorre a injeção de água nos tubos de extração de petróleo, no objetivo do óleo subir. Na interface entre água e petróleo, o endedamento ocorre, originando bolhas de óleo dentro de água, que tem um efeito negativo na extração do petróleo, causando perca de óleo quando a água é jogada fora.
+A instabilidade de Saffman-Taylor, também chamada de endedamento, ou \textit{fingering}, que pode ser visto na Figura \ref{finger}, é um fenômeno que ocorre na superfície de contato entre dois fluidos sob circunstâncias específicas. Esse fenômeno ocorre quando um fluido menos viscoso é injetado para deslocar um outro mais viscoso (na situação inversa, do fluido mais viscoso usado para movimentar o outro, a interface é estavel, não ocorrendo o endedamento). Também pode ocorrer movida pela gravidade, ao invés de injeção de um fluido em outro. Neste caso, a interface separando os fluidos de diferentes densidades está direcionada na horizontal, e o mais pesado está em cima do outro. Este tipo de fenômeno é um problema ocorrente em petrolíferas marítimas. Em tais petrolíferas, ocorre a injeção de água nos tubos de extração de petróleo, no objetivo do óleo subir. Na interface entre água e petróleo, o endedamento ocorre, originando bolhas de óleo dentro de água, que tem um efeito negativo na extração do petróleo, causando perca de óleo quando a água é jogada fora.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=6cm]{figures/fingergel.png}
+\caption{Demonstração de fingering\label{finger}}
+\end{figure}
 
 Para o estudo dessa instabilidade, que não é nada trivial, a solução se dá por meio de métodos numéricos auxiliados por computador. A equação de Navier Stokes deve ser discretizada e então resolvida numericamente. Ela é uma equação diferencial parcial altamente não-linear e de difícil resolução. No caso da instabilidade de Saffman-Taylor, no qual a fronteira está em movimento, que é a interface entre os dois fluidos, faz-se necessário algoritmos numéricos capazes de lidar com este movimento sem causar complicações extremas que impossibilitem a obtenção de soluções práticas. 
 
@@ -83,57 +95,60 @@ Tais ferramentas numéricas e decisão de métodos/algoritmos a se utilizar são
 A metologia aqui proposta resume as tarefas realizadas, não seguindo um ordem cronológica, mas sim uma mais organizada, para estar bem divididas as seções.
 \begin{enumerate}
   \item[A.] Programação
-  \item[B.] Equação de Laplace
-  \item[C.] Equação de Poisson
-  \item[D.] Navier Stokes
+  \item[B.] Equação de Laplace com condições de fronteira de Dirichlet
+  \item[C.] Equação de Poisson com condições de fronteira de Dirichlet e Neumann
+  \item[D.] Equação de Navier Stokes
   \begin{enumerate}
-  \item [0.1.] Discretização
-  \item[0.2.] Malha Escalonada
+  \item [] Considerações gerais sobre a equação
   \item[1.] Desconsiderando a pressão
   \item[2.] Obtendo a pressão
   \item[3.] Avançando no tempo
   \end{enumerate}
 \end{enumerate}
-\subsection{Programação}
+\section{Técnicas de Computação Básica}
 O fato do problema numérico em questão ser difícil torna o tempo uma questão fundamental na escolha da linguagem de programação a ser utilizada. De início a ferramenta e linguagem de programação utilizada era o MATLAB\textregistered. O MATLAB inclui uma infinidade de algoritmos já prontos disponíveis para uso, ferramentas para plotagem de gráficos embutidas, ótimos sistemas de referências de funções, mas tem a desvantagem de ser muito caro, proprietário e consumir muita memória e processamento só de estar aberto, sem executar o próprio programa para resolver nossas equações em questão. Como o tempo é um fator crítico, como já mencionado, o custo de memória de um programa como o MATLAB, sendo executado por muitas horas ou dias, pode ser algo muito complicado, preferiu-se tomar outro rumo para o desenvolvimento dos nossos códigos.
 
-Tais problemas levaram a uma escolha de uma linguagem de programação compilada e rápida, o C++. O fato do aluno ter experiência em C inicialmente, aliado ao fato de se haver encontrado uma biblioteca de álgebra linear chamada Eigen que evita a necessidade de criação de inúmeros algoritmos básicos, e que é feita em C++, influenciou na escolha de tal linguagem.
+Tais problemas levaram a uma escolha de uma linguagem de programação compilada e rápida, o C++. O fato do aluno ter experiência em C inicialmente, aliado ao fato de se haver encontrado uma biblioteca de álgebra linear chamada Eigen\footnote{Eigen: http://eigen.tuxfamily.org/} que evita a necessidade de criação de inúmeros algoritmos básicos, e que é feita em C++, influenciou na escolha de tal linguagem.
 
-A Eigen\footnote{Eigen: http://eigen.tuxfamily.org/} inclui algoritmos para resolução de sistemas lineares, criação de matrizes e alocação de memória, operações básicas de matrizes, resolução de sistemas de matrizes esparsas e vários outros algoritmos não explorados que estão à disposição, isso tudo de graça, pois é código aberto e gratuito. 
+A Eigen inclui algoritmos para resolução de sistemas lineares, criação de matrizes e alocação de memória, operações básicas de matrizes, resolução de sistemas de matrizes esparsas e vários outros algoritmos não explorados que estão à disposição, isso tudo de graça, pois é código aberto e gratuito. 
 
-Apesar de se ter escolhido o C++ e a Eigen, isto só não traz todas as ferramentas necessárias ao trabalho em questão. A plotagem de gráficos diretamente em C++ não é algo trivial, não foram encontradas bibliotecas de fácil uso que pudessem ser utilizadas de uma forma tão simples como o MATLAB. Após muita pesquisa, foi decidido utilizar o python, e suas bibliotecas de plotagem de gráficos. Os códigos em C++ passarem a ser compilados não em programas, mas em bibliotecas, e executados de dentro do ambiente Python, bem mais leve que o MATLAB, e então com o Python, que possui poderosos recursos para salvar arquivos, plotar gráficos e tudo de fácil estudo para uso, completou-se o arsenal de ferramentas de programação que são utilizadas no presente trabalho.
+Apesar de se ter escolhido o C++ e a Eigen, isto só não traz todas as ferramentas necessárias ao trabalho em questão. A plotagem de gráficos diretamente em C++ não é algo trivial, não foram encontradas bibliotecas de fácil uso que pudessem ser utilizadas de uma forma tão simples como o MATLAB. Após muita pesquisa, foi decidido utilizar o Python e suas bibliotecas de plotagem de gráficos. Os códigos em C++ passaram a ser compilados não em programas, mas em bibliotecas, e executados de dentro do ambiente Python, que possui poderosos recursos para salvar arquivos, plotar gráficos e tudo de fácil estudo para uso, completou-se o arsenal de ferramentas de programação que são utilizadas no presente trabalho.
 
 Além das ferramentas que lidam direto com código, é utilizado o CMake\footnote{Cmake: http://www.cmake.org/} para criação de Makefiles para compilar o código e o git\footnote{Git: http://git-scm.com/} é utilizado como gerenciador de versões do projeto, de forma a sempre se ter as versões antigas dos códigos salvas, e bem organizadas.
 
-O projeto tem sido desde certo ponto hospedado num servidor git gratuito, que pode ser obtido\footnote{Github projeto: https://github.com/ataias/ff} facilmente online. Há um histórico de todas as versões dos programas do projeto, e os códigos C++, Python e instruções de como compilar e executar em sistema operacional Ubuntu.
-\subsection{Equação de Laplace}
-Primeiramente, teve-se a familiarização do aluno com a resolução de equações diferenciais parciais, realizando um curso na UnB, onde foram vistas principalmente a equação de Laplace, Poisson, Calor e Onda. O método de resolução aprendido foi por separação de variáveis, o método de Fourier. Após isso, o primeiro problema proposto foi resolver uma destas equações numericamente, a escolhida foi a equação de Laplace em duas dimensões, que segue abaixo:
-\begin{equation}
-\nabla^2 u=\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}=0\label{laplace}
-\end{equation}
+O projeto tem sido desde certo ponto hospedado num servidor git gratuito, que pode ser obtido facilmente online\footnote{Github projeto: https://github.com/ataias/ff}. Neste site do projeto há um histórico de todas as versões dos programas do projeto, e os códigos C++, Python e instruções de como compilar e executar em sistema operacional Ubuntu.
+\section{Equação de Laplace com condições de fronteira de Dirichlet}
+Primeiramente, o aluno se familiarizou com a resolução de equações diferenciais parciais de Laplace, Poisson, Calor e Onda. O método de resolução aprendido foi o método de Fourier. Tal método consiste na separação de variáveis. Tendo-se uma função incógnita $u(x,y)$, propõe-se uma solução do tipo $H(x)G(y)$ e este termo é então trabalhado na equação diferencial, de forma a obter-se equações diferenciais ordinárias que podem ser resolvidas mais facilmente. As soluções muitas vezes envolvem o uso da série de Fourier, onde partes das EDPs são representadas como uma soma de senos e cossenos, por necessidade pelo uso do método.
 
-A primeira etapa na resolução desta equação de maneira numérica é discretizá-la, e isto quer dizer limitar o domínio, escolher um número de pontos em cada dimensão, e representar a equação como operações mais simples que o computador possa entender, diferentes da derivada. O método escolhido para realizar a discretização foi diferenças finitas.
+Após isso, o primeiro problema proposto foi resolver uma destas equações numericamente, a escolhida foi a equação de Laplace com condições de fronteira de Dirichlet em duas dimensões, num quadrado $1\times 1$, conforme se verifica abaixo:
+\begin{eqnarray}
+\nabla^2 u=\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}=0\label{laplace}\\
+u(x,0)=f_1(x),\,u(x,1)=f_2(x)\nonumber \\
+\,u(0,y)=g_1(y),\,u(1,y)=g_2(y) \nonumber
+\end{eqnarray}
 
-Para a discretização da equação \ref{laplace}, usa-se o método mencionado antes, que são as diferenças finitas. Este método basicamente faz a seguinte aproximação para a derivada:
+A primeira etapa na resolução numérica desta equação de maneira é discretizá-la, e isto implica em tornar finito o número de pontos em cada dimensão, e representar a equação como operações mais simples e que o computador seja capaz de entender, operações diferentes da derivada, tais como soma, subtração e multiplicação. O método escolhido para realizar a discretização foi diferenças finitas. Este método basicamente faz a seguinte aproximação para a derivada:
 \begin{equation}
 f'(x)=\lim_{h\rightarrow 0}\frac{f(x+h)-f(x)}{h}=\frac{d}{dx}f(x)\approx \frac{f_i-f_{i-1}}{\Delta x}
 \end{equation}
 Os valores de $f_i$ são valores discretizados da função $f(x)$, ou seja, $f_i=f(i\Delta x)$. Agora a distância entre dois pontos passa a ser de $\Delta x$, e daí a derivada se calcula como a diferença entre um ponto e outro, dividida pela distância entre eles. 
 
-Há vários tipos de diferenças finitas: progressivas, regressivas e centrais. Além disso, elas podem envolver mais de dois pontos, de forma a se obter diferentes ordens de erro. O erro também muda de acordo com quão grande é $\Delta x$, que está diretamente ligado ao número de pontos da malha. A malha é uma matriz bidimensional que contém pontos representando posições do espaço do problema. Para Laplace, utilizou-se diferenças centrais de segunda ordem, para vários tamanhos de malhas. Neste caso, o erro é da ordem de $\Delta x^2$.
+Há vários tipos de diferenças finitas: progressivas, regressivas e centrais. Além disso, elas podem envolver mais de dois pontos, de forma a se obter diferentes ordens de erro. O erro também muda de acordo com quão grande é $\Delta x$, que está diretamente ligado ao número de pontos da malha. A malha é uma matriz bidimensional que contém pontos representando posições do espaço. Para resolver a equação de Laplace, utilizou-se diferenças centrais de segunda ordem, cujo erro é da ordem de $\Delta x^2$:
 \begin{equation}
 f''(x)\approx \frac{f(x+\Delta x)-2f(x)-f(x-\Delta x)}{\Delta x^2}
 \end{equation}
-Utilizando essa equação para Laplace, chega-se na seguinte discretização, considerando $\Delta x=\Delta y$, ou seja, uma malha quadrada, e que a variável $x$ varia de acordo com o índice $i$ e a variável $y$ com o índice $j$:
+Utilizando essa discretização da segunda derivada, chega-se na seguinte discretização da equação de Laplace, considerando $\Delta x=\Delta y$, ou seja, uma malha quadrada, e que a variável $x$ varia de acordo com o índice $i$ e a variável $y$ com o índice $j$:
 \begin{equation}
 \frac{u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1}-4u_{ij}}{\Delta x^2}=0 \label{laplace_discreta_zero}
 \end{equation}
-Reordenando essa equação:
+Reordenando essa equação álgebrica para encontrar o valor de $u_{ij}$:
 \begin{equation}
   u_{ij}=\frac{u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1}}{4} \label{laplace_discreta}
 \end{equation}
 
-A equação da fórmula \ref{laplace_discreta} está na forma explícita, na qual um ponto central é obtido diretamente a partir dos pontos adjacentes. No entanto, quando a equação é aplicada ao ponto central, ele influencia no cálculo de outros, que faz com que esta fórmula deva ser aplicada muitas vezes, até se alcançar a convergência de todos os pontos do domínio. Entretanto, se apenas aplica-se essa equação a todos os pontos do domínio, já se vê um problema, pois ela sempre pede mais pontos para os lados. Por isso, além da equação, necessita-se das condições de contorno para o problema, onde-se são determinados os valores nas fronteiras do domínio, de forma direta ou indireta, dependendo se as condições são de Dirichlet, Neumann ou uma mistura. O domínio escolhido é um quadrado, e abaixo tem-se o exemplo de uma malha 6x6.
+A equação da fórmula \ref{laplace_discreta} está na forma explícita, na qual um ponto central é obtido diretamente a partir dos pontos adjacentes. No entanto, quando a equação é aplicada ao ponto central, ele influencia no cálculo de outros, que faz com que esta fórmula deva ser aplicada muitas vezes, até se alcançar a convergência de todos os pontos do domínio. A convergência é a aproximação de um valor, quando os valores da malha parecem ter alcançado valores estacionários, mudando muito pouco, é alcançada a convergência.
+
+Caso essa equação é aplicada a todos os pontos do domínio, se nota um problema, pois ela requere pontos adjacentes em todo local no qual ela é aplicada. Por isso, além da equação, necessita-se das condições de contorno para o problema, onde-se são determinados os valores nas fronteiras do domínio, de forma direta ou indireta, dependendo se as condições são de Dirichlet, Neumann ou uma mistura. No caso atual, as condições são de Dirichlet, que indica o valor de forma direta que a fronteira deve ter. O domínio escolhido é um quadrado, como já mencionado, e abaixo tem-se o exemplo de uma malha 6x6.
 
 \begin{figure}[!ht]
 \centering
@@ -160,22 +175,18 @@ A equação da fórmula \ref{laplace_discreta} está na forma explícita, na qua
 \end{tikzpicture}
 \caption{Malha padrão para discretizar Laplace e Poisson\label{malha_poisson}}
 \end{figure}
-Cada cruzamento de linha indica um ponto no domínio, e a equação \ref{laplace_discreta} será aplicada em quase todos estes postos, com exceção dos de fronteira. O valor dos pontos de fronteira deste primeiro problema foi escolhido fixo, utilizando condições de Dirichlet. 
+Cada cruzamento de linha indica um ponto no domínio, e a Equação \ref{laplace_discreta} será aplicada em quase todos estes postos, com exceção dos de fronteira, que são determinados pelas condições de Dirichlet. 
 
 Pelo fato do método ser iterativo, com um \textit{loop} sendo repetido muitas vezes, até a convergência, é natural escolher um método de parada. Isto poderia ser: (1) escolher um tempo limite de execução, (2) ver a diferença entre duas matrizes após uma iteração completa em seus pontos internos, para analisar se a diferença entre elas é desprezível e se indica convergência, ou ainda (3) pode-se calcular os valor da equação de Laplace em cada ponto interno, que seria o melhor a se fazer, e analisar se a equação está dentro de uma faixa de erro desejada. A segunda maneira de se fazer isto foi escolhida na primeira parte, e foi uma difícil decisão escolher qual utilizar, pois ainda não se compreendia como aplicar o terceiro método.
 
-O problema inicialmente proposto tem condições de Dirichlet, que indica a função em cada fronteira do domínio. E os problemas todos são resolvidos num quadrado de lado igual a 1.
-\begin{eqnarray}
-\nabla^2 u=0 \\
-(x,y) \in D\,; 0\le x\le 1\,\textrm{e}\,0\le y\le 1 \nonumber \\
-u(0,y)=h_1(y) \nonumber \\
-u(1,y)=h_2(y) \nonumber \\
-u(x,0)=g_1(x) \nonumber \\
-u(x,1)=g_2(x) \nonumber \\
-\Delta x = \frac{1}{n-1} \nonumber
-\end{eqnarray}
+Um valor que não está sendo utilizado agora, mas será posteriormente, é a distância $\Delta x$. Não é utilizada pelo fato do lado direito da equação de Laplace ser zero, e assim simplificou-se o problema.
 
-Agora, apresenta-se o algoritmo que se utilizou para resolver a equação
+\begin{equation}
+\Delta x = 1/(n-1)
+\end{equation}
+
+Agora, apresenta-se o algoritmo que se utilizou para resolver a equação:
+
 \begin{algorithm}
 \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
 \Input{Matriz com as condições de contorno de tamanho $n\times n$}
@@ -198,12 +209,10 @@ $STOP\leftarrow1$\;
 }
 }
 
-\caption{Resolvendo Laplace Iterativamente}\label{algo_laplace_iter}
+\caption{Resolvendo a equação de Laplace Iterativamente}\label{algo_laplace_iter}
 \end{algorithm}
 
-Na equação de Laplace, o $\Delta x$ não aparece diretamente, tanto que não aparece no algoritmo, mas esta variável contém um valor importante que será usada nos problemas posteriores de Poisson e Navier Stokes.
-
-O método de resolução apresentado é explícito, no qual o valor de cada ponto no método é obtido diretamente dos pontos adjacentes, e se faz necessária uma resolução iterativa. Isso tem um custo de processamento razoável, no qual o tempo aumenta grandemente conforme o número de pontos $n$ escolhido. Tendo em vista uma resolução mais rápida e direta, pode-se utilizar o método implícito.
+O método de resolução apresentado no algoritmo acima é o explícito, no qual o valor de cada ponto no método é obtido diretamente dos pontos adjacentes, e se faz necessária uma resolução iterativa. Isso tem um custo de processamento razoável, no qual o tempo aumenta grandemente conforme o número de pontos $n$ escolhido. Tendo em vista uma resolução mais rápida e direta, pode-se utilizar o método implícito.
 
 Anteriormente, a partir da equação \ref{laplace_discreta_zero}, isolou-se $u_{ij}$ e então resolveu-se iterativamente nosso problema. Outra forma de se resolver o mesmo problema é pegar essa mesma equação e trocar os índices $(i,j)$ por números de fato, obtendo várias equações, e isolando na parte da direita os termos de fronteira. Assim, para um sistema $n\times n$, dos $n^2$ pontos da malha dos índices $(0,0)\rightarrow (n-1,n-1)$, $(n-1)^2$ pontos são internos, correspondendo aos índices de $(1,1)\rightarrow (n-2,n-2)$. A seguir temos as equações para um sistema $5\times 5$:
 
@@ -235,7 +244,7 @@ O conjunto de equações acima é um sistema linear, e é possível representá-
 Observando o padrão de formação da matriz $A$ pentadiagonal e sabendo-se também obter o vetor de valores conhecidos $b$, tem-se um sistema linear para obter os pontos internos $x$. A solução é $x=A^{-1}b$.
 
 Como se nota, a resolução é muito mais direta, mas o algoritmo para se resolver este sistema linear pode ser muito mais complexo. Não se preocupou em criar um algoritmo para isso, mas sim em utilizar um pronto da biblioteca Eigen. Mas há um problema para este método, que um sistema pode ficar extremamente grande com um $n$ relativamente pequeno, tão grande, ao ponto de necessitar de mais memória do que o computador tem. Isso se resolve utilizando matrizes esparsas, que só salvam na memória elementos diferentes de zero. A matriz $A$ é uma matriz esparsa, na qual a maioria de seus elementos é igual a 0. Também utilizaram-se métodos prontos para resolução de sistemas esparsos provenientes da Eigen.
-\subsection{Equação de Poisson}
+\section{Equação de Poisson}
 
 A equação de Poisson é muito similar a de Laplace, mas com uma diferença, que é a de haver uma função forçamento existente no lado direito da equação.
 \begin{equation}
@@ -250,22 +259,29 @@ u_{ij}=\frac{1}{4}[(u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1})-\Delta x^2 f_{ij}] \lab
 O algoritmo iterativo para este caso é o mesmo anterior, substituindo a equação \ref{laplace_discreta} por \ref{poisson_discreta} no algoritmo.
 
 Para o caso implícito, o problema é muito similar, bastando mudar o vetor $b$, que passa a apresentar termos $\Delta x^2 f_{ij}$.
-\subsection{Navier Stokes}
 
-Após resolver-se as equações de Laplace e Poisson com condições de Dirichlet, pelos métodos explícito e implícito, tem-se já uma base para partir para a próxima etapa: Navier Stokes. Essa equação tem muitas complicações, e está levando ainda certo tempo para ter-se um programa que a resolva, e esteja de fato livre de bugs. A complexidade do programa é maior, tem muitas etapas, e tem ainda uma evolução no tempo que não foi lidada no problema de Poisson. A equação de Navier Stokes é a seguinte:
+A equação de Poisson realmente complicou quando se preparou o algoritmo numa versão mais similar àquela que é utilizada em Navier Stokes. Esta versão resolve o problema de Poisson com as quatro fronteiras com condições de Neumann, isto é:
+\begin{equation}
+\frac{\partial u}{\partial n} = f
+\end{equation}
+
+Isto resulta em maior processamento devido à esta equação gerar condições na fronteira que não são inicialmente fixas, mas que também são incógnitas. O problema foi resolvido e é apresentado na seção de resultados.
+\section{Equação de Navier Stokes}
+\subsection*{Considerações gerais}
+Após resolver-se as equações de Laplace e Poisson com condições de Dirichlet, pelos métodos explícito e implícito, tem-se já uma base para partir para a próxima etapa: Navier Stokes. Essa equação tem muitas complicações, e está levando ainda certo tempo para ter-se um programa que a resolva, e esteja de fato livre de bugs. A complexidade do programa é muitas maior, tem várias etapas, e tem ainda uma evolução no tempo que não foi lidada nos problemas anteriores. A equação de Navier Stokes é a seguinte:
 
 \begin{eqnarray}
 \rho\left( \frac{\partial \textbf{v}}{\partial
 t}+\textbf{v}\cdot\nabla\textbf{v}\right)=-\nabla
 p+\mu\nabla^2\textbf{v}+\textbf{f} \label{ns}\\
- \nabla\cdot \textbf{v}=0 \nonumber
+ \nabla\cdot \textbf{v}=0 \label{divergente_zero}
 \end{eqnarray}
 
-A discretização não é simples e é um pouco diferente da que foi feita anteriormente no problema de Poisson. Primeiramente, tem-se de saber que a discretização de Navier Stokes que será feita aqui é a fórmulação em variáveis primitivas. Isso quer dizer que o problema será trabalhado com as variáveis originais de velocidade $u$, $v$ (em $x$ e $y$) e pressão $p$. Outra forma de resolver é usando uma formulação com a vorticidade, que não será trabalhada aqui.
+A discretização não é simples e é um pouco diferente das que foram feitas anteriormente. Em primeiro lugar, tem-se de saber que a discretização de Navier Stokes que será feita aqui é a fórmulação em variáveis primitivas. Isso quer dizer que o problema será trabalhado com as variáveis originais de velocidade $u$, $v$ (em $x$ e $y$) e pressão $p$. Outra forma de resolver é usando uma formulação com a vorticidade, que não será trabalhada aqui.
 
-No que se aprendeu lendo um material em pdf que ensina o processo de resolução em variáveis primitivas, sabe-se que utilizando a malha da Figura \ref{malha_poisson}, ocorre modos espúrios de pressão que causa uma solução de velocidades que contém oscilações não esperadas no resultado do problema. O resultado desta forma não é satisfatório, e para resolver este problema usa-se uma malha escalonada.
+No que se aprendeu lendo sobre tal formulação do processo de resolução em variáveis primitivas, sabe-se que utilizando uma malha como a da Figura \ref{malha_poisson}, ocorrem modos espúrios de pressão que causam um perfil de velocidades que contém oscilações não esperadas no resultado do problema. O resultado, obtido com tal malha, desta forma, não é satisfatório, e para resolver este problema usa-se uma malha escalonada.
 
-A malha escalonada é uma malha na qual um ponto não salva a informação que é exatamente do local onde o ponto se situa, mas de um local próximo. No ponto $P=(i,j)$ são salvos cinco valores: força horizontal, força vertical, pressão, velocidade horizontal e vertical. Essas são representadas pelos símbolos $f_x$, $f_y$, $p$, $u$ e $v$. Um elemento da malha escalonada é representado na figura a seguir, na qual as forças não estão mostradas, mas elas são localizadas nas mesmas posições que as velocidades.
+A malha escalonada é uma malha na qual valores guardados num ponto se referem à informação em um outro ponto, próximo. No ponto $P=(i,j)$ são salvos cinco valores: força horizontal, força vertical, pressão, velocidade horizontal e vertical. Essas são representadas pelos símbolos $f_x$, $f_y$, $p$, $u$ e $v$. Um elemento da malha escalonada é representado na figura a seguir, na qual as forças não estão mostradas, mas elas são localizadas nas mesmas posições que as velocidades.
 
 \begin{figure}[!ht]
 \centering
@@ -284,11 +300,78 @@ A malha escalonada é uma malha na qual um ponto não salva a informação que �
 \caption{Elemento de malha escalonada}
 \end{figure}
 
-Diferente dos problemas de Laplace e Poisson, no qual um elemento $u_{ij}$ que estava salvo no computador na posição $ij$ realmente é o elemento $u_{ij}$, agora o elemento $u_{ij}$ salvo na memória do computador é fisicamente o elemento $u_{ij+\frac{1}{2}}$, enquanto o elemento $v_{ij}$ se refere ao elemento $v_{i+\frac{1}{2}j}$. De maneira similar ocorre para as forças. Para a pressão, $p_{ij}$ corresponde ao ponto $p_{i+\frac{1}{2}j+\frac{1}{2}}$.
+Diferente dos problemas de Laplace e Poisson, no qual um elemento $u_{ij}$ que estava salvo no computador na posição $ij$ realmente é o elemento $u_{ij}$, agora o elemento $u_{ij}$ salvo na memória do computador é fisicamente o elemento $u_{ij+\frac{1}{2}}$, enquanto o elemento $v_{ij}$ se refere ao elemento $v_{i+\frac{1}{2}j}$. De maneira similar ocorre para as forças. Para a pressão, $p_{ij}$ corresponde ao ponto $p_{i+\frac{1}{2}j+\frac{1}{2}}$. Isso influencia diretamente na discretização, e na posterior criação dos gráficos.
 
+Uma malha escalonada completa é apresentada na Figura a seguir:
 
-\subsubsection{Desconsiderando a pressão}
-A primeira etapa consiste literalmente de desconsiderar a pressão. Há um termo de pressão na equação \ref{ns} que é $\nabla p$. A partir dessa simplificação, faz-se a discretização da equação. Alguns termos foram incluídos nas equações a seguir de forma a tornar algumas das equações menos extensas.
+\begin{figure}
+\centering
+\tikzstyle{help lines}+=[dashed]% aaarghhh!!!
+\begin{tikzpicture}
+%axes
+\draw[->] (0,5) -- (xyz cs:y=6);
+\draw (0,6.3) node {$y(j)$};
+\draw[->] (5,0) -- (xyz cs:x=6);
+\draw (6.5,0) node {$x(i)$};
+\draw (-0.18,-0.18) node {$O$};
+%grid
+\draw[style=help lines] (-1,-1) grid +(7,7);
+\draw (0,0) grid +(5,5);
+%internal p points
+\foreach \x in {0.5,1.5,2.5,3.5,4.5}
+  \foreach \y in {0.5,1.5,2.5,3.5,4.5}
+  {
+  \fill (canvas cs:x=\x cm,y=\y cm) circle (2pt);
+}
+%External p points
+\foreach \x in {0.5,1.5,2.5,3.5,4.5}
+  \draw (\x,-0.5) circle (2pt);
+\foreach \y in {0.5,1.5,2.5,3.5,4.5}
+  \draw (5.5,\y) circle (2pt);
+\foreach \y in {0.5,1.5,2.5,3.5,4.5}
+  \draw (-0.5,\y) circle (2pt);
+\foreach \x in {0.5,1.5,2.5,3.5,4.5}
+  \draw (\x,5.5) circle (2pt);
+%Internal Horizontal Velocities Points
+\foreach \x in {-1.2,-0.2,0.8,1.8,2.8,3.8,4.8}
+  \foreach \y in {0.5,1.5,2.5,3.5,4.5}
+  {
+  \draw[->] (\x,\y) -- (\x+0.4,\y);
+}
+%External Horizontal Velocities Points
+\foreach \x in {-.2,0.8,1.8,2.8,3.8}
+  \draw[->] (\x,5.5) -- (\x+0.4,5.5);
+\foreach \x in {-.2,0.8,1.8,2.8,3.8}
+  \draw[->] (\x,-.5) -- (\x+0.4,-.5);
+%Internal Vertical Velocities Points
+\foreach \x in {0.5,1.5,2.5,3.5,4.5}
+  \foreach \y in {-1.2,-0.2,0.8,1.8,2.8,3.8,4.8}
+  {
+  \draw[->] (\x,\y) -- (\x,\y+0.4);
+}
+%External Vertical Velocities Points
+\foreach \y in {-0.2,0.8,1.8,2.8,3.8}
+  \draw[->] (5.5,\y) -- (5.5,\y+0.4);
+\foreach \y in {-0.2,0.8,1.8,2.8,3.8}
+  \draw[->] (-.5,\y) -- (-.5,\y+0.4);
+\end{tikzpicture}
+\caption{Malha escalonada. Círculos são pontos internos e de fronteira enquanto circunferências indicam fronteira imaginária adicionada\label{malha_escalonada}}
+\end{figure}
+
+Na malha escalonada da Figura \ref{malha_escalonada}, tem-se ainda uma nova adição: uma fronteira imaginária. Quando se discretiza a equação de Navier Stokes, faz-se ainda necessários outros pontos além do internos e fronteira. As equações apresentadas são discretizadas em domínios similares ao de cima, onde a única coisa que muda é o tamanho do domínio, que pode ser maior.
+
+O problema de Navier Stokes é trabalhado em três etapas principais:
+
+\begin{enumerate}
+  \item Desconsiderando a pressão
+  \item Obtendo a pressão
+  \item Avanço no tempo
+\end{enumerate}
+
+Inicia-se agora a descrição da metodologia empregada em tais etapas.
+
+\subsection{Desconsiderando a pressão}
+A primeira etapa consiste literalmente de desconsiderar a pressão. Há um termo de pressão na Equação de Navier Stokes (eq. \ref{ns}) que é o termo $\nabla p$, chamado de gradiente de pressão. Elimina-se ele da equação e a partir dessa simplificação, faz-se a discretização da equação. Pelo fato da malha ser escalonada, termos de velocidade estão em pontos diferentes da malha, e há momentos nos quais é necessário elementos de velocidade que não estão salvos na malha, fazendo-se necessária obter uma média de velocidades próximas para obter as velocidades necessárias na discretização.
  
 \begin{eqnarray}
 \textbf{v}_{ij}^s=(u_{i+1j}+u_{i-1j}+u_{ij+1}+u_{ij-1})\textbf{i} 
@@ -298,28 +381,281 @@ A primeira etapa consiste literalmente de desconsiderar a pressão. Há um termo
 \end{eqnarray}
 \begin{eqnarray}
 u_{ij}^{*}&=&\left[\frac{\mu}{\rho}\left(\frac{u_{ij}^s-4u_{ij}}{\Delta
-x^2}\right)+\frac{1}{\rho}\frac{f_{x,ij}+f_{x,i-1j}}{2}\right] + u_{ij}\nonumber \\
+x^2}\right)+\frac{1}{\rho}f_{x,ij}\right] + u_{ij}\nonumber \\
 &-&\left[u_{ij}\frac{u_{i+1j}-u_{i-1j}}{2\Delta
 x}-v_{ij}^t\frac{u_{ij+1}-u_{ij-1}}{2\Delta x}\right]\Delta t
 \end{eqnarray}
 
 \begin{eqnarray}
 v_{ij}^{*}&=&\left[\frac{\mu}{\rho}\left(\frac{v_{ij}^s-4v_{ij}}{\Delta
-x^2}\right)+\frac{1}{\rho}\frac{f_{y,ij}+f_{y,ij-1}}{2}\right] + v_{ij}\nonumber \\
+x^2}\right)+\frac{1}{\rho}f_{y,ij}\right] + v_{ij}\nonumber \\
 &-&\left[u_{ij}^t\frac{v_{i+1j}-v_{i-1j}}{2\Delta
 x}-v_{ij}\frac{v_{ij+1}-v_{ij-1}}{2\Delta x}\right]\Delta t
 \end{eqnarray}
-\section{Resultados}
-\subsection{Laplace - Método Iterativo}
-Foram realizados vários testes utilizando as seguintes condições:
+
+Com isto, tem-se:
+\[\textbf{v}^{*}=(u^*,v^*)\]
+
+As equações para $u_{ij}^{*}$ e $v_{ij}^{*}$ são utilizadas para obter a solução de velocidades da equação de Navier Stokes sem a pressão, portanto, não é a solução real, mas está relacionada com a solução.
+
+\subsection{Obtendo a pressão}
+A forma de obter a pressão é utilizando as Equações \ref{ns} e \ref{divergente_zero}. Primeiro é obtido o divergente da Eq. \ref{ns} e então, utilizando a Equação \ref{divergente_zero}, se simplifica a equação obtida, obtendo-se o seguinte:
+
+\begin{equation}
+\nabla^2 p = \frac{\rho}{\Delta t} \nabla\cdot \textbf{v}^*=\frac{\rho}{\Delta t} 
+\left( \frac{\partial u^*}{\partial x}+\frac{\partial v^*}{\partial y} \right) \label{poisson_ns}
+\end{equation}
+
+O termo da direita na equação acima será chamado de $DIV$, e é discretizado na equação seguinte:
+
+\begin{equation}
+DIV_{ij}=\frac{\rho}{\Delta t}\left( \frac{u_{i+1j}^*-u_{ij}^*}{\Delta x}+\frac{v_{ij+1}^*-v_{ij}^*}{\Delta x}\right)
+\end{equation}
+
+A equação que estamos tratando é a de Poisson, e resultará na pressão desejada para resolvermos o problema de Navier Stokes. A Equação \ref{poisson_discreta} é usada para pontos internos da malha. Já para a fronteira, a situação muda em relação à anterior. A partir da equação de Navier Stokes podem ser obtidas as condições de contorno para a pressão. Veremos que tais condições são todas de Neumann, fazendo com que não haja uma única solução de pressão, mas como na equação de Navier Stokes só aparece gradiente de pressão, qualquer solução de pressão pode ser usada para então obter esse gradiente. Destrinchando a Equação \ref{ns} em duas coordenadas, tem-se:
+
 \begin{eqnarray}
-\nabla^2 u=0\\
-u_{}
+\frac{\partial u}{\partial t}+u\frac{\partial u}{\partial x}+v\frac{\partial
+u}{\partial y}=-\frac{1}{\rho}\frac{\partial p}{\partial
+x}+\nu\left(\frac{\partial^2 u}{\partial^2 x}+\frac{\partial^2 u}{\partial^2
+y}\right)+f_x\\
+\frac{\partial v}{\partial t}+u\frac{\partial v}{\partial x}+v\frac{\partial
+v}{\partial y}=-\frac{1}{\rho}\frac{\partial p}{\partial
+y}+\nu\left(\frac{\partial^2 v}{\partial^2 x}+\frac{\partial^2 v}{\partial^2
+y}\right)+f_y
 \end{eqnarray}
 
+Se fizermos uma análise dos pontos na parede da esquerda ou
+direita, e aplicarmos as condições de impenetrabilidade e não-deslizamento, que
+dizem que $u=0$ e $v=0$ na parede, temos a simplificação da equação, pois vários
+termos se tornam zero. As equações para as duas paredes verticais é a seguinte:
+\begin{equation}
+\frac{\partial p}{\partial x}\Bigg|_{\textrm{parede}}=\rho\nu\frac{\partial^2
+u}{\partial x^2}\Bigg|_{\textrm{parede}}+\rho f_x \label{parede_vertical_pressao}
+\end{equation}
+
+Para as paredes que ficam na horizontal tem-se:
+\begin{equation}
+\frac{\partial p}{\partial y}\Bigg|_{\textrm{parede}}=\rho\nu\frac{\partial^2
+v}{\partial y^2}\Bigg|_{\textrm{parede}}+\rho f_y \label{parede_horizontal_pressao}
+\end{equation}
+
+As discretizações das Equações \ref{parede_vertical_pressao} e \ref{parede_horizontal_pressao} devem ser feitas considerando-se a malha escalonada, da forma como os dados são salvos no computador. O seguinte esquema mostra a origem $O$ do nosso domínio e o ponto no computador que representa a origem imaginária $x_{00}$:
+
+\begin{figure}
+\centering
+\tikzstyle{help lines}+=[dashed]% aaarghhh!!!
+\begin{tikzpicture}
+%grid
+\draw[style=help lines] (-1,-1) grid +(7,7);
+\draw (0,0) grid +(5,5);
+
+%axes
+\draw[->] (0,0) -- (xyz cs:x=0, y=6.2);
+\draw (0,6.5) node {$y$};
+
+\draw[->] (0,0) -- (xyz cs:x=6.2,y=0);
+\draw (6.6,0) node {$x$};
+\draw (-0.18,-0.18) node {$O$};
+
+\draw[->] (-1,-1) -- (xyz cs:x=-1, y=6.2);
+\draw (-1,6.5) node {$j$};
+
+\draw[->] (-1,-1) -- (xyz cs:x=6.2, y=-1);
+\draw (6.7,-1) node {$i$};
+
+\draw (-1.3,-1.3) node {$x_{00}$};
+\draw (-1,-1) circle (2pt);
+
+\draw (0.3,0.2) node {$x_{11}$};
+\draw (0,0) circle (2pt);
+
+\draw (5.3,5.2) node {$x_{66}$};
+\draw (5,5) circle (2pt);
+
+\draw (6.3,6.2) node {$x_{77}$};
+\draw (6,6) circle (2pt);
+
+\draw (1.3,2.2) node {$x_{23}$};
+\draw (1,2) circle (2pt);
+\end{tikzpicture}
+\caption{Mostra dos índices dos pontos do domínio e pontos imaginários}
+\end{figure}
+Esta malha é mostrada como na figura acima porque em C++ não é possível ter elementos de matrizes com índices negativos, como em Fortran. Discretizando as equações e isolando os termos da fronteira imaginária, que se deseja obter, tem-se o seguinte:
+\begin{eqnarray}
+p_{i-1j}|_{i=1}&=&p_{ij}-\frac{\mu}{\Delta x}\left(2u_{ij}-5u_{i+1j}+4u_{i+2j}-u_{i+3j}\right)\nonumber\\ & & -\rho\Delta x f_{ij}\\
+p_{i+1j}|_{i=n}&=&p_{ij}+\frac{\mu}{\Delta x}\left(2u_{ij}-5u_{i-1j}+4u_{i-2j}-u_{i-3j}\right)\nonumber\\ & &+\rho\Delta x f_{ij}\\
+p_{ij-1}|_{j=1}&=&p_{ij}-\frac{\mu}{\Delta x}\left(2v_{ij}-5v_{ij+1}+4u_{ij+2}-u_{ij+3}\right)\nonumber\\& &-\rho\Delta x f_{ij}\\
+p_{ij+1}|_{j=n}&=&p_{ij}+\frac{\mu}{\Delta x}\left(2v_{ij}-5v_{ij-1}+4u_{ij-2}-u_{ij-3}\right)\nonumber\\& &+\rho\Delta x f_{ij}
+\end{eqnarray}
+
+Tais equações devem então ser utilizadas no algoritmo para resolver a equação de Poisson, lembrando que essas condições são de Neumann, e então a fronteira não é fixa, mas irá variar até o momento que o algoritmo iterativo utilizado convergir.
+\subsection{Avanço no tempo}
+Agora faz-se a relação entre a velocidade obtida ignorando-se a pressão com o gradiente da pressão obtida no item anterior para então obter-se o próximo passo de tempo da velocidade. Finalmente, tem-se: 
+
+\begin{equation}
+\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}=-\frac{1}{\rho}\nabla p
+\end{equation}
+
+Expandindo para as equações escalares, tem-se:
+\begin{eqnarray}
+u^{n+1}=u^*-\frac{\Delta t}{\rho}\frac{\partial p}{\partial x}\\
+v^{n+1}=v^*-\frac{\Delta t}{\rho}\frac{\partial p}{\partial y}
+\end{eqnarray}
+Basta discretizar os termos das derivadas parciais agora:
+
+\begin{eqnarray}
+p_{x,ij}=\frac{p_{ij}-p_{i-1j}}{\Delta x}\\
+p_{y,ij}=\frac{p_{ij}-p_{ij-1}}{\Delta x}
+\end{eqnarray}
+
+E finalmente tem-se a solução para o tempo $n+1$ a partir do tempo passado $n$:
+
+\begin{eqnarray}
+u^{n+1}=u^*-\frac{\Delta t}{\rho}p_x\\
+v^{n+1}=v^*-\frac{\Delta t}{\rho}p_y
+\end{eqnarray}
+Cada uma das varíaveis acima é uma matriz. Com isso, tem-se as fórmulas necessárias para resolver a equação de Navier Stokes. No entanto, mais processos são necessários computacionalmente, é necessário escolher uma boa condição de parada para as etapas que consideram convergência, trabalhar com arquivos para salvar os resultados, entre outras coisas, que realmente complicam a solução do problema.
+\section{Resultados}
+\subsection{Equação de Laplace e Poisson com fronteira de Dirichlet}
+A equação de Laplace foi resolvida pelo método explícito iterativo, algumas vezes usando paralelismo e outras não, e pelo método ímplicito. Serão mostradas várias figuras com os resultados destas etapas.
+
+% Figura 1
+% Pontos vs Tempo de Cálculo - 1 Thread  
+\begin{figure}[ht!]
+\centering
+\includegraphics[width = 0.4\textwidth]{figures/problema01_m1/03.png}
+\caption{Pontos vs Tempo de Cálculo - 1 thread - Método Explícito\label{pontos_vs_tempo_1th}}
+\end{figure}
+
+Nas Figuras \ref{pontos_vs_tempo_1th} e \ref{pontos_vs_tempo_4th} tem-se uma visão geral do tempo que o programa criado gasta para resolver a equação de Laplace com condições de Dirichlet, pelo método explícito iterativo. Os conjuntos de pontos obtidos em cada gráfico foram melhor aproximados por polinômios cúbicos. A diferença entre os dois se vê no tempo de cálculo quando o número de pontos passa de 100. Pelo fato de serem polinômios cúbicos, ambos crescem muito rápido com o número de pontos, mas o cálculo com 4 threads foi mais rápido pelo fato de estar usando mais poder de processamento do computador nos cálculos.
+
+As Figuras \ref{malha5x5_1th} a \ref{malha500x500_4th} são um conjunto de resultados da equação de Laplace com condições de fronteira de Dirichlet, resolvidas pelo método iterativo explícito, tanto com 1 thread como 4 threads. As condições de contorno em todas são as mesmas, como se pode notar pelo formato similar de cada uma. Os lados tem valores de condições de Dirichlet que são $u(x,0)=0$, $u(x,1)=50$, $u(0,y)=75$ e $u(1,y)=100$. Nota-se que cada gráfico se parece mais com uma função contínua, sendo a malha $500\times 500$ praticamente toda contínua em questão dos pontos coloridos, que parecem estar em todo local. Para se ter estes resultados próximos do contínuo, o gasto computacional é enorme, conforme se nota nas descrições das figuras.
+
+\newpage
+% Figura 2
+% Pontos vs Tempo de Cálculo - 4 threads
+\begin{figure}[ht!]
+
+\centering
+\includegraphics[width = 0.4\textwidth]{figures/problema01_m1/08.png}
+\caption{Pontos vs Tempo de Cálculo - 4 threads - Método Explícito\label{pontos_vs_tempo_4th}}
+\end{figure}
+
+% Figura 3
+% Cálculo da Malha 5x5 - 1 thread
+\begin{figure}[ht!]
+
+\centering
+\includegraphics[width = 0.4\textwidth]{figures/problema01_m1/01.png}
+\caption{Malha 5x5 - 1 thread - Tempo: 0s - Método Explícito\label{malha5x5_1th}}
+\end{figure}
+
+% Figura 4
+% Cálculo da Malha 5x5 - 4 threads
+\begin{figure}[ht!]
+
+\centering
+\includegraphics[width = 0.4\textwidth]{figures/problema01_m1/09.png}
+\caption{Malha 5x5 - 4 threads - Tempo: 0s - Método Explícito\label{malha5x5_4th}}
+\end{figure}
+
+\newpage
+% Figura 5
+% Cálculo da Malha 40x40 - 1 thread
+\begin{figure}[ht!]
+
+\centering
+\includegraphics[width = 0.4\textwidth]{figures/problema01_m1/04.png}
+\caption{Malha 40x40 - 1 thread - Tempo: 2s - Método Explícito\label{malha40x40_1th}}
+\end{figure}
+
+% Figura 6
+% Cálculo da Malha 40x40 - 4 threads
+\begin{figure}[ht!]
+
+\centering
+\includegraphics[width = 0.4\textwidth]{figures/problema01_m1/10.png}
+\caption{Malha 40x40 - 4 threads - Tempo: 0s - Método Explícito\label{malha40x40_4th}}
+\end{figure}
+
+% Figura 9
+% Cálculo da Malha 200x200 - 1 thread
+\begin{figure}[ht!]
+
+\centering
+\includegraphics[width = 0.4\textwidth]{figures/problema01_m1/13.png}
+\caption{Malha 200x200 - 1 thread - Tempo: 1235s - Método Explícito\label{malha200x200_1th}}
+\end{figure}
+
+\newpage
+% Figura 10
+% Cálculo da Malha 200x200 - 4 threads
+\begin{figure}[ht!]
+
+\centering
+\includegraphics[width = 0.4\textwidth]{figures/problema01_m1/14.png}
+\caption{Malha 200x200 - 4 threads - Tempo: 274s - Método Explícito\label{malha200x200_4th}}
+\end{figure}
+
+% Figura 11
+% Cálculo da Malha 500x500 - 1 thread
+\begin{figure}[ht!]
+
+\centering
+\includegraphics[width = 0.4\textwidth]{figures/problema01_m1/06.png}
+\caption{Malha 500x500 - 1 thread - Tempo: 36083s - Método Explícito\label{malha500x500_1th}}
+\end{figure}
+
+% Figura 14
+% Cálculo da Malha 500x500 - 4 threads
+\begin{figure}[ht!]
+
+\centering
+\includegraphics[width = 0.4\textwidth]{figures/problema01_m1/15.png}
+\caption{Malha 500x500 - 4 threads - Tempo: 9610s - Método Explícito\label{malha500x500_4th}}
+\end{figure}
+
+O uso de paralelismo começou por causa do elevado custo computacional para malhas maiores e, sabendo-se que computadores atuais tem múltiplos threads, fez-se uso deste recurso para analisar como ficava a relação entre tempo e número de pontos\footnote{Pontos: o eixo de número de pontos nos gráficos do método explícito na verdade é a ordem da malha, que é a raiz quadrada do número de pontos.}. O mesmo resultado foi obtido por meio do uso de múltiplos threads que no caso não-paralelo.
+
+No caso do método ímplicito, utilizando matrizes esparsas, os resultados foram espantosamente mais rápidos. Na maior malha que foi calculada no método explícito, foram gastas 10h\footnote{36083s} no cálculo com 1 thread e 2h40min\footnote{9610s} no cálculo com 4 threads. No método ímplicito com matrizes esparsas, o mesmo resultado foi obtido em menos de 1min. O método ímplicito não é utilizado em Navier Stokes devido ao problema da pressão nesta equação ter fronteiras de Neumann, e o método ímplicito se torna muito complicado. Os resultados para Poisson são similares, só mudando o tempo no caso do método explícito.
+\subsection{Solução da Equação de Poisson com fronteira de Neumann pelo método iterativo}
+São apresentados os resultados para o problema abaixo:
+\begin{eqnarray}
+\nabla^2 u = 1\\
+\frac{\partial u}{\partial n}=0\,\textrm{na fronteira, exceto}\\
+\frac{\partial u(x,0)}{\partial y}=2x
+\end{eqnarray}
+
+
+\begin{figure}[ht!]
+\label{poisson_neumann_contorno}
+\centering
+\includegraphics[width = 0.25\textwidth]{figures/poisson_neumann_02.png}
+\caption{Poisson com 4 fronteiras de Neumann - Linhas de contorno}
+\end{figure}
+
+\begin{figure}[ht!]
+\label{poisson_neumann}
+\centering
+\includegraphics[width = 0.4\textwidth]{figures/poisson_neumann_01.png}
+\caption{Poisson com 4 fronteiras de Neumann}
+\end{figure}
+\newpage
+\subsection{Equação de Navier Stokes}
+Não há resultados para a equação de Navier Stokes, pois está muito complicado descobrir os bugs ainda existentes no programa. Muita coisa já foi corrigida, mas não há resultado nenhum.
 \section{Conclusão}
 
-% use section* for acknowledgement
+O problema proposto inicialmente ainda não foi alcançado, que é trabalhar com a instabilidade de Saffman-Taylor com fluido magnético e, ou Anisotrópico. Antes de trabalhar com tal problema, teve-se uma etapa inicial que demandou um certo trabalho. Essa primeira etapa deste projeto consistiu então do estudo da resolução de equações diferenciais parciais, por meio de sua discretização e codificação em um programa de computador.
+
+Foi bem sucedida a resolução das equações de Laplace e Poisson numa malha quadrada, pelos métodos implícito e explícito, usando diferenças finitas. No caso de Poisson, ainda teve-se a resolução bem sucedida com condições de fronteira de Neumann, que seria essencial para trabalhar com a pressão na equação de Navier Stokes.
+
+Chegando na equação de Navier Stokes, houve muitas equações a serem discretizadas, e a malha escalonada foi algo difícil de ser plenamente entendido, tendo muitas vezes ocorrido erros no caminho por causa disso.
+
+O trabalho foi um aprendizado razoavelmente complexo, e que teve muitas consequências positivas. As habilidades de programação de programas numéricos pelo aluno aumentaram bastante, na realidade, de qualquer programa, pelo fato de se ter treinado bastante o uso do git e da ferramenta de compilação cmake. Apesar da programação ainda ser um problema, pela complexidade do programa, o código\footnote{Código está acessível online em https://github.com/ataias/ff} está muito mais organizado do que se esperava, e pra isso ele foi refeito algumas vezes.
+
+O programa de Navier Stokes ainda está em fase de desenvolvimento, e se espera ter resultados em breve, com mais um tempo de dedicação e, futuramente, continuar trabalhando com esse programa para um problema físico com ferrofluido.
+
 \section*{Agradecimentos}
 
 Primeiramente agradeço a Deus pela oportunidade de ter feito parte deste trabalho. Agradeço também ao professor Yuri Dumaresq pelas orientações e ânimo no ensino que eu vi nele e que também me animaram na resolução destes problemas numéricos. Agradeço também ao CNPq pela bolsa de incentivo à pesquisa.
@@ -327,6 +663,5 @@ Primeiramente agradeço a Deus pela oportunidade de ter feito parte deste trabal
 \begin{thebibliography}{4}
   
 \bibitem{ubuntu} \href{ftp://ftp.fisio.cinvestav.mx/Manuales/linux/Getting\%20Started\%20with\%20Ubuntu\%2010.10.pdf}{Getting Started with Ubuntu 10.10}
-\bibitem{openkinect} \href{http://openkinect.org/wiki/Main_Page}{OpenKinect}
 \end{thebibliography}
 \end{document}
