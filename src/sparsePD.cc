@@ -97,5 +97,5 @@ MatrixXd exPoissonLDLT(){
 	u = chol.solve(b);
 
 	MatrixXd S = vectorToMatrix(B, u, n);
-	return 0;
+	return S;
 }
