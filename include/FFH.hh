@@ -7,53 +7,26 @@
  * da ausência de funções.
  */
 
-#ifndef STDHEADER_HPP_
-#define STDHEADER_HPP_
+#ifndef FFH_HH_
+#define FFH_HH_
 
 	/*------------C and C++ libraries---------------*/
 	#ifndef IOSTREAM_H
 	#define IOSTREAM_H
 	#include<iostream>
 	#endif /* IOSTREAM_H */
-
-	#ifndef STRING_H
-	#define STRING_H
-	#include<string>
-	#endif/* STRING_H */
-
-	#ifndef CSTDLIB_H
-	#define CSTDLIB_H
-	#include<cstdlib>
-	#endif /* CSTDLIB_H */
-
-	#ifndef CTIME_H
-	#define CTIME_H
-	#include<ctime>
-	#endif /* CTIME_H */
-
-	/*To deal with files*/
-	#ifndef FSTREAM_H
-	#define FSTREAM_H
-	#include<fstream>
-	#endif
-
-	#ifndef VECTOR_H
-	#define VECTOR_H
-	#include<vector>
-	#endif
 	/*----------------------------------------------*/
 
 	/*---------------Eigen Libraries --------------*/
 	#ifndef DENSE_H
 	#define DENSE_H
-	#include<eigen3/Eigen/Dense>
+	#include<Eigen/Dense>
 	#endif
 
 	#ifndef SPARSE_H
 	#define SPARSE_H
-	#include<eigen3/Eigen/Sparse>
+	#include<Eigen/Sparse>
 	#endif
-
 	/*---------------------------------------------*/
 
   /** Os seguintes typedef's foram criados com o intuito de serem usados
@@ -65,4 +38,4 @@
 
 	using namespace Eigen;
 	using namespace std;
-#endif /* STDHEADER_HPP_ */
+#endif /* FFH_HH_ */
