@@ -1,11 +1,15 @@
 \documentclass[a4paper,11pt]{article}
 \usepackage[]{styles}
 \usepackage[]{equations}
+\usepackage{subfiles}
+
 \begin{document}
 
 \maketitle
 
 \newpage
+\subfile{poisson}
+
 \section{Navier Stokes}
 Quer-se resolver a seguinte equação:
 
@@ -230,4 +234,8 @@ p_{y,ij}=\frac{p_{ij}-p_{ij-1}}{\Delta x}
 \NextTimeStep{v}{y}
 \end{eqnarray}
 \paragraph{} Cada uma das varíaveis acima é uma matriz.
+
+\bibliographystyle{plain}
+\bibliography{pibic}
+
 \end{document}
