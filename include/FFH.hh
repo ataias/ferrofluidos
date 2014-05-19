@@ -1,10 +1,7 @@
 /**
- * @file stdheader.hpp
+ * @file FFH.hh
  * @author Ataias Pereira Reis
  * Created on: Dec 29, 2012
- * Este arquivo contém arquivos cabeçalho básicos para inserir em qualquer
- * arquivo que faça parte do projeto. Isso evita o eclipse ficar reclamando
- * da ausência de funções.
  */
 
 #ifndef FFH_HH_

@@ -1,3 +1,4 @@
 #Gitignore for ferrofluidos repository
-/build
+/bin
+/bin/lib
 *.o

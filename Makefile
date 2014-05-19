@@ -1,23 +1,36 @@
+#Autor: Ataias Pereira Reis
+#Make file para projeto ferrofluidos
+#Notice: need to create folders "bin" and "lib" before running this!
+#Criado em: 19 de Maio de 2014
 CC=clang++
-CFLAGS=-c -Wall -I /Users/ataias/opt/ -I ./include
-LDFLAGS=
-SOURCES=poisson.cc sparsePD.cc
-OBJECTS=$(SOURCES:.cc=.o)
-VPATH = src
-BUILDDIR = build
-EXECUTABLE=poisson
+EIGEN= ~/opt
+PROJECT_HEADERS=./include
+CXXFLAGS=-c -Wall -I $(EIGEN) -I $(PROJECT_HEADERS)
+SRC= $(wildcard *.cc)
+OBJ=$(SOURCES:.cc=.o)
+VPATH=bin/lib:src:bin
 
-define cc-command
-$(CC) $(CFLAGS) $< -o $@
-endef
+#Nomes dos programas executáveis com funções main
+# aparecem como dependências de "all"
+all:	poisson
 
-all: $(SOURCES) $(EXECUTABLE)
+#Seção que faz o linking cada programa de acordo com
+#os objetos que ele necessita
+#move os objetos pra pasta bin/lib
+poisson:	poisson.o sparsePD.o
+			$(CC) $^ -o $@
+			@mv $? bin/lib #move dependências de arquivos modificados, outras já estão em lib
+			@mv $@ bin/$@  #move arquivos executáveis
 
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+#Seção que compila arquivos, mas sem fazer o link
+$(OBJ):	$(SRC)
+	$(CC) $(CXXFLAGS) $(OBJ)
 
-$(BUILDDIR)/%.o: %.cc
-	$(CC) $(CFLAGS) $< -o $@
-
+#Apaga arquivos objetos
 clean:
-	rm -rf *o
+	@cd bin/lib && rm -rf *.o
+	@cd bin/ && rm -rf *.o
+
+#Apaga arquivos executáveis
+mrproper:	clean
+	@cd bin && rm -rf poisson
