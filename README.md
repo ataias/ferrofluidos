@@ -1,12 +1,16 @@
 <a name="Vortex"/>
+## Vortex
 Este projeto faz parte do grupo Vortex.
 - **Vortex:** <http://www.vortex.unb.br>
+
 <a name="Ferrofluidos"/>
 ## Ferrofluidos
 
 Este é um Projeto de Iniciação Científica na área de fluidos realizado na Universidade de Brasília sob a supervisão principal do professor Yuri Dumaresq. O objetivo é simular fluidos magnéticos em diversas aplicações. Para isso, discretizações de equações diferenciais devem ser realizadas e então executadas em um computador. As equações principais discretizadas aqui são: Laplace, Poisson e Navier Stokes (esta última ainda está em projeto). A solução das equações se dá num quadrado de lado 1 com o número de pontos na malha, n, variável. As discretizações são feitas aqui com o método das diferenças finitas.
 
 <a name="Dependências"/>
+## Dependências
+
 Uma das dependências é a biblioteca Eigen. Outra é um compilador para C++, dois bastante utilizados são o GNU GCC e o LLVM Clang. Para criar gráficos, a biblioteca matplotlib para python será utilizada, mas isto ainda não foi implementado.
 
 - **Eigen:** <http://eigen.tuxfamily.org>
@@ -14,6 +18,7 @@ Uma das dependências é a biblioteca Eigen. Outra é um compilador para C++, do
 - **Clang:** <http://clang.llvm.org>
 
 <a name="Como compilar e executar"/>
+## Compilar e executar
 
 Os programas aqui são feitos em C++ e os gráficos são feitos com a ajuda da biblioteca python matplotlib. 
 
