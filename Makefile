@@ -1,6 +1,5 @@
 #Autor: Ataias Pereira Reis
 #Make file para projeto ferrofluidos
-#Notice: need to create folders "bin" and "lib" before running this!
 #Criado em: 19 de Maio de 2014
 CC=clang++
 EIGEN= ~/opt
@@ -13,22 +12,27 @@ vpath %.cc src/
 
 #Nomes dos programas executáveis com funções main
 # aparecem como dependências de "all"
+#executando make tenta criar o diretório bin/
+#se ele já não existir
 all:	dir poisson navierstokes
 
 #Seção com comandos para compilar cada programa
 
 poisson:	poisson.cc sparsePD.cc
 			$(CC) $(CXXFLAGS) $^ -o $@
-			@mv $@ bin/$@  #move arquivos executáveis
-			@mv $@.dSym bin/
+			@mv $@ bin/$@  #move arquivo executávei
+      		ifeq (test -d $@.dSym,0)
+			  @mv $@.dSym bin/
+      		endif
 
 navierstokes:	navierstokes.cc naviertest.cc
 				$(CC) $(CXXFLAGS) $^ -o $@
-#				@mv $? bin/lib #move dependências de arquivos modificados, outras já estão em lib
-				@mv $@ bin/$@  #move arquivos executáveis
-				@mv $@.dSym bin/
+				@mv $@ bin/$@  #move arquivo executável
+        		ifeq (test -d $@.dSym,0)
+				  @mv $@.dSym bin/
+        		endif
 
-#Apaga arquivos objetos
+#Apaga arquivos em bin
 clean:
 	@cd bin/ && rm -rf *
 
