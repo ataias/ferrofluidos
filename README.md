@@ -26,10 +26,9 @@ Primeiramente, adquira o código fonte clonando o repositório git:
 
 	git clone git@github.com:ataias/ferrofluidos.git
 
-Após isso, entre no diretório `ferrofluidos/` e crie as pastas para os binários serem alocados, então execute `make`.
+Após isso, entre no diretório `ferrofluidos/` e então execute `make`. Os binários estarão disponíveis em `ferrofluidos/bin/`.
 
 	cd ferrofluidos/
-	mkdir bin && mkdir bin/lib
 	make
 
 Note que para este comando ser capaz de funcionar, tanto o compilador C++ como a biblioteca Eigen devem estar no caminho padrão para o sistema os poder encontrar. Em relação à Eigen, pode-se modificar arquivo `Makefile` no diretório `ferrofluidos` indicando onde ela está instalada, em qualquer seção do sistema. Por exemplo, obtenha uma versão da Eigen, como a 3.2.1:
