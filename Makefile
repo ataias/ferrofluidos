@@ -5,38 +5,35 @@
 CC=clang++
 EIGEN= ~/opt
 PROJECT_HEADERS=./include
-CXXFLAGS=-c -g -Wall -I $(EIGEN) -I $(PROJECT_HEADERS)
+CXXFLAGS= -g -Wall -I $(EIGEN) -I $(PROJECT_HEADERS)
 SRC= $(wildcard *.cc)
 OBJ=$(SOURCES:.cc=.o)
 VPATH=bin/lib:src:bin
+vpath %.cc src/
 
 #Nomes dos programas executáveis com funções main
 # aparecem como dependências de "all"
-all:	poisson navierstokes
+all:	dir poisson navierstokes
 
-#Seção que faz o linking cada programa de acordo com
-#os objetos que ele necessita
-#move os objetos pra pasta bin/lib
-poisson:	poisson.o sparsePD.o
-			$(CC) $^ -o $@
-			@mv $? bin/lib #move dependências de arquivos modificados, outras já estão em lib
+#Seção com comandos para compilar cada programa
+
+poisson:	poisson.cc sparsePD.cc
+			$(CC) $(CXXFLAGS) $^ -o $@
 			@mv $@ bin/$@  #move arquivos executáveis
+			@mv $@.dSym bin/
 
-navierstokes:	navierstokes.o naviertest.o
-				$(CC) $^ -o $@
-				@mv $? bin/lib #move dependências de arquivos modificados, outras já estão em lib
+navierstokes:	navierstokes.cc naviertest.cc
+				$(CC) $(CXXFLAGS) $^ -o $@
+#				@mv $? bin/lib #move dependências de arquivos modificados, outras já estão em lib
 				@mv $@ bin/$@  #move arquivos executáveis
-
-
-#Seção que compila arquivos, mas sem fazer o link
-$(OBJ):	$(SRC)
-	$(CC) $(CXXFLAGS) $(OBJ)
+				@mv $@.dSym bin/
 
 #Apaga arquivos objetos
 clean:
-	@cd bin/lib && rm -rf *.o
-	@cd bin/ && rm -rf *.o
+	@cd bin/ && rm -rf *
 
 #Apaga arquivos executáveis
 mrproper:	clean
-	@cd bin && rm -rf poisson
+
+dir:
+	@mkdir -p bin/
