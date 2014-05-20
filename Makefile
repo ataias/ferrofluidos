@@ -5,14 +5,14 @@
 CC=clang++
 EIGEN= ~/opt
 PROJECT_HEADERS=./include
-CXXFLAGS=-c -Wall -I $(EIGEN) -I $(PROJECT_HEADERS)
+CXXFLAGS=-c -g -Wall -I $(EIGEN) -I $(PROJECT_HEADERS)
 SRC= $(wildcard *.cc)
 OBJ=$(SOURCES:.cc=.o)
 VPATH=bin/lib:src:bin
 
 #Nomes dos programas executáveis com funções main
 # aparecem como dependências de "all"
-all:	poisson
+all:	poisson navierstokes
 
 #Seção que faz o linking cada programa de acordo com
 #os objetos que ele necessita
@@ -21,6 +21,12 @@ poisson:	poisson.o sparsePD.o
 			$(CC) $^ -o $@
 			@mv $? bin/lib #move dependências de arquivos modificados, outras já estão em lib
 			@mv $@ bin/$@  #move arquivos executáveis
+
+navierstokes:	navierstokes.o naviertest.o
+				$(CC) $^ -o $@
+				@mv $? bin/lib #move dependências de arquivos modificados, outras já estão em lib
+				@mv $@ bin/$@  #move arquivos executáveis
+
 
 #Seção que compila arquivos, mas sem fazer o link
 $(OBJ):	$(SRC)
