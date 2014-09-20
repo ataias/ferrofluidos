@@ -13,6 +13,39 @@ A equação de Navier Stokes é apresentada abaixo, essa é a equação que gove
 \paragraph{} O método de Chorin com malha escalonada será utilizado. Para cada passo de tempo, há 3 etapas a serem realizadas. 
 \paragraph{} Valores que devem ser fornecidas antes de se resolver tal equação são os parâmetros do fluido, $\mu$ e $\rho$ (massa específica), a força externa e as condições de fronteira. 
 \subsection{Resolução Numérica}
+\subsubsection{Time-splitting} A primeira etapa neste método de resolução é o \textit{time-splitting}. A discretização no tempo tem duas etapas. Para se entender isso, começamos com a equação abaixo:
+\begin{equation}
+\frac{\partial \textbf{v}}{\partial t}\approx \frac{\textbf{v}^{n+1}-\textbf{v}^n}{\Delta t}=\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t} 
+\end{equation}
+
+A ideia do \textit{time-splitting} é responsabilizar cada um dos termos do lado direito desta equação com uma parte da equação de Navier-Stokes.
+
+Reescrevendo a equação de Navier-Stokes:
+
+\begin{eqnarray*}
+\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}=-\frac{1}{\rho}\nabla p + \nu\nabla ^2 \textbf{v} + \frac{\textbf{f}}{\rho} - \textbf{v}\cdot \nabla \textbf{v}
+\end{eqnarray*}
+
+Agora, é possível impor o seguinte:
+
+\begin{eqnarray}
+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}&=& \nu\nabla ^2 \textbf{v} + \frac{\textbf{f}}{\rho} - \textbf{v}\cdot \nabla \textbf{v}\label{equacaovestrela}\\
+\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}&=&-\frac{1}{\rho}\nabla p\label{equacaoprepressao}
+\end{eqnarray}
+
+A equação \ref{equacaovestrela} pode ser discretizada e então obtemos $\textbf{v}^*$. A equação \ref{equacaoprepressao}, por sua vez, não pode ser diretamente discretizada e resolvida pois não se sabe $\textbf{v}^{n+1}$. No entanto, se o gradiente da equação for obtido, tem-se:
+
+\begin{eqnarray*}
+\nabla\cdot \left(\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}\right)&=&\nabla\cdot\frac{\textbf{v}^{n+1}}{\Delta t}-\nabla\cdot \frac{\textbf{v}^*}{\Delta t}\\
+&=&-\frac{1}{\rho}\nabla^2 p
+\end{eqnarray*}
+
+A equação da continuidade $\nabla\cdot \textbf{v}=0$ tem de valer para $\textbf{v}^{n+1}$, logo:
+
+\begin{eqnarray}
+\nabla^2 p = \frac{\rho}{\Delta t}\nabla\cdot\textbf{v}^*\label{eqpressao}
+\end{eqnarray}
+
 \subsubsection{Desconsiderando a pressão}
 \paragraph{} O primeiro passo é desconsiderar a pressão $\nabla p$ da equação. Nas equações abaixo foi realizada a discretização da equação com essa simplificação. A parte direita de cada equação é avaliada no tempo passado, enquanto a parte da esquerda é avaliada para o próximo passo de tempo que deve ser obtido.
 
