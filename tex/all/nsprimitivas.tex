@@ -46,8 +46,10 @@ A equação da continuidade $\nabla\cdot \textbf{v}=0$ tem de valer para $\textb
 \nabla^2 p = \frac{\rho}{\Delta t}\nabla\cdot\textbf{v}^*\label{eqpressao}
 \end{eqnarray}
 
+Nos próximos passos, iremos (1) resolver para o tempo ``*'', que seria o intermediário entre $n$ e $n+1$, (2) obter a pressão (3) obter $n+1$.
+
 \subsubsection{Desconsiderando a pressão}
-\paragraph{} O primeiro passo é desconsiderar a pressão $\nabla p$ da equação. Nas equações abaixo foi realizada a discretização da equação com essa simplificação. A parte direita de cada equação é avaliada no tempo passado, enquanto a parte da esquerda é avaliada para o próximo passo de tempo que deve ser obtido.
+\paragraph{} Numericamente, O primeiro passo é resolver a equação \ref{equacaovestrela}, que não leva em conta a pressão. Nas equações abaixo foi realizada a discretização da equação com essa simplificação. A parte direita de cada equação é avaliada no tempo passado, enquanto a parte da esquerda é avaliada para o próximo passo de tempo que deve ser obtido.
 
 \begin{eqnarray}
 \textbf{v}_{ij}^s&=&(\SumFour{u})\textbf{i} \nonumber \\&+& (\SumFour{v})\textbf{j}\\
@@ -55,16 +57,63 @@ A equação da continuidade $\nabla\cdot \textbf{v}=0$ tem de valer para $\textb
 \end{eqnarray}
 %------------------- u* -------------------
 \begin{eqnarray}
-u_{ij}^{*}&=&u_{ij}^n+\Delta t\left[\frac{\mu}{\rho}\left(\frac{u_{ij}^s-4u_{ij}^n}{\Delta
-x^2}\right)+\frac{1}{\rho}Fx_{ij}^n\right] + \nonumber \\
+u_{ij}^{*}&=&u_{ij}^n+\frac{\Delta t}{\rho}\left[\mu\left(\frac{u_{ij}^s-4u_{ij}^n}{\Delta
+x^2}\right)+Fx_{ij}^n\right] + \nonumber \\
 &-&\left[u_{ij}^n(u_{i+1j}^n-u_{i-1j}^n)+v_{ij}^t(u_{ij+1}^n-u_{ij-1}^n)\right]\frac{\Delta t}{2\Delta x}
 \end{eqnarray}
 %------------------- v* ------------------
 \begin{eqnarray}
-v_{ij}^{*}&=&v_{ij}+\Delta t\left[\frac{\mu}{\rho}\left(\frac{v_{ij}^s-4v_{ij}^n}{\Delta
-x^2}\right)+\frac{1}{\rho}Fy_{ij}^n\right] \nonumber \\
+v_{ij}^{*}&=&v_{ij}+\frac{\Delta t}{\rho}\left[\mu\left(\frac{v_{ij}^s-4v_{ij}^n}{\Delta
+x^2}\right)+Fy_{ij}^n\right] \nonumber \\
 &-&\left[u_{ij}^t (v_{i+1j}^n-v_{i-1j}^n)+v_{ij}^n(v_{ij+1}^n-v_{ij-1}^n)\right]\frac{\Delta t}{2\Delta x}
 \end{eqnarray}
+
+\paragraph{} Note que as equações acima são só válidas para pontos internos à malha escalonada. Os pontos de fronteira serão obtidos por equações diferentes. Considere a parede da esquerda da cavidade, onde a velocidade normal é 0. Como nossa malha é escalonada, este ponto não está salvo na matrix e uma média deve ser feita de modo a determinar o ponto da fronteira da malha. Neste caso, teria-se:
+
+\begin{eqnarray*}
+\frac{v_{i-\frac{1}{2}j}+v_{i+\frac{1}{2}j}}{2}=0
+\end{eqnarray*}
+
+o que leva a:
+\begin{eqnarray}
+v_{i-\frac{1}{2}j} &=& -v_{i+\frac{1}{2}j}
+\end{eqnarray}
+
+De maneira similar, para as paredes de baixo e da direita, tem-se:
+
+\begin{eqnarray}
+u_{ij-\frac{1}{2}}&=&-u_{ij+\frac{1}{2}}\\
+v_{i+\frac{1}{2}j} &=& -v_{i-\frac{1}{2}j}
+\end{eqnarray}
+
+Para a parte de cima, onde a velocidade é diferente de zero, tem-se:
+
+\begin{eqnarray*}
+\frac{u_{ij+\frac{1}{2}}+u_{ij-\frac{1}{2}}}{2}=u_{Bi}
+\end{eqnarray*}
+
+$u_{Bi}$ é a condição de fronteira para o ponto na coluna $i$.
+
+
+Retirando os índices fracionários:
+
+\begin{eqnarray}
+v_{i-1j} &=& -v_{ij},\,\, \textrm{esquerda}\\
+u_{ij-1}&=&-u_{ij},\,\, \textrm{embaixo} \\
+v_{ij} &=& -v_{i-1j},\,\, \textrm{direita}\\
+u_{ij} &=& 2u_{Bi}-u_{ij-1},\,\, \textrm{em cima}
+\end{eqnarray}
+
+fixando o índice de cada lado:
+
+\begin{eqnarray}
+v_{0j} &=& -v_{1j},\,\, \textrm{esquerda}\\
+u_{i0}&=&-u_{i1},\,\, \textrm{embaixo} \\
+v_{n-1j} &=& -v_{n-2j},\,\, \textrm{direita}\\
+u_{in-1} &=& 2u_{Bi}-u_{in-2},\,\, \textrm{em cima}
+\end{eqnarray}
+
+
 
 \paragraph{} Com isto, tem-se \[\textbf{v}^{*}=(u^*,v^*)\]
 %------------------------Obter a pressão!!!! --------------------
