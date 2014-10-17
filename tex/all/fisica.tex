@@ -1,0 +1,45 @@
+\documentclass[fisica.tex]{subfiles}
+\begin{document}
+\section{Física}
+\paragraph{} Antes de iniciar-se a resolução numérica da equação de Navier Stokes, seja qual for o método escolhido, é necessário ter em mente que certas condições físicas devem ser satisfeitas de modo a se ter um resultado que convirja numericamente. As restrições irão determinar quais os mínimos/máximos de $\Delta t$ e $\Delta x$. Nesta seção veremos as condições de difusão estável, advecção (ou transporte) estável e camada limite hidrodinâmica.
+
+\paragraph{} Além de restrições físicas, iremos também introduzir o número de Reynolds: $\mathit{Re}$. Este é um número adimensional no qual se escolhe uma velocidade e tamanho característicos para o problema em questão. O número de Reynolds é dado por:
+
+\begin{eqnarray}
+\mathit{Re}=\frac{\rho L U}{\mu}
+\end{eqnarray}
+
+\paragraph{} Neste trabalho, tem-se um quadrado de lado 1. Seja então $L=1$ o tamanho característico e $U=1$ a velocidade característica. Ainda, escolha $\rho = 1$. Desta forma:
+
+\begin{eqnarray}
+\mathit{Re}=\frac{1}{\mu}
+\end{eqnarray}
+ 
+\paragraph{} As equações de Navier Stokes são discretizadas adiante com $\rho$ e $\mu$. Utilizaremos o número de Reynolds por meio da técnica mostrada aqui e variar-se-á somente $\mu$ para influenciar as características do escoamento.
+
+\subsection{Difusão Estável}
+\begin{eqnarray}
+\Delta t < \frac{1}{4}\frac{\Delta x^2}{\mathit{Re}}
+\end{eqnarray}
+
+\subsection{Advecção Estável}
+\begin{eqnarray}
+\Delta t < \frac{\Delta x}{U}
+\end{eqnarray}
+
+\subsection{Camada Limite Hidrodinâmica}
+\paragraph{} O que é essa camada mesmo?
+\begin{eqnarray*}
+\mathit{Re}_{\Delta x} &=& \frac{\rho U \Delta x}{\mu} < 1\\
+\mathit{Re}_{\Delta x} &=& \frac{\rho U \Delta x}{\mu} \frac{L}{L}\\
+&=& \frac{\rho U L}{\mu} \frac{\Delta x}{L}=\mathit{Re}\cdot \lambda < 1
+\end{eqnarray*}
+
+\paragraph{} Assim
+
+\begin{eqnarray}
+\lambda < \frac{1}{\mathit{Re}}
+\end{eqnarray}
+
+
+\end{document}
