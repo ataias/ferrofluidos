@@ -60,3 +60,56 @@ void navier_stokes_step1(int n, double dt, double mu, double rho, MatrixXd *u, M
 
 }
 	
+void navier_stokes_step2(int n, double dt, double mu, double rho, 
+						 MatrixXd *p, //pressão, assumo que já seja alocada
+						 MatrixXd *u_start, MatrixXd *v_start, //v*, obtido ignorando-se o termo envolvendo p
+						 MatrixXd *fx, MatrixXd *fy
+						 ){
+	int i, j; double DIVij;
+	double dx = 1.0/(n-1.0); double dx2 = dx*dx;
+	double dtx = dt/(2.*dx);
+	double sum_aux; double f_aux;
+
+	//Processar pontos internos
+	for(i=1; i<n-1; i++){
+		for(j=1; j<n-1; j++){
+			DIVij = (rho/dt)*((*u)(i+1,j)-(*u)(i,j)+(*v)(i,j+1)-(*v)(i,j))/dx;
+			sum_aux = (*p)(i+1,j)+(*p)(i-1,j)+(*p)(i,j+1)+(*p)(i,j-1);
+			(*p)(i,j) = 0.25*(sum_aux)-0.25*dx2*DIVij;
+		}
+	}
+
+	//Processar fronteira i=1
+	i = 1;
+	for(j=1; j<n-1; j++){
+		sum_aux = 2*(*u)(i,j)-5*(*u)(i+1,j)+4*(*u)(i+2,j)-(*u)(i+3,j);
+		f_aux = (*fx)(i,j)+(*fx)(i+1,j);
+		(*p)(i-1,j) = (*p)(i,j)-(mu/dx)*sum_aux-(rho*dx/2)*f_aux;
+	}
+
+	//Processar fronteira i=n
+	i = n-2; //n é o tamanho da malha escalonada, o tamanho da malha de fato é n-1
+	for(j=1; j<n-1; j++){
+		sum_aux = 2*(*u)(i,j)-5*(*u)(i-1,j)+4*(*u)(i-2,j)-(*u)(i-3,j);
+		f_aux = (*fx)(i,j)+(*fx)(i-1,j);
+		(*p)(i+1,j) = (*p)(i,j)+(mu/dx)*sum_aux+(rho*dx/2)*f_aux;
+	}
+
+
+	//Processar fronteira j=1
+	j = 1;
+	for(i=1; i<n-1; i++){
+		sum_aux = 2*(*v)(i,j)-5*(*v)(i,j+1)+4*(*v)(i,j+2)-(*v)(i,j+3);
+		f_aux = (*fy)(i,j)+(*fy)(i,j+1);
+		(*p)(i,j-1) = (*p)(i,j)-(mu/dx)*sum_aux-(rho*dx/2)*f_aux;
+	}
+
+	//Processar fronteira j=n
+	j = n-2; //n é o tamanho da malha escalonada, o tamanho da malha de fato é n-1
+	for(i=1; i<n-1; i++){
+		sum_aux = 2*(*v)(i,j)-5*(*v)(i,j-1)+4*(*v)(i,j-2)-(*v)(i,j-3);
+		f_aux = (*fy)(i,j)+(*fy)(i,j-1);
+		(*p)(i,j+1) = (*p)(i,j)+(mu/dx)*sum_aux+(rho*dx/2)*f_aux;
+	}
+
+}

@@ -25,7 +25,7 @@ int main(){
 	initialize(n,&u,&v, &u_old, &v_old, &fx, &fy);
 
 	if(!isdXok(1/mu, n)) {
-		cout << "There is a problem with you dx. Increase n.\n";
+		cout << "There is a problem with your dx. Increase n.\n";
 		return 1;
 	}
 

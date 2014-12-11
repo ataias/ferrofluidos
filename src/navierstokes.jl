@@ -1,3 +1,11 @@
+module NavierStokes
+
+export navier_stokes_step1!, navier_stokes_step2!, navier_stokes_step3!
+export solve_navier_stokes!, test_poisson_internal, isdXok, getDt
+
+#navier_stokes_step1!
+#Obtem u* e v*, a velocidade antes de se considerar a pressão
+#Note que as fronteiras ainda não 
 function navier_stokes_step1!(n, dt, mu, rho, u, v, u_old, v_old, fx, fy, uB)
 	#u and v will be modified!!!
 	#int i, j; double u_s, v_s, u_t, v_t
@@ -52,8 +60,8 @@ function navier_stokes_step1!(n, dt, mu, rho, u, v, u_old, v_old, fx, fy, uB)
 			end #if
 		end #for j
 	end #for i
-    #println("u=", u)
-    #println("v=", v)
+    println("u=", u)
+    println("v=", v)
 end #navier_stokes_step1
 
 function navier_stokes_step2!(n, dt, mu, rho, p, #pressão pode ser matriz zeros(6,6)
@@ -110,7 +118,7 @@ end
 function navier_stokes_step3!(n, dt, mu, rho, p, #pressão já calculada
 						 	  u, v, #u* e v*, serão atualizados para u(n+1)
 						 	  u_old, v_old, #u(n)
-						 	  fx, fy)
+						 	  fx, fy, uB)
 	dx = 1/(n-2)
 	px = 0.0
 	py = 0.0
@@ -132,8 +140,10 @@ function navier_stokes_step3!(n, dt, mu, rho, p, #pressão já calculada
 end
 
 function solve_navier_stokes!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
+	# ------------------------ Passo 1 ------------------------
 	navier_stokes_step1!(n, dt, mu, rho, u, v, u_old, v_old, fx, fy, uB)
 
+	# ------------------------ Passo 2 ------------------------
 	#A parte 2 tem de ter iterações até convergir
 	p_old = zeros(n,n)
 	error = 1.0
@@ -152,13 +162,14 @@ function solve_navier_stokes!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 		end
 	end
 	println("There were $(i) iterations to solve step2. Error=$(error)")
-	#println(p)
 
-	navier_stokes_step3!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy)
+	# ------------------------ Passo 3 ------------------------
+	navier_stokes_step3!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 
 end
 
-
+#test_poisson_internal
+#
 function test_poisson_internal(n, dt, p, rho, u, v)
 	m = zeros(n,n)
 	dx = 1/(n-2)
@@ -172,33 +183,9 @@ function test_poisson_internal(n, dt, p, rho, u, v)
 	return maxabs(m)
 end
 
-function initialize()
-	#need to execute this directly... otherwise those variables are all local
-	n = 6;
-	p = zeros(n,n);
-	u = zeros(n,n);
-	v = zeros(n,n);
-	u_old = zeros(n,n);
-	v_old = zeros(n,n);
-	fx = zeros(n,n);
-	fy = zeros(n,n);
-	mu = 1.0;
-	rho = 1.0;
-	Re = 1.0/mu;
-	# uB = [1.0 1 1 1 1 1];
-	uB = ones(typeof(1.0),1,n)
-	dt = getDt(n, Re);
-
-end
-
-function solve()
-	if(!isdXok(1/mu, n))
-		println("There is a problem with your dx. Increase n.\n");
-		exit(0)
-	end
-	@time solve_navier_stokes!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
-end
-
+#isdXok
+#Esta função analisa se o número de pontos escolhido 
+#satisfaz a condição de camada limite hidrodinâmica
 function isdXok(Re, n)
 	dx = 1./(n-2); #because n = n' + 1
 	if dx < (1/Re) 
@@ -220,4 +207,16 @@ function getDt(n, Re, divFactor=5)
 	end
 	println("dt = ", dt);
 	return dt;
+end
+
+#staggered2notS
+#descarta dimensão extra da malha escalonada
+#u é a entrada, malha escalonada, dimensão n
+#un é a saída, dimensão n-1, escalonada de dimensão menor
+#n é a dimensão da malha escalonada
+function staggered2notS!(u, un, n) 
+	for i in 2:n 
+		for j in 2:n un[i-1,j-1] = u[i,j] end 
+	end
+end
 end

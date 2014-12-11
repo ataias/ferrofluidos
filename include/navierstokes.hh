@@ -8,9 +8,9 @@ void navier_stokes_step1(int n, double dt, double mu, double rho,
 						 VectorXd uB
 						 );
 
-void navier_stokes_step2(int n, double dt, double mu, double rho, 
+void navier_stokes_step2(int n, double dt, double rho, 
 						 MatrixXd *p, //pressão 
-						 MatrixXd *u_star, MatrixXd *v_start //v*, obtido ignorando-se o termo envolvendo p
+						 MatrixXd *u_start, MatrixXd *v_start //v*, obtido ignorando-se o termo envolvendo p
 						 );
 
 #endif
