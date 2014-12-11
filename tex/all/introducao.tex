@@ -1,5 +1,54 @@
 \documentclass[introducao.tex]{subfiles}
 \begin{document}
 \section{Introdução}
-\paragraph{} O objetivo deste trabalho é de resolver a equação de Navier Stokes num quadrado de lado igual a um.
+\paragraph{} A equação de Navier Stokes é apresentada abaixo, essa é a equação que governa a dinâmica dos fluidos.
+
+\begin{eqnarray}
+\rho\left( \frac{\partial {\textbf{v}}}{\partial t}+\textbf{v}\cdot\nabla \textbf{v} \right)=-\nabla p+\mu\nabla^2 \textbf{v} + \textbf{f}\label{navierstokes}\\
+\nabla\cdot\textbf{v}=0
+\end{eqnarray}
+
+\paragraph{} Neste trabalho consideraremos um campo vetorial de duas dimensões. A equação de Navier Stokes é altamente não-linear. Isso ocorre devido ao termo de convecção (aceleração independente do tempo, $\textbf{v}\cdot \nabla\textbf{v}$) e o termo da pressão $\nabla p$. 
+
+\paragraph{} A abordagem para se obter uma solução para a equação dos fluidos é de seguir o método de Chorin\cite{chorin68} com malha escalonada. Para cada passo de tempo, há 3 etapas a serem realizadas. Será utilizado \textit{time-splitting} de forma a se desacoplar a pressão da velocidade, ambas incógnitas. 
+
+\paragraph{} O que deve ser definido antes de se resolver tal equação são os parâmetros do fluido, $\mu$ e $\rho$ (massa específica), a força externa $\textbf{f}$ e as condições de fronteira. Nosso interesse inicial é resolver o problema da cavidade num quadradro de lado igual a 1 numa malha de $n$ pontos.
+\paragraph{} A seguir será feita uma introdução do que vem a ser \textit{time-splitting}, de forma a se compreender este trabalho.
+
+\subsection{Time-splitting} A primeira etapa neste método de resolução é o \textit{time-splitting}. A discretização no tempo tem duas etapas. Para se entender isso, começamos com a equação abaixo:
+\begin{equation}
+\frac{\partial \textbf{v}}{\partial t}\approx \frac{\textbf{v}^{n+1}-\textbf{v}^n}{\Delta t}=\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t} 
+\end{equation}
+
+A ideia do \textit{time-splitting} é responsabilizar cada um dos termos do lado direito desta equação com uma parte da equação de Navier-Stokes.
+
+Reescrevendo a equação de Navier-Stokes:
+
+\begin{eqnarray*}
+\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}=-\frac{1}{\rho}\nabla p + \nu\nabla ^2 \textbf{v} + \frac{\textbf{f}}{\rho} - \textbf{v}\cdot \nabla \textbf{v}
+\end{eqnarray*}
+
+Agora, é possível impor o seguinte:
+
+\begin{eqnarray}
+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}&=& \nu\nabla ^2 \textbf{v} + \frac{\textbf{f}}{\rho} - \textbf{v}\cdot \nabla \textbf{v}\label{equacaovestrela}\\
+\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}&=&-\frac{1}{\rho}\nabla p\label{equacaoprepressao}
+\end{eqnarray}
+
+A equação \ref{equacaovestrela} pode ser discretizada e então obtemos $\textbf{v}^*$. A equação \ref{equacaoprepressao}, por sua vez, não pode ser diretamente discretizada e resolvida pois não se sabe $\textbf{v}^{n+1}$. No entanto, se o gradiente da equação for obtido, tem-se:
+
+\begin{eqnarray*}
+\nabla\cdot \left(\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}\right)&=&\nabla\cdot\frac{\textbf{v}^{n+1}}{\Delta t}-\nabla\cdot \frac{\textbf{v}^*}{\Delta t}\\
+&=&-\frac{1}{\rho}\nabla^2 p
+\end{eqnarray*}
+
+A equação da continuidade $\nabla\cdot \textbf{v}=0$ tem de valer para $\textbf{v}^{n+1}$, logo:
+
+\begin{eqnarray}
+\nabla^2 p = \frac{\rho}{\Delta t}\nabla\cdot\textbf{v}^*\label{eqpressao}
+\end{eqnarray}
+
+Nos próximos passos, iremos (1) resolver para o tempo ``*'', que seria o intermediário entre $n$ e $n+1$, (2) obter a pressão (3) obter $n+1$.
+
+
 \end{document}
