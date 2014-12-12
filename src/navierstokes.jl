@@ -1,7 +1,7 @@
 module NavierStokes
 
 export navier_stokes_step1!, navier_stokes_step2!, navier_stokes_step3!
-export solve_navier_stokes!, test_poisson_internal, isdXok, getDt
+export solve_navier_stokes!, testPoisson, isdXok, getDt
 
 #navier_stokes_step1!
 #Obtem u* e v*, a velocidade antes de se considerar a pressão
@@ -161,16 +161,17 @@ function solve_navier_stokes!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 			return "Fim"
 		end
 	end
-	println("There were $(i) iterations to solve step2. Error=$(error)")
+	println("There were $(i) iterations to solve step2. Estimated Error=$(error)")
+	println("Actual error: $(testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy))")
 
 	# ------------------------ Passo 3 ------------------------
 	navier_stokes_step3!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 
 end
 
-#test_poisson_internal
+#testPoisson
 #
-function test_poisson_internal(n, dt, p, rho, u, v)
+function testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy)
 	m = zeros(n,n)
 	dx = 1/(n-2)
 	dx2 = dx^2
@@ -180,6 +181,39 @@ function test_poisson_internal(n, dt, p, rho, u, v)
 			m[i,j] = 0.25*(p[i+1,j]+p[i-1,j]+p[i,j+1]+p[i,j-1]-dx2*DIVij)-p[i,j]
 		end
 	end
+
+	#Processar fronteira i=2
+	i = 2
+	for j in 2:n-1
+		sum_aux = 2*u_old[i,j]-5*u_old[i+1,j]+4*u_old[i+2,j]-u_old[i+3,j]
+		f_aux = fx[i,j]+fx[i+1,j]
+		m[i-1,j] = p[i,j]-(mu/dx)*sum_aux-(rho*dx/2)*f_aux - p[i-1,j]
+	end
+
+	#Processar fronteira i=n-1
+	i = n-1 #n é o tamanho da malha escalonada, o tamanho da malha de fato é n-1
+	for j in 2:n-1
+		sum_aux = 2*u_old[i,j]-5*u_old[i-1,j]+4*u_old[i-2,j]-u_old[i-3,j]
+		f_aux = fx[i,j]+fx[i-1,j]
+		m[i+1,j] = p[i,j]+(mu/dx)*sum_aux+(rho*dx/2)*f_aux - p[i+1,j]
+	end
+	
+	#Processar fronteira j=2
+	j = 2
+	for i in 2:n-1
+		sum_aux = 2*v_old[i,j]-5*v_old[i,j+1]+4*v_old[i,j+2]-v_old[i,j+3]
+		f_aux = fy[i,j]+fy[i,j+1]
+		m[i,j-1] = p[i,j]-(mu/dx)*sum_aux-(rho*dx/2)*f_aux - p[i,j-1]
+	end
+
+	#Processar fronteira j=n-1
+	j = n-1 #n é o tamanho da malha escalonada
+	for i in 2:n-1
+		sum_aux = 2*v_old[i,j]-5*v_old[i,j-1]+4*v_old[i,j-2]-v_old[i,j-3]
+		f_aux = fy[i,j]+fy[i,j-1]
+		m[i,j+1] = p[i,j]+(mu/dx)*sum_aux+(rho*dx/2)*f_aux - p[i,j+1]
+	end
+	println(m)
 	return maxabs(m)
 end
 
