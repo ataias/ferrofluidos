@@ -2,6 +2,7 @@ module NavierStokes
 
 export navier_stokes_step1!, navier_stokes_step2!, navier_stokes_step3!
 export solve_navier_stokes!, testPoisson, isdXok, getDt
+export staggered2not!
 
 #navier_stokes_step1!
 #Obtem u* e v*, a velocidade antes de se considerar a pressão
@@ -164,13 +165,15 @@ function solve_navier_stokes!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 
 		p_old[:,:] = p
 		i = i + 1
-		if i == 10000 #limitado a 12 mil iterações... pode mudar este número
+		if i == 30000 #limitado a 30 mil iterações... pode mudar este número
 			return "Fim"
 		end
 	end
-	println("There were $(i) iterations to solve step2. Estimated Error=$(error)")
-	println("Actual error: $(testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy))")
-
+	if testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy) > (threshold*10)
+		println("Problem!")
+		println("There were $(i) iterations to solve step2. Estimated Error=$(error)")
+		println("Actual error: $(testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy))")
+	end
 	# ------------------------ Passo 3 ------------------------
 	navier_stokes_step3!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 
@@ -248,11 +251,15 @@ end
 #staggered2notS
 #descarta dimensão extra da malha escalonada
 #u é a entrada, malha escalonada, dimensão n
-#un é a saída, dimensão n-1, escalonada de dimensão menor
+#un é a saída, dimensão n-2, escalonada de dimensão menor
 #n é a dimensão da malha escalonada
-function staggered2notS!(u, un, n) 
-	for i in 2:n 
-		for j in 2:n un[i-1,j-1] = u[i,j] end 
+function staggered2not!(u, v, p, un, vn, pn, n) 
+	for i in 2:n-1 
+		for j in 2:n-1 
+			un[i-1,j-1] = (u[i,j] + u[i+1,j])/2
+			vn[i-1,j-1] = (v[i,j] + v[i,j+1])/2
+			pn[i-1,j-1] = p[i,j]
+		end 
 	end
 end
 end
