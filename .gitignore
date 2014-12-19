@@ -3,3 +3,5 @@
 /bin/lib
 *.o
 .texpadtmp/
+*.dat
+*.png

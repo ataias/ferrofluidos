@@ -11,16 +11,12 @@ Este é um Projeto de Iniciação Científica na área de fluidos realizado na U
 <a name="Dependências"/>
 ## Dependências
 
-Uma das dependências é a biblioteca Eigen. Outra é um compilador para C++, dois bastante utilizados são o GNU GCC e o LLVM Clang. Para criar gráficos, a biblioteca matplotlib para python será utilizada, mas isto ainda não foi implementado.
-
-- **Eigen:** <http://eigen.tuxfamily.org>
-- **GCC:** <https://gcc.gnu.org>
-- **Clang:** <http://clang.llvm.org>
+- **Julia:** <http://julialang.org>
 
 <a name="Como compilar e executar"/>
 ## Compilar e executar
 
-Os programas aqui são feitos em C++ e os gráficos são feitos com a ajuda da biblioteca python matplotlib. 
+Os programas aqui são feitos em Julia e os gráficos são feitos com a ajuda da biblioteca python matplotlib. 
 
 Primeiramente, adquira o código fonte clonando o repositório git:
 

@@ -154,7 +154,7 @@ function solve_navier_stokes!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 	#A parte 2 tem de ter iterações até convergir
 	p_old = zeros(n,n)
 	error = 1.0
-	threshold = 1e-8
+	threshold = 1e-9
 	i = 0
 	while error > threshold
 		navier_stokes_step2!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy)
