@@ -1,9 +1,9 @@
 using NavierStokes
 
 #O mesmo dt será usado para todos
-Re = 10.0;
+Re = 1.0;
 t = 2.5;
-n = 41;
+n = 11;
 dt = getDt(n, Re, 1.05); 
 
 steadyState(n, dt, Re, t)
@@ -66,7 +66,9 @@ function steadyState(n, dt, Re, t)
 		end
 
 		u, u_old = u_old, u
+		v, v_old = v_old, v
 		u[:,:] = u_old[:,:]
+		v[:,:] = v_old[:,:]
 	end
 
 	close(file)
