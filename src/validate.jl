@@ -75,7 +75,9 @@ function steadyState(n, dt, Re, t)
 		end
 
 		u, u_old = u_old, u
+		v, v_old = v_old, v
 		u[:,:] = u_old[:,:]
+		v[:,:] = v_old[:,:]
 	end
 
 	# close(file)

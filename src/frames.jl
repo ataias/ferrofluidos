@@ -3,10 +3,8 @@ using NavierStokes
 #O mesmo dt será usado para todos
 Re = 1.0;
 t = 2.5;
-n = 11;
+n = 23;
 dt = getDt(n, Re, 1.05); 
-
-steadyState(n, dt, Re, t)
 
 #retorna o valor em regime permanente do ponto 0.5, 0.5
 #resolve equações para um dado n e Re
@@ -78,3 +76,5 @@ function steadyState(n, dt, Re, t)
 	ij = integer(n/2 - 1)
 	return [un[ij, ij], vn[ij, ij]] #returns steady state value in the middle
 end
+
+@time steadyState(n, dt, Re, t)
