@@ -69,21 +69,24 @@ function steadyState(n, dt, Re, t)
 	return [un[ij, ij], vn[ij, ij]] #returns steady state value in the middle
 end
 
-#O mesmo dt será usado para todos
-Re = 10.0;
-dt = getDt(91, Re, 1.01); #escolho o menor dt entre todos	
-t = 2.5;
+function validate()
+	#O mesmo dt será usado para todos
+	Re = 10.0;
+	dt = getDt(91, Re, 1.01); #escolho o menor dt entre todos	
+	t = 2.5;
 
-solution = steadyState(91, dt, Re, t)
-fileErro = open("errorUVvsDx2.dat", "w")
+	fileErro = open("errorUVvsDx2.dat", "w")
 
-for n in 13:4:69
-	dx = 1/(n-2)
-	dx2 = dx^2
-	ss = steadyState(n, dt, Re, t)
-	write(fileErro, dx2)
-	write(fileErro, abs(solution[1] - ss[1]))
-	write(fileErro, abs(solution[2] - ss[2]))
+	solution = steadyState(91, dt, Re, t)
+	for n in 13:4:69
+		dx = 1/(n-2)
+		dx2 = dx^2
+		ss = steadyState(n, dt, Re, t)
+		write(fileErro, dx2)
+		write(fileErro, abs(solution[1] - ss[1]))
+		write(fileErro, abs(solution[2] - ss[2]))
+	end
+	close(fileErro)
 end
 
-close(fileErro)
+@time validate()
