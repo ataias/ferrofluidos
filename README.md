@@ -12,26 +12,29 @@ Este é um Projeto de Iniciação Científica na área de fluidos realizado na U
 ## Dependências
 
 - **Julia:** <http://julialang.org>
+- **Python 3:** <https://www.python.org>
 
 <a name="Como compilar e executar"/>
 ## Compilar e executar
 
-Os programas aqui são feitos em Julia e os gráficos são feitos com a ajuda da biblioteca python matplotlib. 
+Os programas aqui são feitos em Julia e os gráficos são feitos com a ajuda da biblioteca python matplotlib. Para o código em Julia, basta executar e o sistema fará a compilação Just-In-Time. No caso do python, os códigos serão interpretados.
 
-Primeiramente, adquira o código fonte clonando o repositório git:
+Primeiramente, obtenha o código fonte clonando o repositório git. Isto pode ser feito tanto por ssh como por https:
 
 	git clone git@github.com:ataias/ferrofluidos.git
+	git clone https://github.com/ataias/ferrofluidos.git
 
-Após isso, entre no diretório `ferrofluidos/` e então execute `make`. Os binários estarão disponíveis em `ferrofluidos/bin/`.
+Após isso, entre no diretório `ferrofluidos/` e então terás acesso ao código fonte. Os binários estarão disponíveis em `ferrofluidos/bin/`. Comandos para executar os códigos `frames.jl` e `validate.jl` são os seguintes:
 
-	cd ferrofluidos/
-	make
+	cd ferrofluidos/src
+	julia frames.jl > frames.txt
+	julia validate.jl > validate.txt
 
-Note que para este comando ser capaz de funcionar, tanto o compilador C++ como a biblioteca Eigen devem estar no caminho padrão para o sistema os poder encontrar. Em relação à Eigen, pode-se modificar arquivo `Makefile` no diretório `ferrofluidos` indicando onde ela está instalada, em qualquer seção do sistema. Por exemplo, obtenha uma versão da Eigen, como a 3.2.1:
+Dados da velocidade e pressão estão disponíveis na saída `.dat` de cada um desses programas. Pode-se processar a saída do `frames.jl` com o `vectorField.py`
 
-	wget -nc http://bitbucket.org/eigen/eigen/get/3.2.1.tar.bz2
-	tar xf 3.2.1.tar.bz2
-	mkdir ~/opt #pode escolher outro diretório, e caso exista, não precisa desta linha
-	mv eigen-eigen-6b38706d90a9/Eigen ~/opt/Eigen
+	chmod +x vectorField.py
+	./vectorField.py
 
-Com a Eigen e outras bibliotecas localizadas no diretório `~/opt`, o compilador irá considerá-las além daquelas que estão no caminho padrão. 
+A saída do `validate.jl` pode ser processada com o programa `plotVvsDX2.jl`
+
+	julia plotVvsDX2.jl
