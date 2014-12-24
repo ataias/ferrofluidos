@@ -2,7 +2,7 @@
 \begin{document}
 \section{Resolução Numérica}
 \subsection{Desconsiderando a pressão}
-\paragraph{} Numericamente, O primeiro passo é resolver a equação \ref{equacaovestrela}, que não leva em conta a pressão. Nas equações abaixo foi realizada a discretização da equação com essa simplificação. A parte direita de cada equação é avaliada no tempo passado, enquanto a parte da esquerda é avaliada para o próximo passo de tempo que deve ser obtido.
+\paragraph{} A velocidade $\textbf{v}^*$ não leva em conta a pressão. Primeiramente, discretizamos a Equação  \ref{equacaovestrela} por meio de diferenças finitas. A parte da direita de cada equação é avaliada no tempo passado, enquanto a parte da esquerda é o resultado no tempo estrela.
 
 \begin{eqnarray}
 \textbf{v}_{ij}^s&=&(\SumFour{u})\textbf{i} \nonumber \\&+& (\SumFour{v})\textbf{j}\\
@@ -21,18 +21,16 @@ x^2}\right)+Fy_{ij}^n\right] \nonumber \\
 &-&\left[u_{ij}^t (v_{i+1j}^n-v_{i-1j}^n)+v_{ij}^n(v_{ij+1}^n-v_{ij-1}^n)\right]\frac{\Delta t}{2\Delta x}
 \end{eqnarray}
 
-\paragraph{} Note que as equações acima são só válidas para pontos internos à malha escalonada. Os pontos de fronteira serão obtidos por equações diferentes, porém, na etapa 3. 
+\paragraph{} Note que as equações acima são só válidas para pontos internos à malha escalonada. Os pontos de fronteira  não sofrem alteração nenhum nesta etapa. É importante atender às condições de não deslizamento e impenetrabilidade em todo momento. 
 
-
-\paragraph{} Com isto, tem-se \[\textbf{v}^{*}=(u^*,v^*)\]
 %------------------------Obter a pressão!!!! --------------------
 \subsection{Obter a pressão}
-\paragraph{} É necessário calcular uma pressão que satisfaça nossa equação. É possível obter uma nova equação, somente para a pressão, aplicando-se o operador divergente na equação de Navier Stokes, de forma a obter-se o seguinte:
+\paragraph{} Como já foi apresentado na seção de introdução, a segunda etapa é obter a pressão, por meio da Equação \ref{pressaoEq}.
 \begin{equation}
 \nabla^2 p = \frac{\rho}{\Delta t} \nabla\cdot \textbf{v}^*=\frac{\rho}{\Delta t} 
 \left( \frac{\partial u^*}{\partial x}+\frac{\partial v^*}{\partial y} \right) \label{pressaoEq}
 \end{equation}
-\paragraph{} Para cada ponto $ij$ da malha, pode-se calcular a não-homogeneidade apresentada na direita da Equação \ref{pressaoEq}:
+\paragraph{} Para cada ponto $ij$ da malha, deve-se calcular a não-homogeneidade apresentada na direita da Equação \ref{pressaoEq}:
 \begin{equation}
 DIV_{ij}=\frac{\rho}{\Delta t}\left( \frac{u_{i+1j}^*-u_{ij}^*}{\Delta x}+\frac{v_{ij+1}^*-v_{ij}^*}{\Delta x}\right)
 \end{equation}
@@ -42,7 +40,7 @@ DIV_{ij}=\frac{\rho}{\Delta t}\left( \frac{u_{i+1j}^*-u_{ij}^*}{\Delta x}+\frac{
 p_{ij}=\frac{1}{4}[(p_{i+1j}+p_{i-1j}+p_{ij+1}+p_{ij-1})-\Delta x^2 DIV_{ij}]
 \end{equation}
 
-\paragraph{} O que acontece com as condições de fronteira? É necessário que sejam obtidas. Considere novamente a equação de Navier Stokes:
+\paragraph{} O que acontece com as condições de fronteira? Ainda não sabemos quais são elas, é necessário que sejam obtidas antes de se resolver a equação de Poisson. Para obter tais condições, considere novamente a equação de Navier Stokes:
 
 \[\rho\left( \frac{\partial \textbf{v}}{\partial t}+\textbf{v}\cdot\nabla\textbf{v}\right)=-\nabla p+\mu\nabla^2\textbf{v}+\textbf{f}\]
 \[\nabla\cdot\textbf{v}=0\]
@@ -58,7 +56,7 @@ y}+\nu\left(\frac{\partial^2 v}{\partial^2 x}+\frac{\partial^2 v}{\partial^2
 y}\right)+f_y
 \end{eqnarray}
 \paragraph{} Se fizermos uma análise dos pontos na parede da esquerda ou
-direita, e aplicarmos as condições de impenetrabilidade e não-deslizamento, que
+direita, nossa fronteira, e aplicarmos as condições de impenetrabilidade e não-deslizamento, que
 dizem que $u=0$ e $v=0$ na parede, temos a simplificação da equação, pois vários
 termos se tornam zero. As Equações \ref{paredesVerticais} e \ref{paredesHorizontais} são as condições de fronteira, tipo Neumann, para as paredes verticais e horizontais, respectivamente.
 
@@ -68,45 +66,25 @@ u}{\partial x^2}\Bigg|_{\textrm{parede}}+\rho f_x\label{paredesVerticais}\\
 \frac{\partial p}{\partial y}\Bigg|_{\textrm{parede}}&=&\rho\nu\frac{\partial^2
 v}{\partial y^2}\Bigg|_{\textrm{parede}}+\rho f_y\label{paredesHorizontais}
 \end{eqnarray}
-\paragraph{} O próximo passo é reescrever as Equações \ref{paredesVerticais}  e \ref{paredesHorizontais} com diferenças finitas. 
-\paragraph{Equações discretizadas para fronteira de Poisson} As equações, em
-sequência, para as fronteiras da esquerda, direita, baixo e topo da matriz são
-as seguintes:
+
+\paragraph{} O próximo passo é reescrever as Equações \ref{paredesVerticais}  e \ref{paredesHorizontais} com diferenças finitas. Para isso, foram utilizadas diferenças finitas unilaterais, para as velocidades, e centrais, para a pressão. A discretização tem ordem 2. As equações, em
+sequência, para as fronteiras da esquerda, direita, baixo e topo da matriz estão nas Equações \ref{pressure_01} até \ref{pressure_04}. Todas as discretizações foram feitas com malha escalonada, lembre-se!
+
 \begin{eqnarray}
 \frac{p_{ij}-p_{i-1j}}{\Delta x}&=&\frac{\mu}{\Delta x^2}(2u_{ij}-5u_{i+1j}+4u_{i+2j}-u_{i+3j})+\rho f_{x,ij} \label{pressure_01}\\
 \frac{p_{ij}-p_{i-1j}}{\Delta x}&=&\frac{\mu}{\Delta x^2}(2u_{ij}-5u_{i-1j}+4u_{i-2j}-u_{i-3j})+\rho f_{x,ij}\label{pressure_02}\\
 \frac{p_{ij}-p_{ij-1}}{\Delta y}&=&\frac{\mu}{\Delta y^2}(2v_{ij}-5v_{ij+1}+4v_{ij+2}-v_{ij+3})+\rho f_{y,ij} \label{pressure_03}\\
 \frac{p_{ij}-p_{ij-1}}{\Delta y}&=&\frac{\mu}{\Delta y^2}(2v_{ij}-5v_{ij-1}+4v_{ij-2}-v_{ij-3})+\rho f_{y,ij} \label{pressure_04}
 \end{eqnarray}
-\paragraph{} Agora, tem-se as equações que serão utilizadas no domínio em questão, na malha escalonada, para resolver a equação da pressão em Navier Stokes. Abaixo tem-se o nosso domínio.
-\domainOne
 
-\paragraph{} Cada um dos pontos pretos são pontos internos, e nestes pontos precisamos saber os valores das derivadas, de forma a obter a matriz $DIV$, para então utilizar na resolução da equação de Navier, que estamos originalmente interessados. Com a malha extendida, com a fronteira imaginária adicionada, ela fica no ``ponto'' para obter o gradiente de pressão usando derivadas centrais em cada um dos pontos, agora internos, da nossa malha extendida. As setas verticais indicam as velocidades horizontais, enquanto as setas verticais indicas velocidades verticais. 
-
-\paragraph{} O modelo de cada bloco é o seguinte:
-
-\begin{tikzpicture}
-\draw (0,0) rectangle (2,2);
-\draw (1.4,0.95) node {$p_{ij}$};
-\draw[->] (1,-0.2) -- (1,0.2);
-\draw (1,-0.3) node {$v_{i+\frac{1}{2}j}$};
-\draw[->] (-0.2,1) -- (0.2,1);
-\draw (-0.5,1.3) node {$u_{ij+\frac{1}{2}}$};
-\draw (1,1) circle (2pt);
-\end{tikzpicture}
-
-\paragraph{} Para a representação no computador, somente com índices positivos, tem-se de mudar o local da origem, e fica-se com o seguinte esquema:
-\esquemaUm
-
-\paragraph{} As coordenadas dos pontos acima, onde os pontos são $x_{ij}$, são diferentes do original mencionado antes com uma malha escalonada com índices negativos, e as equações ficam com os termos de uma forma um pouco diferente. Em relação ao tamanho da matriz, note que para uma malha de ordem 6 como acima, a malha escalonada ficou de ordem 8. Logo, há um aumento da ordem da matriz por uma adição de 2 ordens.
-
-\paragraph{} Reescrevendo as equação de \ref{pressure_01} até \ref{pressure_04}, e considerando $n$ a ordem da matriz, temos:
+\paragraph{} Reescrevendo-se as equações \ref{pressure_01} até \ref{pressure_04}, e considerando $n$ a ordem da matriz, temos:
 \begin{eqnarray}
 i=1 \,|\, p_{i-1j}&=&p_{ij}-\frac{\mu}{\Delta x}\left(2u_{ij}-5u_{i+1j}+4u_{i+2j}-u_{i+3j}\right)-\rho\Delta x f_{x,ij}\\
 i=n \,|\, p_{ij}&=&p_{i-1j}+\frac{\mu}{\Delta x}\left(2u_{ij}-5u_{i-1j}+4u_{i-2j}-u_{i-3j}\right)+\rho\Delta x f_{x,ij}\\
 j=1 \,|\, p_{ij-1}&=&p_{ij}-\frac{\mu}{\Delta x}\left(2v_{ij}-5v_{ij+1}+4v_{ij+2}-v_{ij+3}\right)-\rho\Delta x f_{y,ij}\\
 j=n \,|\, p_{ij}&=&p_{ij-1}+\frac{\mu}{\Delta x}\left(2v_{ij}-5v_{ij-1}+4v_{ij-2}-v_{ij-3}\right)+\rho\Delta x f_{y,ij}
 \end{eqnarray}
+\paragraph{} Dependendendo se a linguagem que você usa inicia índices de 0 ou 1, você pode precisar mudar um pouco os índices $i$ e $j$ acima, mas as equação permanecem as mesmas. 
 \subsection{Resolver para o passo $t+\Delta t$}
 \paragraph{} Finalmente, tem-se: 
 
@@ -131,7 +109,7 @@ p_{y,ij}=\frac{p_{ij}-p_{ij-1}}{\Delta x}
 \NextTimeStep{u}{x}\\
 \NextTimeStep{v}{y}
 \end{eqnarray}
-\paragraph{} As equações acima são válidas para pontos internos. Para as fronteiras, considere a parede da esquerda da cavidade, onde a velocidade normal é 0. Como nossa malha é escalonada, este ponto não está salvo na matriz e uma média deve ser feita de modo a determinar o ponto da fronteira da malha. Neste caso, teria-se:
+\paragraph{} As equações acima são válidas para pontos internos. Para as fronteiras, comece considerando a parede da esquerda da cavidade, onde a velocidade normal é 0. Como nossa malha é escalonada, este ponto não está salvo na matriz e uma média deve ser feita de modo a determinar o ponto da fronteira da malha. Neste caso, teria-se:
 
 \begin{eqnarray*}
 \frac{v_{i-\frac{1}{2}j}+v_{i+\frac{1}{2}j}}{2}=0
