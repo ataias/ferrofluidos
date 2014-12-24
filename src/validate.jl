@@ -32,10 +32,6 @@ function steadyState(n, dt, Re, t)
 	fx = zeros(n,n);
 	fy = zeros(n,n);
 
-	# file = open("N" * string(n-2) * ".dat", "w")
-	#falta ainda salvar o valor do ponto médio conforme
-	#o tempo avança...
-
 	un = zeros(n-2,n-2)
 	vn = zeros(n-2,n-2)
 	pn = zeros(n-2,n-2)
@@ -44,15 +40,13 @@ function steadyState(n, dt, Re, t)
 	timeToSave = integer(steps/numberFrames)
 
 	for i in 1:steps
-		#println("Step i = ", i)
 		solve_navier_stokes!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 
 		if i % timeToSave == 0
 		 	println("t = ", i*dt)
-		# 	staggered2not!(u, v, p, un, vn, pn, n)
-		# 	write(file, un) #note that it writes to memory column-wise
-		# 	write(file, vn)
-		# 	write(file, pn)
+			staggered2not!(u, v, p, un, vn, pn, n)
+			ij = integer(n/2 - 1)
+			println([un[ij, ij], vn[ij, ij]])
 		end
 
 		u, u_old = u_old, u
@@ -60,8 +54,6 @@ function steadyState(n, dt, Re, t)
 		u[:,:] = u_old[:,:]
 		v[:,:] = v_old[:,:]
 	end
-
-	# close(file)
 
 	#steady state value in (0.5, 0.5)
 	staggered2not!(u, v, p, un, vn, pn, n)
@@ -72,8 +64,8 @@ end
 function validate()
 	#O mesmo dt será usado para todos
 	Re = 10.0;
-	dt = getDt(91, Re, 1.01); #escolho o menor dt entre todos	
-	t = 2.5;
+	dt = getDt(91, Re, 1.10); #escolho o menor dt entre todos	
+	t = 2.2;
 
 	fileErro = open("errorUVvsDx2.dat", "w")
 
