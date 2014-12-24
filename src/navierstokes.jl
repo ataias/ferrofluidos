@@ -72,13 +72,15 @@ function navier_stokes_step2!(n, dt, mu, rho, p, #pressão pode ser matriz zeros
 	dx = 1.0/(n-2.0) #n-1 or n-2?
 	dx2 = dx*dx
 	dtx = dt/(2.*dx)
+	r = 2/(1+pi/(n-2)) #SOR constant
 
 	# Processar pontos internos
 	for i in 2:n-1
 		for j in 2:n-1
 			DIVij = (rho/dt)*(u[i+1,j]-u[i,j]+v[i,j+1]-v[i,j])/dx
 			sum_aux = p[i+1,j]+p[i-1,j]+p[i,j+1]+p[i,j-1]
-			p[i,j] = 0.25*sum_aux-0.25*dx2*DIVij
+			p_new = 0.25*sum_aux-0.25*dx2*DIVij
+			p[i,j] = (1-r)*p[i,j]+r*p_new
 		end
 	end
 
@@ -237,7 +239,7 @@ end
 
 function getDt(n, Re, divFactor=5)
 	dx = 1./(n-2) #n é o tamanho da malha escalonada, por isso está n-2 ao invés de n-1
-	dt1 = 0.25*dx*dx/Re
+	dt1 = 0.25*Re*dx*dx
 	dt2 = dx
 	dt = 0.0
 	if dt1 < dt2

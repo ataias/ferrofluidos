@@ -13,9 +13,9 @@ import struct
 
 #Da forma abaixo posso ler os valores de um arquivo
 # de pontos flutuantes
-f = open('N41.dat', 'rb')
-t = 2.5
-n = 41 #esta é a dimensão da malha escalonada menos 2
+f = open('N43.dat', 'rb')
+t = 2.2
+n = 43 #esta é a dimensão da malha escalonada menos 2
 dx = 1/n
 
 numberFrames = round(180*t)
