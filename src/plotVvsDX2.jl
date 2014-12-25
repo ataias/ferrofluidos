@@ -16,12 +16,12 @@ end
 close(f)
 
 plot(x=dx2, y=error_u,
-	Scale.y_sqrt, Geom.point, Geom.smooth,
+	Geom.point, Geom.smooth,
 	Guide.xlabel("dx2"), Guide.ylabel("abs(erro)"), 
 	Guide.title("Erro da velocidade em x"))
 
 plot(x=dx2, y=error_v,
-	Scale.y_sqrt, Geom.point, Geom.smooth,
+	Geom.point, Geom.smooth,
 	Guide.xlabel("dx2"), Guide.ylabel("abs(erro)"), 
-	Guide.title("Erro da velocidade em x"))
+	Guide.title("Erro da velocidade em y"))
 
