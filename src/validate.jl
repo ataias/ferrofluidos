@@ -65,7 +65,7 @@ function validate()
 	#O mesmo dt será usado para todos
 	Re = 10.0;
 	dt = getDt(91, Re, 1.10); #escolho o menor dt entre todos	
-	t = 2.2;
+	t = 2.5;
 
 	fileErro = open("errorUVvsDx2.dat", "w")
 

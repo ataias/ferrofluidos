@@ -2,21 +2,20 @@ module NavierStokes
 
 export navier_stokes_step1!, navier_stokes_step2!, navier_stokes_step3!
 export solve_navier_stokes!, testPoisson, isdXok, getDt
-export staggered2not!
+export staggered2not!, simpson
 
 #navier_stokes_step1!
 #Obtem u* e v*, a velocidade antes de se considerar a pressão
 #Note que as fronteiras ainda não 
 function navier_stokes_step1!(n, dt, mu, rho, u, v, u_old, v_old, fx, fy, uB)
 	#u and v will be modified!!!
-	#int i, j; double u_s, v_s, u_t, v_t
-	dx = 1/(n-2.)
+
+	dx = 1/(n-2)
 	dx2 = dx*dx
 	dtx = dt/(2*dx)
 
 	#Process internal points
 	for i in 2:n-1
-        #println("i is $(i)")
 		for j in 2:n-1
 
 			# Those two lines are just summing the stencil around i,j
@@ -25,10 +24,8 @@ function navier_stokes_step1!(n, dt, mu, rho, u, v, u_old, v_old, fx, fy, uB)
 
 			#Those lines take an average of u around i,j considering the 
 			#staggered grid
-			u_t  = u_old[i,j]+u_old[i+1,j]+u_old[i+1,j-1]+u_old[i,j-1]
-			u_t *= 0.25
-			v_t  = v_old[i,j]+v_old[i-1,j]+v_old[i-1,j+1]+v_old[i,j+1]
-			v_t *= 0.25
+			u_t  = (u_old[i,j]+u_old[i+1,j]+u_old[i+1,j-1]+u_old[i,j-1])/4
+			v_t  = (v_old[i,j]+v_old[i-1,j]+v_old[i-1,j+1]+v_old[i,j+1])/4
 
 			#Now, let's compute u in i,j
 			#value is fixed in the boundaries
@@ -69,17 +66,18 @@ function navier_stokes_step2!(n, dt, mu, rho, p, #pressão pode ser matriz zeros
 						 	  u_old, v_old, #u antes de u estrela
 						 	  fx, fy)
 	DIVij = 0.0
-	dx = 1.0/(n-2.0) #n-1 or n-2?
+	dx = 1/(n-2) 
 	dx2 = dx*dx
-	dtx = dt/(2.*dx)
+	dtx = dt/(2*dx)
+	rhodt = rho/dt
 	r = 2/(1+pi/(n-2)) #SOR constant
 
 	# Processar pontos internos
 	for i in 2:n-1
 		for j in 2:n-1
-			DIVij = (rho/dt)*(u[i+1,j]-u[i,j]+v[i,j+1]-v[i,j])/dx
-			sum_aux = p[i+1,j]+p[i-1,j]+p[i,j+1]+p[i,j-1]
-			p_new = 0.25*sum_aux-0.25*dx2*DIVij
+			DIVij = rhodt*(u[i+1,j]-u[i,j]+v[i,j+1]-v[i,j])/dx
+			sum_aux = (p[i+1,j]+p[i-1,j]+p[i,j+1]+p[i,j-1])/4
+			p_new = sum_aux-dx2*DIVij/4
 			p[i,j] = (1-r)*p[i,j]+r*p_new
 		end
 	end
@@ -91,22 +89,22 @@ function navier_stokes_step2!(n, dt, mu, rho, p, #pressão pode ser matriz zeros
 		p[i-1,j] = p[i,j] - (mu/dx)*sum_aux - rho*dx*fx[i,j]
 	end
 
-	#Processar fronteira i=n
+	#Processar fronteira direita
 	i = n #n é o tamanho da malha escalonada
 	for j in 2:n-1
 		sum_aux = 2*u_old[i,j]-5*u_old[i-1,j]+4*u_old[i-2,j]-u_old[i-3,j]
 		p[i,j] = p[i-1,j] + (mu/dx)*sum_aux + rho*dx*fx[i,j]
 	end
 	
-	#Processar fronteira j=2
+	#Processar fronteira inferior
 	j = 2
 	for i in 2:n-1
 		sum_aux = 2*v_old[i,j]-5*v_old[i,j+1]+4*v_old[i,j+2]-v_old[i,j+3]
 		p[i,j-1] = p[i,j] - (mu/dx)*sum_aux - rho*dx*fy[i,j]
 	end
 
-	#Processar fronteira j=n
-	j = n #n é o tamanho da malha escalonada, o tamanho da malha de fato é n-1
+	#Processar fronteira superior
+	j = n #n é o tamanho da malha escalonada
 	for i in 2:n-1
 		sum_aux = 2*v_old[i,j]-5*v_old[i,j-1]+4*v_old[i,j-2]-v_old[i,j-3]
 		p[i,j] = p[i,j-1] + (mu/dx)*sum_aux + rho*dx*fy[i,j]
@@ -117,23 +115,24 @@ function navier_stokes_step3!(n, dt, mu, rho, p, #pressão já calculada
 						 	  u, v, #u* e v*, serão atualizados para u(n+1)
 						 	  u_old, v_old, #u(n)
 						 	  fx, fy, uB)
-	dx = 1./(n-2)
+	dx = 1/(n-2)
 	px = 0.0
 	py = 0.0
+	drho = dt/rho
 	#Pontos internos
 	for i in 2:n-1
 		for j in 2:n-1
 			px = (p[i,j]-p[i-1,j])/dx
 			py = (p[i,j]-p[i,j-1])/dx
-			u[i,j] = u[i,j] - (dt/rho)*px
-			v[i,j] = v[i,j] - (dt/rho)*py
+			u[i,j] = u[i,j] - drho*px
+			v[i,j] = v[i,j] - drho*py
 		end
 	end
 
 	#Fronteira
-	for j in 2:n-1 v[1,j] = -v[2,j] end #esquerda
-	for i in 2:n-1 u[i,1] = -u[i,2] end #embaixo
-	for j in 2:n-1 v[n,j] = -v[n-1,j] end #direita
+	for j in 2:n-1 v[1,j] = -v[2,j]          end #esquerda
+	for i in 2:n-1 u[i,1] = -u[i,2]          end #embaixo
+	for j in 2:n-1 v[n,j] = -v[n-1,j]        end #direita
 	for i in 2:n-1 u[i,n] = 2*uB[i]-u[i,n-1] end # em cima
 
 	#Boundary conditions, velocidades normais na malha escalonada
@@ -154,28 +153,29 @@ function solve_navier_stokes!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 
 	# ------------------------ Passo 2 ------------------------
 	#A parte 2 tem de ter iterações até convergir
-	p_old = zeros(n,n)
 	error = 1.0
-	threshold = 1e-9
+	threshold = 1e-14
 	i = 0
 	while error > threshold
+		i = i + 1 #identificar iteração
 		navier_stokes_step2!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy)
-		# p[:,:] = p - minimum(p)
-		p[:,:] = p - mean(p)
-		p[1,1] = 0; p[1,n]=0; p[n,1]=0; p[n,n]=0
-		error = maxabs(p-p_old)
+		error = testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy)
 
-		p_old[:,:] = p
-		i = i + 1
-		if i == 30000 #limitado a 30 mil iterações... pode mudar este número
-			return "Fim"
+		if i == 80000 #Evita loops que sejam muito longos
+			println("Fim")
+			return 1
 		end
 	end
-	if testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy) > (threshold*10)
-		println("Problem!")
-		println("There were $(i) iterations to solve step2. Estimated Error=$(error)")
-		println("Actual error: $(testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy))")
-	end
+
+	p[:,:] = p - minimum(p)
+	# p[:,:] = p - mean(p)
+	# p[1,1] = 0; p[1,n]=0; p[n,1]=0; p[n,n]=0
+
+	# if testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy) > (threshold*10)
+	# 	println("Problem!")
+	# 	println("There were $(i) iterations to solve step2. Estimated Error=$(error)")
+	# 	println("Actual error: $(testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy))")
+	# end
 	# ------------------------ Passo 3 ------------------------
 	navier_stokes_step3!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 
@@ -184,45 +184,50 @@ end
 #testPoisson
 #
 function testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy)
-	m = zeros(n,n)
+	m = 0.0
 	dx = 1/(n-2)
-	dx2 = dx^2
+	dx2 = dx*dx
 	for i in 2:n-1
 		for j in 2:n-1
 			DIVij = (rho/dt)*(u[i+1,j]-u[i,j]+v[i,j+1]-v[i,j])/dx #este é o u e v estrela
-			m[i,j] = 0.25*(p[i+1,j]+p[i-1,j]+p[i,j+1]+p[i,j-1]-dx2*DIVij)-p[i,j]
+			m_aux = 0.25*(p[i+1,j]+p[i-1,j]+p[i,j+1]+p[i,j-1]-dx2*DIVij)-p[i,j]
+			if abs(m_aux) > m;	m = abs(m_aux); end
 		end
 	end
 
-	#Processar fronteira i=2
+	#Processar fronteira esquerda
 	i = 2
 	for j in 2:n-1
 		sum_aux = 2*u_old[i,j]-5*u_old[i+1,j]+4*u_old[i+2,j]-u_old[i+3,j]
-		m[i-1,j] = - p[i-1,j] + p[i,j] - (mu/dx)*sum_aux - rho*dx*fx[i,j]
+		m_aux = - p[i-1,j] + p[i,j] - (mu/dx)*sum_aux - rho*dx*fx[i,j]
+		if abs(m_aux) > m;	m = abs(m_aux); end
 	end
 
-	#Processar fronteira i=n-1
+	#Processar fronteira direita
 	i = n #n é o tamanho da malha escalonada, o tamanho da malha de fato é n-1
 	for j in 2:n-1
 		sum_aux = 2*u_old[i,j]-5*u_old[i-1,j]+4*u_old[i-2,j]-u_old[i-3,j]
-		m[i,j]  = - p[i,j] + p[i-1,j] + (mu/dx)*sum_aux + rho*dx*fx[i,j]
+		m_aux  = - p[i,j] + p[i-1,j] + (mu/dx)*sum_aux + rho*dx*fx[i,j]
+		if abs(m_aux) > m;	m = abs(m_aux); end
 	end
 	
-	#Processar fronteira j=2
+	#Processar fronteira inferior
 	j = 2
 	for i in 2:n-1
 		sum_aux = 2*v_old[i,j]-5*v_old[i,j+1]+4*v_old[i,j+2]-v_old[i,j+3]
-		m[i,j-1] = - p[i,j-1] + p[i,j] - (mu/dx)*sum_aux - rho*dx*fy[i,j]
+		m_aux = - p[i,j-1] + p[i,j] - (mu/dx)*sum_aux - rho*dx*fy[i,j]
+		if abs(m_aux) > m;	m = abs(m_aux); end
 	end
 
-	#Processar fronteira j=n-1
+	#Processar fronteira superior
 	j = n #n é o tamanho da malha escalonada
 	for i in 2:n-1
 		sum_aux = 2*v_old[i,j]-5*v_old[i,j-1]+4*v_old[i,j-2]-v_old[i,j-3]
-		m[i,j] = - p[i,j] + p[i,j-1] + (mu/dx)*sum_aux + rho*dx*fy[i,j]
+		m_aux = - p[i,j] + p[i,j-1] + (mu/dx)*sum_aux + rho*dx*fy[i,j]
+		if abs(m_aux) > m;	m = abs(m_aux); end
 	end
-	# println(m)
-	return maxabs(m)
+
+	return m
 end
 
 #isdXok
@@ -251,7 +256,8 @@ function getDt(n, Re, divFactor=5)
 end
 
 #staggered2notS
-#descarta dimensão extra da malha escalonada
+#salva pontos internos da malha escalonada
+#interpolação linear é feita para obter pontos no centro de cada bloco
 #u é a entrada, malha escalonada, dimensão n
 #un é a saída, dimensão n-2, escalonada de dimensão menor
 #n é a dimensão da malha escalonada
@@ -264,4 +270,23 @@ function staggered2not!(u, v, p, un, vn, pn, n)
 		end 
 	end
 end
+
+function simpson(f, a, b, n)
+	#Only works for even n
+    #Approximates the definite integral of f from a to b by
+    #the composite Simpson's rule, using n subintervals
+    h = (b - a) / n
+    s = f(a) + f(b)
+ 
+    for i in 1:2:n
+        s += 4 * f(a + i * h)
+    end
+
+    for i in 2:2:n-1
+        s += 2 * f(a + i * h)
+    end
+ 
+    return s * h / 3
+end
+
 end

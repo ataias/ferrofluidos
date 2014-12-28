@@ -3,8 +3,16 @@
 from numpy import *
 from pylab import *
 import struct
+import sys
 
-n = 41
+#Example of use: compare.py 41 1.0 1764.dat
+
+#argv[1] is the size of matriz
+#argv[2] is the time of simulation
+#argv[3] is the fortran .dat file
+#the name of the file from julia is obtained with argv[1]
+
+n = int(sys.argv[1])
 dx = 1/n
 tot = int((n-1)**2)
 uv = zeros((tot,8),dtype=float64)
@@ -12,8 +20,10 @@ uv = zeros((tot,8),dtype=float64)
 
 u = zeros((n-1,n-1), dtype=float64)
 v = zeros((n-1,n-1), dtype=float64)
+vort = zeros((n-1,n-1), dtype=float64)
 
-with open('1764.dat') as f:
+#with open('1764.dat') as f:
+with open(sys.argv[3]) as f:
     for line in f:
         numbers_str = line.split()
         #convert numbers to floats
@@ -21,8 +31,9 @@ with open('1764.dat') as f:
         if numbers_float:
           i = round(numbers_float[0]/dx) - 1
           j = round(numbers_float[1]/dx) - 1
-          u[i,j] = numbers_float[4]
-          v[i,j] = numbers_float[5]
+          vort[i,j] = numbers_float[3]
+          u[i,j]    = numbers_float[4]
+          v[i,j]    = numbers_float[5]
 
 #use LaTeX, choose nice some looking fonts and tweak some settings
 matplotlib.rc('font', family='serif')
@@ -60,8 +71,8 @@ show()
 
 #Da forma abaixo posso ler os valores de um arquivo
 # de pontos flutuantes
-f = open('N41.dat', 'rb')
-t = 2.5
+f = open('N' + sys.argv[1] + '.dat', 'rb')
+t = float(sys.argv[2]) #time of simulation
 
 numberFrames = round(180*t)
 #f.seek((numberFrames - 1)*n*n*8*3) #get steady state solution
@@ -113,4 +124,8 @@ axis([0, 1.02, 0, 1.02])
 show()
 
 print("Maior diferença em u é ", abs(vxx - vx).max())
+print("Maior valor em u - fortran é, ", abs(vx).max())
+print("Maior valor em u - ataias é, ", abs(vxx).max())
 print("Maior diferença em v é ", abs(vyy - vy).max())
+print("Maior valor em v - fortran é, ", abs(vy).max())
+print("Maior valor em v - ataias é, ", abs(vyy).max())

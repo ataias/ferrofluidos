@@ -6,6 +6,8 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import matplotlib.pyplot as plt
+import math
+import sys
 
 from numpy import *
 from pylab import *
@@ -13,9 +15,11 @@ import struct
 
 #Da forma abaixo posso ler os valores de um arquivo
 # de pontos flutuantes
-f = open('N43.dat', 'rb')
-t = 2.2
-n = 43 #esta é a dimensão da malha escalonada menos 2
+#sys.argv[1] é o n
+
+f = open('N' + sys.argv[1] + '.dat', 'rb')
+t = 1.0
+n = int(sys.argv[1]) #esta é a dimensão da malha escalonada menos 2
 dx = 1/n
 
 numberFrames = round(180*t)
@@ -87,5 +91,8 @@ fig.colorbar(surf, shrink=0.5, aspect=5)
 
 plt.show()
 
-
-
+ij = math.ceil((n+2)/2-1) - 1
+w = (v[ij,ij+1]-v[ij,ij-1])/(2*dx) - (u[ij+1,ij]-u[ij-1,ij])/(2*dx)
+wc = -0.63925
+error = abs(abs(wc)-abs(w))
+print("Error in vorticity: ", error)

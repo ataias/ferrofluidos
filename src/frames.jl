@@ -1,66 +1,88 @@
 using NavierStokes
 
-#O mesmo dt será usado para todos
-Re = 10.0;
-t = 2.2;
-n = 45;
-dt = getDt(n, Re, 1.10); 
+#modo de usar
+#n  - ARGS[1] é o tamanho da matriz escalonada
+#t  - ARGS[2] é o tempo de simulação, em segundos
+#Re - ARGS[3] é o número de Reynolds
+#dt - ARGS[4] dividir o passo de tempo, deve ser maior do que 1
 
+#Exemplo:
+# 		julia frames.jl 43 2.5 10.0 1.25
+
+n = int(ARGS[1]);
+t = float(ARGS[2]);
+Re = float(ARGS[3]);
+dt = getDt(n, Re, float(ARGS[4]));
+
+println("Dados sobre simulação:\n n\t= ", n, "\n t\t= ", t, "\n Re\t= ", Re, "\n dt\t= ", dt, "\n");
+
+#steadyState
 #retorna o valor em regime permanente do ponto 0.5, 0.5
 #resolve equações para um dado n e Re
 #t is time, in seconds, of physical simulation
 function steadyState(n, dt, Re, t)
-	println("Running! n = ", n)
-	rho = 1.0;
-	mu = 1/Re;
+	rho = 1.0
+	mu = 1/Re
 	dx = 1/(n-2)
-	steps = integer(t/dt)
+	steps = integer(t/dt) + 1
+	c = integer(n/2 - 1); #center, non-staggered grid
+	ce = integer(n/2) #center, staggered grid
 
 	if(!isdXok(Re, n))
-		println("There is a problem with your dx. Increase n.\n");
-		return 0
+		println("There is a problem with your dx. Increase n.\n")
+		return 1
 	end
 
-	p = zeros(n,n);
-	u = zeros(n,n);
-	uB = zeros(1,n);
+	#Declarando vetores e matrizes que serão utilizados
+	p = zeros(n,n)
+
+	uB = zeros(1,n)
 	for i in -1:n-2
 		uB[i+2] = (sinpi(i*dx))^2
 	end
+
+	u = zeros(n,n) #malha escalonada
 	u[:,n] = 2*uB
 	u[1,:] = NaN
 		
-	v = zeros(n,n);
+	v = zeros(n,n); #malha escalonada
 	v[:,1] = NaN
 
-	u_old = copy(u);
-	v_old = copy(v);
-	fx = zeros(n,n);
-	fy = zeros(n,n);
+	u_old = copy(u)
+	v_old = copy(v)
+
+	fx = zeros(n,n)
+	fy = zeros(n,n)
 
 	file = open("N" * string(n-2) * ".dat", "w")
-	#falta ainda salvar o valor do ponto médio conforme
-	#o tempo avança...
 
-	un = zeros(n-2,n-2)
+	un = zeros(n-2,n-2) #malha não escalonada
 	vn = zeros(n-2,n-2)
 	pn = zeros(n-2,n-2)
 
-	numberFrames = integer(180*t)
+	numberFrames = integer(60*t)
 	timeToSave = integer(steps/numberFrames)
 
 	for i in 1:steps
 		solve_navier_stokes!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 
-		if i % timeToSave == 0
-		 	println("t = ", i*dt)
+		if (i % timeToSave == 0) || (i == steps - 1)
 			staggered2not!(u, v, p, un, vn, pn, n)
-			write(file, un) #note that it writes to memory column-wise
-			write(file, vn)
+			write(file, un); write(file, vn);
 			write(file, pn)
-			ij = integer(n/2 - 1)
-			println([un[ij, ij], vn[ij, ij]])
-			# write(file, pn)
+			println("t = ", i*dt)
+			println("  u[0.5,0.5]\t= ", un[c,c])
+			println("  v[0.5,0.5]\t= ", vn[c,c])
+			vortc =  ((vn[c+1,c]-vn[c-1,c]) - (un[c,c+1]-un[c,c-1]))/(2*dx)
+			println("  ω [0.5,0.5]\t= ", vortc)
+			vortce = ((v[ce+1,ce]-v[ce,ce]) - (u[ce,ce+1]-u[ce,ce]))/dx
+			println("  ω [0.5,0.5]\t= ", vortce)
+			F = 0.0
+			for i in 2:n-1
+				F = F + (u[i,n]-u[i,n-1])/dx
+			end
+			F = F/(n-2)
+			println("  F\t= ", F)
 		end
 
 		u, u_old = u_old, u
@@ -70,11 +92,7 @@ function steadyState(n, dt, Re, t)
 	end
 
 	close(file)
-
-	#steady state value in (0.5, 0.5)
-	staggered2not!(u, v, p, un, vn, pn, n)
-	ij = integer(n/2 - 1)
-	return [un[ij, ij], vn[ij, ij]] #returns steady state value in the middle
+	return 0
 end
 
 @time steadyState(n, dt, Re, t)
