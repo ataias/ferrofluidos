@@ -48,13 +48,13 @@ function navier_stokes_step1!(n, dt, mu, rho, u, v, u_old, v_old, fx, fy, uB)
 		end #for j
 	end #for i
 
-	#Boundary conditions, velocidades normais na malha escalonada
-	for j in 1:n
+    #Boundary conditions, velocidades normais na malha escalonada
+	for j in 2:n-1
 		u[2,j] = 0 #esquerda
 		u[n,j] = 0 #direita
 	end
 
-	for i in 1:n
+	for i in 2:n-1
 		v[i,2] = 0 #embaixo
 		v[i,n] = 0 #em cima
 	end
@@ -75,9 +75,9 @@ function navier_stokes_step2!(n, dt, mu, rho, p, #pressão pode ser matriz zeros
 	# Processar pontos internos
 	for i in 2:n-1
 		for j in 2:n-1
-			DIVij = rhodt*(u[i+1,j]-u[i,j]+v[i,j+1]-v[i,j])/dx
+			DIVij = rhodt*((u[i+1,j]-u[i,j])+(v[i,j+1]-v[i,j]))/(4*dx)
 			sum_aux = (p[i+1,j]+p[i-1,j]+p[i,j+1]+p[i,j-1])/4
-			p_new = sum_aux-dx2*DIVij/4
+			p_new = sum_aux-dx2*DIVij
 			p[i,j] = (1-r)*p[i,j]+r*p_new
 		end
 	end
@@ -128,23 +128,25 @@ function navier_stokes_step3!(n, dt, mu, rho, p, #pressão já calculada
 			v[i,j] = v[i,j] - drho*py
 		end
 	end
-
-	#Fronteira
-	for j in 2:n-1 v[1,j] = -v[2,j]          end #esquerda
-	for i in 2:n-1 u[i,1] = -u[i,2]          end #embaixo
-	for j in 2:n-1 v[n,j] = -v[n-1,j]        end #direita
-	for i in 2:n-1 u[i,n] = 2*uB[i]-u[i,n-1] end # em cima
-
-	#Boundary conditions, velocidades normais na malha escalonada
-	for j in 1:n
+    
+    #Boundary conditions, velocidades normais na malha escalonada
+	for j in 2:n-1
 		u[2,j] = 0 #esquerda
 		u[n,j] = 0 #direita
 	end
 
-	for i in 1:n
+	for i in 2:n-1
 		v[i,2] = 0 #embaixo
 		v[i,n] = 0 #em cima
 	end
+
+	#Fronteira
+	for j in 2:n v[1,j] = -v[2,j]          end #esquerda
+	for i in 2:n u[i,1] = -u[i,2]          end #embaixo
+	for j in 2:n v[n,j] = -v[n-1,j]        end #direita
+	for i in 2:n u[i,n] = 2*uB[i]-u[i,n-1] end # em cima
+
+
 end
 
 function solve_navier_stokes!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)

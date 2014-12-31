@@ -24,7 +24,7 @@ function steadyState(n, dt, Re, t)
 	rho = 1.0
 	mu = 1/Re
 	dx = 1/(n-2)
-	steps = integer(t/dt) + 1
+	steps = integer(t/dt)
 	c = integer(n/2 - 1); #center, non-staggered grid
 	ce = integer(n/2) #center, staggered grid
 
@@ -66,7 +66,7 @@ function steadyState(n, dt, Re, t)
 	for i in 1:steps
 		solve_navier_stokes!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 
-		if (i % timeToSave == 0) || (i == steps - 1)
+		if (i % timeToSave == 0) || (i == steps)
 			staggered2not!(u, v, p, un, vn, pn, n)
 			write(file, un); write(file, vn);
 			write(file, pn)
@@ -75,14 +75,15 @@ function steadyState(n, dt, Re, t)
 			println("  v[0.5,0.5]\t= ", vn[c,c])
 			vortc =  ((vn[c+1,c]-vn[c-1,c]) - (un[c,c+1]-un[c,c-1]))/(2*dx)
 			println("  ω [0.5,0.5]\t= ", vortc)
-			vortce = ((v[ce+1,ce]-v[ce,ce]) - (u[ce,ce+1]-u[ce,ce]))/dx
+			vortce  = ((v[ce+1,ce+1]+v[ce+1,ce]) - (v[ce-1,ce+1]+v[ce-1,ce]))/(4*dx)
+            vortce -= ((u[ce+1,ce+1]+u[ce,ce+1]) - (u[ce+1,ce-1]+u[ce,ce-1]))/(4*dx)
 			println("  ω [0.5,0.5]\t= ", vortce)
-			F = 0.0
-			for i in 2:n-1
-				F = F + (u[i,n]-u[i,n-1])/dx
-			end
-			F = F/(n-2)
-			println("  F\t= ", F)
+#			F = 0.0
+#			for i in 2:n-1
+#				F = F + (u[i,n]-u[i,n-1])/dx
+#			end
+#			F = F/(n-2)
+#			println("  F\t= ", F)
 		end
 
 		u, u_old = u_old, u
