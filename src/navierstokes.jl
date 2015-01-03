@@ -151,7 +151,7 @@ function solve_navier_stokes!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 		navier_stokes_step2!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy)
 		error = testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy)
 
-		if i == 100000 #Evita loops que sejam muito longos
+		if i == 250000 #Evita loops que sejam muito longos
 			println("Problema na convergência da pressão")
 			exit(1)
 		end
@@ -247,16 +247,16 @@ end
 
 #staggered2notS
 #salva pontos internos da malha escalonada
-#interpolação linear é feita para obter pontos no centro de cada bloco
+#interpolação linear é feita para obter pontos na quina esquerda-inferior de cada bloco
 #u é a entrada, malha escalonada, dimensão n
 #un é a saída, dimensão n-2, escalonada de dimensão menor
 #n é a dimensão da malha escalonada
 function staggered2not!(u, v, p, un, vn, pn, n) 
 	for i in 2:n-1 
 		for j in 2:n-1 
-			un[i-1,j-1] = (u[i,j] + u[i+1,j])/2
-			vn[i-1,j-1] = (v[i,j] + v[i,j+1])/2
-			pn[i-1,j-1] = p[i,j]
+			un[i-1,j-1] = (u[i,j] + u[i,j-1])/2
+			vn[i-1,j-1] = (v[i,j] + v[i-1,j])/2
+			pn[i-1,j-1] = p[i,j] #continua no centro...
 		end 
 	end
 end

@@ -25,8 +25,8 @@ function steadyState(n, dt, Re, t)
 	mu = 1/Re
 	dx = 1/(n-2)
 	steps = integer(t/dt)
-	c = integer(n/2 - 1); #center, non-staggered grid
-	ce = integer(n/2) #center, staggered grid
+	c = integer(n/2); #center, non-staggered grid
+#	ce = integer(n/2) #center, staggered grid
 
 	if(!isdXok(Re, n))
 		println("There is a problem with your dx. Increase n.\n")
@@ -75,9 +75,9 @@ function steadyState(n, dt, Re, t)
 			println("  v[0.5,0.5]\t= ", vn[c,c])
 			vortc =  ((vn[c+1,c]-vn[c-1,c]) - (un[c,c+1]-un[c,c-1]))/(2*dx)
 			println("  ω [0.5,0.5]\t= ", vortc)
-			vortce  = ((v[ce+1,ce+1]+v[ce+1,ce]) - (v[ce-1,ce+1]+v[ce-1,ce]))/(4*dx)
-            vortce -= ((u[ce+1,ce+1]+u[ce,ce+1]) - (u[ce+1,ce-1]+u[ce,ce-1]))/(4*dx)
-			println("  ω [0.5,0.5]\t= ", vortce)
+#			vortce  = ((v[ce+1,ce+1]+v[ce+1,ce]) - (v[ce-1,ce+1]+v[ce-1,ce]))/(4*dx)
+#            vortce -= ((u[ce+1,ce+1]+u[ce,ce+1]) - (u[ce+1,ce-1]+u[ce,ce-1]))/(4*dx)
+#			println("  ω [0.5,0.5]\t= ", vortce)
 #			F = 0.0
 #			for i in 2:n-1
 #				F = F + (u[i,n]-u[i,n-1])/dx
