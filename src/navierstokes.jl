@@ -31,33 +31,20 @@ function navier_stokes_step1!(n, dt, mu, rho, u, v, u_old, v_old, fx, fy, uB)
 			#value is fixed in the boundaries
 			if i!=2 && i!=n #in the case i==2 or n, it is a boundary point
 				#Order is important here!
-				u[i,j]  =  mu*(u_s-4*u_old[i,j])/dx2+fx[i,j]
-				u[i,j] *= (dt/rho)
+				u[i,j]  =  (mu*(u_s-4*u_old[i,j])/dx2+fx[i,j])*(dt/rho)
 				u[i,j] += -dtx*u_old[i,j]*(u_old[i+1,j]-u_old[i-1,j])
 				u[i,j] += -dtx*v_t*(u_old[i,j+1]-u_old[i,j-1])
 				u[i,j] +=  u_old[i,j]
 			end #if
 			#Now, let's compute v in i,j
 			if j!=2 && j!=n #in the case j==2, it is a boundary point
-				v[i,j]  =  mu*(v_s-4*v_old[i,j])/dx2+fy[i,j]
-				v[i,j] *= (dt/rho)
+				v[i,j]  =  (mu*(v_s-4*v_old[i,j])/dx2+fy[i,j])*(dt/rho)
 				v[i,j] += -dtx*u_t*(v_old[i+1,j]-v_old[i-1,j])
 				v[i,j] += -dtx*v_old[i,j]*(v_old[i,j+1]-v_old[i,j-1])
 				v[i,j] += v_old[i,j]
 			end #if
 		end #for j
 	end #for i
-
-    #Boundary conditions, velocidades normais na malha escalonada
-	for j in 2:n-1
-		u[2,j] = 0 #esquerda
-		u[n,j] = 0 #direita
-	end
-
-	for i in 2:n-1
-		v[i,2] = 0 #embaixo
-		v[i,n] = 0 #em cima
-	end
 
 end #navier_stokes_step1
 
@@ -122,8 +109,8 @@ function navier_stokes_step3!(n, dt, mu, rho, p, #pressão já calculada
 	#Pontos internos
 	for i in 2:n-1
 		for j in 2:n-1
-			px = (p[i,j]-p[i-1,j])/dx
-			py = (p[i,j]-p[i,j-1])/dx
+			px = (p[i,j]-p[i-1,j])/(dx)
+			py = (p[i,j]-p[i,j-1])/(dx)
 			u[i,j] = u[i,j] - drho*px
 			v[i,j] = v[i,j] - drho*py
 		end
@@ -157,20 +144,21 @@ function solve_navier_stokes!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 	#A parte 2 tem de ter iterações até convergir
 	error = 1.0
 	threshold = 1e-14
+    
 	i = 0
 	while error > threshold
 		i = i + 1 #identificar iteração
 		navier_stokes_step2!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy)
 		error = testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy)
 
-		if i == 80000 #Evita loops que sejam muito longos
-			println("Fim")
-			return 1
+		if i == 100000 #Evita loops que sejam muito longos
+			println("Problema na convergência da pressão")
+			exit(1)
 		end
 	end
 
-	p[:,:] = p - minimum(p)
-	# p[:,:] = p - mean(p)
+#	p[:,:] = p - minimum(p)
+    p[:,:] = p - mean(p)
 	# p[1,1] = 0; p[1,n]=0; p[n,1]=0; p[n,n]=0
 
 	# if testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy) > (threshold*10)
@@ -184,7 +172,7 @@ function solve_navier_stokes!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 end
 
 #testPoisson
-#
+
 function testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy)
 	m = 0.0
 	dx = 1/(n-2)
@@ -236,7 +224,7 @@ end
 #Esta função analisa se o número de pontos escolhido 
 #satisfaz a condição de camada limite hidrodinâmica
 function isdXok(Re, n)
-	dx = 1./(n-2); #because n = n' + 1
+	dx = 1/(n-2); 
 	if dx < (1/Re) 
 		return true
 	else 
@@ -245,7 +233,7 @@ function isdXok(Re, n)
 end
 
 function getDt(n, Re, divFactor=5)
-	dx = 1./(n-2) #n é o tamanho da malha escalonada, por isso está n-2 ao invés de n-1
+	dx = 1/(n-2) #n é o tamanho da malha escalonada
 	dt1 = 0.25*Re*dx*dx
 	dt2 = dx
 	dt = 0.0
