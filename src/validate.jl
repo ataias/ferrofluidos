@@ -2,6 +2,7 @@ using NavierStokes
 
 #retorna o valor em regime permanente do ponto 0.5, 0.5
 #resolve equações para um dado n e Re
+#n deve ser par
 #t is time, in seconds, of physical simulation
 function steadyState(n, dt, Re, t)
 	println("Running! n = ", n)
@@ -9,7 +10,9 @@ function steadyState(n, dt, Re, t)
 	mu = 1/Re;
 	dx = 1/(n-2)
 	steps = integer(t/dt)
-
+    
+    c = integer(n/2) #center, non-staggered grid
+    
 	if(!isdXok(Re, n))
 		println("There is a problem with your dx. Increase n.\n");
 		return 0
@@ -45,8 +48,7 @@ function steadyState(n, dt, Re, t)
 		if i % timeToSave == 0
 		 	println("t = ", i*dt)
 			staggered2not!(u, v, p, un, vn, pn, n)
-			ij = integer(n/2 - 1)
-			println([un[ij, ij], vn[ij, ij]])
+			println([un[c, c], vn[c, c]])
 		end
 
 		u, u_old = u_old, u
@@ -57,20 +59,19 @@ function steadyState(n, dt, Re, t)
 
 	#steady state value in (0.5, 0.5)
 	staggered2not!(u, v, p, un, vn, pn, n)
-	ij = integer(n/2 - 1)
-	return [un[ij, ij], vn[ij, ij]] #returns steady state value in the middle
+	return [un[c, c], vn[c, c]] #returns steady state value in the middle
 end
 
 function validate()
 	#O mesmo dt será usado para todos
 	Re = 10.0;
-	dt = getDt(91, Re, 1.10); #escolho o menor dt entre todos	
+	dt = getDt(152, Re, 1.25); #escolho o menor dt entre todos	
 	t = 2.5;
 
 	fileErro = open("errorUVvsDx2.dat", "w")
 
-	solution = steadyState(91, dt, Re, t)
-	for n in 13:4:69
+	solution = steadyState(152, dt, Re, t)
+	for n in 32:4:142
 		dx = 1/(n-2)
 		dx2 = dx^2
 		ss = steadyState(n, dt, Re, t)

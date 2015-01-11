@@ -1,7 +1,7 @@
 using Gadfly
 
 f = open("errorUVvsDx2.dat");
-l = length(13:4:69);
+l = length(32:4:142);
 
 dx2 = zeros(l);
 error_u = zeros(l);
