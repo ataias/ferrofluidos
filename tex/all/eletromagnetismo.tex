@@ -1,0 +1,75 @@
+\documentclass[eletromagnetismo.tex]{subfiles}
+\begin{document}
+\section{Eletromagnetismo}
+
+\paragraph{} Esta é a hora na qual as equações do eletromagnetismo serão introduzidas neste projeto. Até a última seção, a força utilizada era nula. A partir deste momento, iniciar-se-á um estudo matemático do comportamento de um fluido magnético na presença de um campo magnético. Iniciaremos com algoritmos básicos e não tão precisos e após isso iremos melhorar nosso ferramental. 
+
+\subsection{Equações Básicas}
+
+\paragraph{} Primeiramente, temos a equação do campo magnético e de seu divergente. O fato do divergente ser 0 indica que o campo é solenoidal, isto é, todas as linhas de campo magnético que saem, tem de voltar à superfície.
+
+\begin{eqnarray}
+\mathbf{B} &=& \mu_0(\mathbf{M}+\mathbf{H})\\
+\nabla\cdot \mathbf{B} & = & 0
+\end{eqnarray}
+
+\paragraph{} A consequência das equações acima é que 
+
+\begin{eqnarray}
+\nabla\cdot \mathbf{M} = -\nabla\cdot\mathbf{H}	\label{mh1}
+\end{eqnarray}
+
+
+No caso de nosso estudo, temos um caso magnetostático, o que implica que:
+
+\begin{eqnarray}
+\nabla\times \mathbf{H} & = & \mathbf{0}
+\end{eqnarray}
+
+\paragraph{} Lembre-se que $\mathbf{H}$ é o fluxo elétrico. Como este campo é irrotacional, temos que $\mathbf{H}$ é um campo potencial:
+
+\begin{equation}
+\mathbf{H} = -\nabla\phi \label{poth}	
+\end{equation}
+
+\paragraph{} A partir das Equações \ref{mh1} e \ref{poth}, tem-se:
+
+\begin{align}
+\nabla^2\phi &= \nabla\cdot \mathbf{M}\label{eqcampomag}\\ \eqname{Equação do Campo Magnético}
+\end{align}
+
+\subsection{Relação entre Magnetismo e Força}
+
+\paragraph{} A relação entre força e o campo magnético é dada pelas equações abaixo:
+
+\begin{align}
+\mathbf{f} & = \mu_0\mathbf{M}\cdot \nabla \mathbf{H}\\ \eqname{Caso dimensional}\\
+\mathbf{f} & = \mathrm{Cpm}\,\mathbf{M}\cdot \nabla \mathbf{H}\\ \eqname{Caso adimensional}\\
+\mathrm{Cpm} & = \frac{\mu_0 H_0^2}{\rho u^2} \\ \eqname{Coeficiente de permeabilidade magnética}
+\end{align}
+
+\paragraph{} Desta forma, cada componente da força toma a seguinte forma:
+
+\begin{eqnarray}
+f_x & = & \mathrm{Cpm}\left[M_x\cdot \frac{\partial H_x}{\partial x}+M_y\cdot \frac{\partial H_x}{\partial y}\right]\\
+f_y & = & \mathrm{Cpm}\left[M_x\cdot \frac{\partial H_y}{\partial x}+M_y\cdot \frac{\partial H_y}{\partial y}\right]
+\end{eqnarray}
+
+\paragraph{} A pesquisa se centra no $\mathrm{M}$, que depende do campo magnético, da velocidade do escoamento e do material.
+
+\subsection{Problema exemplo}
+\paragraph{} É necessário estudo para se definir as condições de contorno para a Equação \ref{eqcampomag}. Enquanto isso, será feito um teste com condições de contorno de Dirichlet $\phi(x,1) = \sin^2\pi x$ e $\phi(x,y)=0$ na fronteira caso contrário.
+
+\paragraph{} O procedimento para se resolver a Equação de Navier Stokes com o campo magnético, nas condições simples apresentadas, é:
+
+\begin{enumerate}
+	\item Resolver equação do campo magnético, se for passo inicial: $\mathbf{M} = \mathbf{0}$
+	\item Calcular $\mathbf{M} = \chi \mathbf{H}$ (lei simples)
+	\item Calcular força $\mathbf{f} = \mathrm{Cpm}\,\mathbf{M}\cdot \nabla \mathbf{H}$
+	\item Resolver hidrodinâmica
+	\item Avançar no tempo e voltar ao passo 1
+\end{enumerate}
+
+
+
+\end{document}
