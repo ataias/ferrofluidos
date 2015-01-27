@@ -57,7 +57,7 @@ function navier_stokes_step2!(n, dt, mu, rho, p, #pressão pode ser matriz zeros
 	dx2 = dx*dx
 	dtx = dt/(2*dx)
 	rhodt = rho/dt
-	r = 2/(1+pi/(n-2)) #SOR constant
+#	r = 2/(1+pi/(n-2)) #SOR constant
 
 	# Processar pontos internos
 	for i in 2:n-1
@@ -65,7 +65,8 @@ function navier_stokes_step2!(n, dt, mu, rho, p, #pressão pode ser matriz zeros
 			DIVij = rhodt*((u[i+1,j]-u[i,j])+(v[i,j+1]-v[i,j]))/(4*dx)
 			sum_aux = (p[i+1,j]+p[i-1,j]+p[i,j+1]+p[i,j-1])/4
 			p_new = sum_aux-dx2*DIVij
-			p[i,j] = (1-r)*p[i,j]+r*p_new
+#			p[i,j] = (1-r)*p[i,j]+r*p_new
+            p[i,j] = p_new
 		end
 	end
 
@@ -261,19 +262,22 @@ function staggered2not!(u, v, p, un, vn, pn, n)
 	end
 end
 
-function simpson(f, a, b, n)
+
+#f é um vetor com o valor a ser integrado
+#este vetor tem n pontos e a distância entre eles é de 1/n
+function simpson(f, n)
 	#Only works for even n
     #Approximates the definite integral of f from a to b by
     #the composite Simpson's rule, using n subintervals
-    h = (b - a) / n
-    s = f(a) + f(b)
+    h = 1 / n
+    s = f[1] + f[n]
  
-    for i in 1:2:n
-        s += 4 * f(a + i * h)
+    for i in 2:2:n-2
+        s += 4 * f[i]
     end
 
-    for i in 2:2:n-1
-        s += 2 * f(a + i * h)
+    for i in 3:2:n-1
+        s += 2 * f[i]
     end
  
     return s * h / 3

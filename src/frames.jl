@@ -78,12 +78,12 @@ function steadyState(n, dt, Re, t)
 #			vortce  = ((v[ce+1,ce+1]+v[ce+1,ce]) - (v[ce-1,ce+1]+v[ce-1,ce]))/(4*dx)
 #            vortce -= ((u[ce+1,ce+1]+u[ce,ce+1]) - (u[ce+1,ce-1]+u[ce,ce-1]))/(4*dx)
 #			println("  ω [0.5,0.5]\t= ", vortce)
-#			F = 0.0
-#			for i in 2:n-1
-#				F = F + (u[i,n]-u[i,n-1])/dx
-#			end
-#			F = F/(n-2)
-#			println("  F\t= ", F)
+			tau = zeros(1,n-2)
+			for i in 2:n-1
+				tau[i-1] = (1/Re)*((u[i,n]-u[i,n-1])/dx)
+			end
+			F = simpson(tau, n-2)
+			println("  F\t= ", F)
 		end
 
 		u, u_old = u_old, u

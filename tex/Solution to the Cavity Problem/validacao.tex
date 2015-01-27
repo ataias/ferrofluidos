@@ -75,5 +75,22 @@ u(x,y) & = & \frac{\cosh 2\pi x}{2\pi \sinh 2\pi}\cos 2 \pi y
 \end{eqnarray}
 
 
+\subsection{Problema 3}
+\paragraph{} Neste caso, temos fronteiras do tipo Dirichlet e o código é um pouco modificado em relação aos casos anteriores. Isto nos permite avaliar se a discretização está condizente.
+
+\begin{eqnarray}
+\left\{\begin{array}{ccl}
+\nabla^2u(x,y) & = & 0\\
+u(x,1) & = & \sin \pi x\\
+u(x,y) & = & 0, \textrm{caso contrário, na fronteira}
+\end{array}\right.
+\end{eqnarray}
+
+\paragraph{} A solução, portanto, é:
+
+\begin{eqnarray}
+u(x,y) & = & \frac{\sinh\pi y}{\sinh\pi} \sin\pi x
+\end{eqnarray}
+
 
 \end{document}
