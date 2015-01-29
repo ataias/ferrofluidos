@@ -2,7 +2,7 @@
 
 \newcommand{\domainOne}[0]{
 \begin{center}
-\tikzstyle{help lines}+=[dashed]% aaarghhh!!!
+\tikzstyle{help lines}+=[dashed]% 
 \begin{tikzpicture}
 %axes
 \draw[->] (0,5) -- (xyz cs:y=6);
@@ -53,41 +53,80 @@
 \end{tikzpicture} 
 \end{center}}
 
-\newcommand{\esquemaUm}[0]{
+\newcommand{\nonsymmetricright}[0]{
 \begin{center}
+\tikzstyle{help lines}+=[dashed]% 
 \begin{tikzpicture}
-%grid
-\draw[style=help lines] (-1,-1) grid +(7,7);
-\draw (0,0) grid +(5,5);
-
 %axes
-\draw[->] (0,0) -- (xyz cs:x=0, y=6.2);
-\draw (0,6.5) node {$y$};
-
-\draw[->] (0,0) -- (xyz cs:x=6.2,y=0);
-\draw (6.6,0) node {$x$};
+\draw[->] (0,1) -- (xyz cs:y=2);
+\draw (0,2.3) node {$y(j)$};
+\draw[->] (5,0) -- (xyz cs:x=6);
+\draw (6.5,0) node {$x(i)$};
 \draw (-0.18,-0.18) node {$O$};
-
-\draw[->] (-1,-1) -- (xyz cs:x=-1, y=6.2);
-\draw (-1,6.5) node {$j$};
-
-\draw[->] (-1,-1) -- (xyz cs:x=6.2, y=-1);
-\draw (6.7,-1) node {$i$};
-
-\draw (-1.3,-1.3) node {$x_{00}$};
-\draw (-1,-1) circle (2pt);
-
-\draw (0.3,0.2) node {$x_{11}$};
-\draw (0,0) circle (2pt);
-
-\draw (5.3,5.2) node {$x_{66}$};
-\draw (5,5) circle (2pt);
-
-\draw (6.3,6.2) node {$x_{77}$};
-\draw (6,6) circle (2pt);
-
-\draw (1.3,2.2) node {$x_{23}$};
-\draw (1,2) circle (2pt);
-\end{tikzpicture}
-\end{center}
+%grid
+\draw[style=help lines] (-1,0) grid +(7,1);
+\draw (0,0) grid +(5,1);
+%internal p points
+\foreach \x in {0.5,1.5,2.5}
+  \foreach \y in {0.5}
+  {
+  \fill [color=red] (canvas cs:x=\x cm,y=\y cm) circle (2pt);
 }
+
+\foreach \x in {3.5,4.5}
+  \foreach \y in {0.5}
+  {
+  \fill (canvas cs:x=\x cm,y=\y cm) circle (2pt);
+}
+
+\fill [color=red] (-0.1,0.4) rectangle (0.1,0.6);
+
+%External p points
+
+\foreach \y in {0.5}
+  \fill [color=red] (-0.5,\y) circle (2pt);
+  
+\foreach \y in {0.5}
+  \draw (5.5,\y) circle (2pt);
+
+\end{tikzpicture} 
+\end{center}}
+
+\newcommand{\nonsymmetricleft}[0]{
+\begin{center}
+\tikzstyle{help lines}+=[dashed]% 
+\begin{tikzpicture}
+%axes
+\draw[->] (0,1) -- (xyz cs:y=2);
+\draw (0,2.3) node {$y(j)$};
+\draw[->] (5,0) -- (xyz cs:x=6);
+\draw (6.5,0) node {$x(i)$};
+\draw (-0.18,-0.18) node {$O$};
+%grid
+\draw[style=help lines] (-1,0) grid +(7,1);
+\draw (0,0) grid +(5,1);
+%internal p points
+\foreach \x in {2.5,3.5,4.5}
+  \foreach \y in {0.5}
+  {
+  \fill [color=red] (canvas cs:x=\x cm,y=\y cm) circle (2pt);
+}
+
+\foreach \x in {0.5,1.5}
+  \foreach \y in {0.5}
+  {
+  \fill (canvas cs:x=\x cm,y=\y cm) circle (2pt);
+}
+
+\fill [color=red] (4.9,0.4) rectangle (5.1,0.6);
+
+%External p points
+
+\foreach \y in {0.5}
+  \fill [color=red] (5.5,\y) circle (2pt);
+  
+\foreach \y in {0.5}
+  \draw (-0.5,\y) circle (2pt);
+
+\end{tikzpicture} 
+\end{center}}
