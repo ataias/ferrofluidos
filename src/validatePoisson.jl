@@ -14,7 +14,7 @@ function poissonStep!(n, p, f, left, right, upper, lower, x, y)
 		end
 	end
 
-	#Processar fronteira esquerda
+   #Processar fronteira esquerda
 	i = 2
 	for j in 2:n-1
 		p[i-1,j] = -(1/x[1])*(x[2]*(p[i,j])/2 + x[3]*p[i,j] + x[4]*p[i+1,j] + x[5]*p[i+2,j] - left[j])/(1+x[2]/(2*x[1]))
@@ -150,17 +150,17 @@ function solvePoisson!(n, p, f, left, right, upper, lower)
     #obtain coefficients
     A1 = [1        1         1          1           1       ; 
         (-dx/2)   0        (dx/2)     (3*dx/2)     (5*dx/2); 
-        (dx^2/4)  0        (dx^2/4)   (9*dx^2/4)   (25*dx^2/4);
-        (-dx^3/8) 0        (dx^3/8)   (27*dx^3/8)  (125*dx^3/8);
-        (dx^4/16) 0        (dx^4/16)  (81*dx^4/16) (625*dx^4/16)]
+        (dx^2/4/2)  0        (dx^2/4/2)   (9*dx^2/4/2)   (25*dx^2/4/2);
+        (-dx^3/8/6) 0        (dx^3/8/6)   (27*dx^3/8/6)  (125*dx^3/8/6);
+        (dx^4/16/24) 0        (dx^4/16/24)  (81*dx^4/16/24) (625*dx^4/16/24)]
     b1 = [0; 1; 0; 0; 0]
     x = A1\b1
     
     A2 = [1        1         1          1           1       ; 
         (dx/2)   0        (-dx/2)     (-3*dx/2)     (-5*dx/2); 
-        (dx^2/4)  0        (dx^2/4)   (9*dx^2/4)   (25*dx^2/4);
-        (dx^3/8) 0        (-dx^3/8)   (-27*dx^3/8)  (-125*dx^3/8);
-        (dx^4/16) 0        (dx^4/16)  (81*dx^4/16) (625*dx^4/16)]
+        (dx^2/4/2)  0        (dx^2/4/2)   (9*dx^2/4/2)   (25*dx^2/4/2);
+        (dx^3/8/6) 0        (-dx^3/8/6)   (-27*dx^3/8/6)  (-125*dx^3/8/6);
+        (dx^4/16/24) 0        (dx^4/16/24)  (81*dx^4/16/24) (625*dx^4/16/24)]
     b2 = [0; 1; 0; 0; 0]
     y = A2\b2
     
