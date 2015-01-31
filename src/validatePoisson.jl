@@ -1,6 +1,7 @@
 function poissonStep!(n, p, f, left, right, upper, lower, x, y)
 
-	dx = 1/(n-2) 
+  p05 = 0.0
+	dx = 1/(n-2)
 	dx2 = dx*dx
 	r = 2/(1+pi/(n-2)) #SOR constant
 
@@ -17,32 +18,34 @@ function poissonStep!(n, p, f, left, right, upper, lower, x, y)
    #Processar fronteira esquerda
 	i = 2
 	for j in 2:n-1
-		p[i-1,j] = -(1/x[1])*(x[2]*(p[i,j])/2 + x[3]*p[i,j] + x[4]*p[i+1,j] + x[5]*p[i+2,j] - left[j])/(1+x[2]/(2*x[1]))
+    p05 = (3/4)*p[i,j] + (-1/8)*p[i+1,j]
+		p[i-1,j] = -(1/x[1])*(x[2]*p05 + x[3]*p[i,j] + x[4]*p[i+1,j] + x[5]*p[i+2,j] - left[j])/(1+(3/8)*x[2]/x[1])
 	end
 
     #Processar fronteira inferior
 	j = 2
 	for i in 2:n-1
-		p[i,j-1] = -(1/x[1])*(x[2]*(p[i,j])/2 + x[3]*p[i,j] + x[4]*p[i,j+1] + x[5]*p[i,j+2] - lower[i])/(1+x[2]/(2*x[1]))
+    p05 = (3/4)*p[i,j] + (-1/8)*p[i,j+1]
+		p[i,j-1] = -(1/x[1])*(x[2]*p05 + x[3]*p[i,j] + x[4]*p[i,j+1] + x[5]*p[i,j+2] - lower[i])/(1+(3/8)*x[2]/x[1])
 	end
-    
+
 	#Processar fronteira direita
 	i = n #n é o tamanho da malha escalonada
 	for j in 2:n-1
-		p[i,j] = -(1/y[1])*(y[2]*(p[i-1,j])/2 + y[3]*p[i-1,j] + y[4]*p[i-2,j] + y[5]*p[i-3,j] - right[j])/(1+y[2]/(2*y[1]))
+    p05 = (3/4)*p[i-1,j] + (-1/8)*p[i-2,j]
+		p[i,j] = -(1/y[1])*(y[2]*p05 + y[3]*p[i-1,j] + y[4]*p[i-2,j] + y[5]*p[i-3,j] - right[j])/(1+(3/8)*y[2]/y[1])
 	end
-	
-
 
 	#Processar fronteira superior
 	j = n #n é o tamanho da malha escalonada
 	for i in 2:n-1
-		p[i,j] = -(1/y[1])*(y[2]*(p[i,j-1])/2 + y[3]*p[i,j-1] + y[4]*p[i,j-2] + y[5]*p[i,j-3] - upper[j])/(1+y[2]/(2*y[1]))
+    p05 = (3/4)*p[i,j-1] + (-1/8)*p[i,j-2]
+		p[i,j] = -(1/y[1])*(y[2]*p05 + y[3]*p[i,j-1] + y[4]*p[i,j-2] + y[5]*p[i,j-3] - upper[j])/(1+(3/8)*y[2]/y[1])
 	end
 end
 
 function poissonStepOld!(n, p, f, left, right, upper, lower)
-    dx = 1/(n-2) 
+    dx = 1/(n-2)
 	dx2 = dx*dx
 	r = 2/(1+pi/(n-2)) #SOR constant
 
@@ -67,7 +70,7 @@ function poissonStepOld!(n, p, f, left, right, upper, lower)
 	for j in 2:n-1
 		p[i,j] = p[i-1,j] + dx*right[j]
 	end
-	
+
 	#Processar fronteira inferior
 	j = 2
 	for i in 2:n-1
@@ -105,7 +108,7 @@ function testPoisson(n, p, f, left, right, upper, lower)
 		m_aux  = - p[i,j] + p[i-1,j] + dx*right[j]
 		if abs(m_aux) > m;	m = abs(m_aux); end
 	end
-	
+
 	#Processar fronteira inferior
 	j = 2
 	for i in 2:n-1
@@ -127,7 +130,7 @@ function solvePoissonOld!(n, p, f, left, right, upper, lower)
     # ------------------------ Método Iterativo ------------------------
 	error = 1.0
 	threshold = 1e-15
-    
+
 	i = 0
 	while error > threshold
 		i = i + 1 #identificar iteração
@@ -148,26 +151,26 @@ end
 function solvePoisson!(n, p, f, left, right, upper, lower)
     dx = 1/(n-2)
     #obtain coefficients
-    A1 = [1        1         1          1           1       ; 
-        (-dx/2)   0        (dx/2)     (3*dx/2)     (5*dx/2); 
+    A1 = [1        1         1          1           1       ;
+        (-dx/2)   0        (dx/2)     (3*dx/2)     (5*dx/2);
         (dx^2/4/2)  0        (dx^2/4/2)   (9*dx^2/4/2)   (25*dx^2/4/2);
         (-dx^3/8/6) 0        (dx^3/8/6)   (27*dx^3/8/6)  (125*dx^3/8/6);
         (dx^4/16/24) 0        (dx^4/16/24)  (81*dx^4/16/24) (625*dx^4/16/24)]
     b1 = [0; 1; 0; 0; 0]
     x = A1\b1
-    
-    A2 = [1        1         1          1           1       ; 
-        (dx/2)   0        (-dx/2)     (-3*dx/2)     (-5*dx/2); 
+
+    A2 = [1        1         1          1           1       ;
+        (dx/2)   0        (-dx/2)     (-3*dx/2)     (-5*dx/2);
         (dx^2/4/2)  0        (dx^2/4/2)   (9*dx^2/4/2)   (25*dx^2/4/2);
         (dx^3/8/6) 0        (-dx^3/8/6)   (-27*dx^3/8/6)  (-125*dx^3/8/6);
         (dx^4/16/24) 0        (dx^4/16/24)  (81*dx^4/16/24) (625*dx^4/16/24)]
     b2 = [0; 1; 0; 0; 0]
     y = A2\b2
-    
+
     # ------------------------ Método Iterativo ------------------------
 	error = 1.0
 	threshold = 1e-15
-    
+
 	i = 0
 	while error > threshold
 		i = i + 1 #identificar iteração
@@ -253,10 +256,10 @@ function problem2!(n = 32)
 end
 
 
-function staggered2not!(p, pn, n) 
-	for i in 2:n-1 
-		for j in 2:n-1 
+function staggered2not!(p, pn, n)
+	for i in 2:n-1
+		for j in 2:n-1
 			pn[i-1,j-1] = p[i,j]
-		end 
+		end
 	end
 end
