@@ -19,69 +19,71 @@ function poissonStep!(n, p, f, left, right, upper, lower)
 	#Processar fronteira esquerda
 	i = 2
 	for j in 2:n-1
-		p[i-1,j] = -p[i,j] + 2*left[j]
+		p[i-1,j] = (-6*p[i,j] + p[i+1,j] + 8*left[j])/3
 	end
 
 	#Processar fronteira direita
 	i = n #n é o tamanho da malha escalonada
 	for j in 2:n-1
-		p[i,j] = -p[i-1,j] + 2*right[j]
+		p[i,j] = (-6*p[i-1,j] + p[i-2,j] + 8*right[j])/3
 	end
 	
 	#Processar fronteira inferior
 	j = 2
 	for i in 2:n-1
-		p[i,j-1] = -p[i,j] + 2*lower[i]
+		p[i,j-1] = (-6*p[i,j] + p[i,j+1] + 8*lower[i])/3
 	end
 
 	#Processar fronteira superior
 	j = n #n é o tamanho da malha escalonada
 	for i in 2:n-1
-		p[i,j] = -p[i,j-1] + 2*upper[i]
+		p[i,j] = (-6*p[i,j-1] + p[i,j-2] + 8*upper[i])/3
 	end
 end
 
-function testPoisson(n, p, f, left, right, upper, lower)
-	m = 0.0
-	dx = 1/(n-2)
-	dx2 = dx*dx
-	for i in 2:n-1
-		for j in 2:n-1
-			m_aux = 0.25*(p[i+1,j]+p[i-1,j]+p[i,j+1]+p[i,j-1]-dx2*f[i,j])-p[i,j]
-			if abs(m_aux) > m;	m = abs(m_aux); end
-		end
-	end
+#Falta corrigir com as novas derivadas
 
-	#Processar fronteira esquerda
-	i = 2
-	for j in 2:n-1
-		m_aux = p[i,j] + p[i-1,j] - 2*left[j]
-		if abs(m_aux) > m;	m = abs(m_aux); end
-	end
-
-	#Processar fronteira direita
-	i = n #n é o tamanho da malha escalonada, o tamanho da malha de fato é n-1
-	for j in 2:n-1
-		m_aux  = p[i,j] + p[i-1,j] - 2*right[j]
-		if abs(m_aux) > m;	m = abs(m_aux); end
-	end
-	
-	#Processar fronteira inferior
-	j = 2
-	for i in 2:n-1
-		m_aux = p[i,j-1] + p[i,j] - 2*lower[i]
-		if abs(m_aux) > m;	m = abs(m_aux); end
-	end
-
-	#Processar fronteira superior
-	j = n #n é o tamanho da malha escalonada
-	for i in 2:n-1
-		m_aux = p[i,j] + p[i,j-1] - 2*upper[i]
-		if abs(m_aux) > m;	m = abs(m_aux); end
-	end
-
-	return m
-end
+#function testPoisson(n, p, f, left, right, upper, lower)
+#	m = 0.0
+#	dx = 1/(n-2)
+#	dx2 = dx*dx
+#	for i in 2:n-1
+#		for j in 2:n-1
+#			m_aux = 0.25*(p[i+1,j]+p[i-1,j]+p[i,j+1]+p[i,j-1]-dx2*f[i,j])-p[i,j]
+#			if abs(m_aux) > m;	m = abs(m_aux); end
+#		end
+#	end
+#
+#	#Processar fronteira esquerda
+#	i = 2
+#	for j in 2:n-1
+#		m_aux = p[i,j] + p[i-1,j] - 2*left[j]
+#		if abs(m_aux) > m;	m = abs(m_aux); end
+#	end
+#
+#	#Processar fronteira direita
+#	i = n #n é o tamanho da malha escalonada, o tamanho da malha de fato é n-1
+#	for j in 2:n-1
+#		m_aux  = p[i,j] + p[i-1,j] - 2*right[j]
+#		if abs(m_aux) > m;	m = abs(m_aux); end
+#	end
+#	
+#	#Processar fronteira inferior
+#	j = 2
+#	for i in 2:n-1
+#		m_aux = p[i,j-1] + p[i,j] - 2*lower[i]
+#		if abs(m_aux) > m;	m = abs(m_aux); end
+#	end
+#
+#	#Processar fronteira superior
+#	j = n #n é o tamanho da malha escalonada
+#	for i in 2:n-1
+#		m_aux = p[i,j] + p[i,j-1] - 2*upper[i]
+#		if abs(m_aux) > m;	m = abs(m_aux); end
+#	end
+#
+#	return m
+#end
 
 function solvePoisson!(n, p, f, left, right, upper, lower)
 	# ------------------------ Método Iterativo ------------------------
