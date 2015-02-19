@@ -7,7 +7,7 @@ using NavierStokes
 #dt - ARGS[4] dividir o passo de tempo, deve ser maior do que 1
 
 #Exemplo:
-# 		julia frames.jl 43 2.5 10.0 1.25
+# 		julia frames.jl 42 2.5 10.0 1.25
 
 n = int(ARGS[1]);
 t = float(ARGS[2]);
@@ -62,9 +62,10 @@ function steadyState(n, dt, Re, t)
 
 	numberFrames = integer(60*t)
 	timeToSave = integer(steps/numberFrames)
-
+    
+    A = getA(n)
 	for i in 1:steps
-		solve_navier_stokes!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
+		solve_navier_stokes!(n, A, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 
 		if (i % timeToSave == 0) || (i == steps)
 			staggered2not!(u, v, p, un, vn, pn, n)

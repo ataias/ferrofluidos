@@ -1,7 +1,7 @@
 module NavierStokes
 
 export navier_stokes_step1!, navier_stokes_step2!, navier_stokes_step3!
-export solve_navier_stokes!, testPoisson, isdXok, getDt
+export solve_navier_stokes!, testPoisson, isdXok, getDt, getA
 export staggered2not!, simpson
 
 #navier_stokes_step1!
@@ -48,7 +48,7 @@ function navier_stokes_step1!(n, dt, mu, rho, u, v, u_old, v_old, fx, fy, uB)
 
 end #navier_stokes_step1
 
-function navier_stokes_step2!(n, dt, mu, rho, p, #pressão pode ser matriz zeros(6,6)
+function navier_stokes_step2!(n, A, dt, mu, rho, p, #pressão ter sido inicializada
 						 	  u, v, #u e v estrela, obtido do passo 1
 						 	  u_old, v_old, #u antes de u estrela
 						 	  fx, fy)
@@ -56,47 +56,53 @@ function navier_stokes_step2!(n, dt, mu, rho, p, #pressão pode ser matriz zeros
 	dx = 1/(n-2) 
 	dx2 = dx*dx
 	dtx = dt/(2*dx)
-	rhodt = rho/dt
-#	r = 2/(1+pi/(n-2)) #SOR constant
-
-	# Processar pontos internos
+	rhodtdx = rho/dt/dx
+    
+    #nabla^2 p = f
+    f = zeros(n,n)
 	for i in 2:n-1
 		for j in 2:n-1
-			DIVij = rhodt*((u[i+1,j]-u[i,j])+(v[i,j+1]-v[i,j]))/(4*dx)
-			sum_aux = (p[i+1,j]+p[i-1,j]+p[i,j+1]+p[i,j-1])/4
-			p_new = sum_aux-dx2*DIVij
-#			p[i,j] = (1-r)*p[i,j]+r*p_new
-            p[i,j] = p_new
+            f[i,j] = rhodtdx*((u[i+1,j]-u[i,j])+(v[i,j+1]-v[i,j]))
 		end
 	end
+
+    #Condições de fronteira de fluxo
+    left = zeros(1,n)
+    right = zeros(1,n)
+    upper = zeros(1,n)
+    lower = zeros(1,n)
 
 	#Processar fronteira esquerda
 	i = 2
 	for j in 2:n-1
 		sum_aux = 2*u_old[i,j]-5*u_old[i+1,j]+4*u_old[i+2,j]-u_old[i+3,j]
-		p[i-1,j] = p[i,j] - (mu/dx)*sum_aux - rho*dx*fx[i,j]
+		left[j] = (mu/dx)*sum_aux + rho*dx*fx[i,j]
 	end
 
 	#Processar fronteira direita
 	i = n #n é o tamanho da malha escalonada
 	for j in 2:n-1
 		sum_aux = 2*u_old[i,j]-5*u_old[i-1,j]+4*u_old[i-2,j]-u_old[i-3,j]
-		p[i,j] = p[i-1,j] + (mu/dx)*sum_aux + rho*dx*fx[i,j]
+		right[j] = (mu/dx)*sum_aux + rho*dx*fx[i,j]
 	end
 	
 	#Processar fronteira inferior
 	j = 2
 	for i in 2:n-1
 		sum_aux = 2*v_old[i,j]-5*v_old[i,j+1]+4*v_old[i,j+2]-v_old[i,j+3]
-		p[i,j-1] = p[i,j] - (mu/dx)*sum_aux - rho*dx*fy[i,j]
+		lower[i] = (mu/dx)*sum_aux + rho*dx*fy[i,j]
 	end
 
 	#Processar fronteira superior
 	j = n #n é o tamanho da malha escalonada
 	for i in 2:n-1
 		sum_aux = 2*v_old[i,j]-5*v_old[i,j-1]+4*v_old[i,j-2]-v_old[i,j-3]
-		p[i,j] = p[i,j-1] + (mu/dx)*sum_aux + rho*dx*fy[i,j]
+		upper[i] = (mu/dx)*sum_aux + rho*dx*fy[i,j]
 	end
+
+    poissonNeumannSparseSolver(n, p, f, A, left, right, upper, lower)
+    
+    
 end
 
 function navier_stokes_step3!(n, dt, mu, rho, p, #pressão já calculada
@@ -137,88 +143,18 @@ function navier_stokes_step3!(n, dt, mu, rho, p, #pressão já calculada
 
 end
 
-function solve_navier_stokes!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
+function solve_navier_stokes!(n, A, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
+    
+    chol = cholfact(A) 
 	# ------------------------ Passo 1 ------------------------
-	navier_stokes_step1!(n, dt, mu, rho, u, v, u_old, v_old, fx, fy, uB)
+	navier_stokes_step1!(n,       dt, mu, rho, u, v, u_old, v_old, fx, fy, uB)
 
 	# ------------------------ Passo 2 ------------------------
-	#A parte 2 tem de ter iterações até convergir
-	error = 1.0
-	threshold = 1e-14
-    
-	i = 0
-	while error > threshold
-		i = i + 1 #identificar iteração
-		navier_stokes_step2!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy)
-		error = testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy)
+    navier_stokes_step2!(n, chol, dt, mu, rho, p, u, v, u_old, v_old, fx, fy)
 
-		if i == 250000 #Evita loops que sejam muito longos
-			println("Problema na convergência da pressão")
-			exit(1)
-		end
-	end
-
-#	p[:,:] = p - minimum(p)
-    p[:,:] = p - mean(p)
-	# p[1,1] = 0; p[1,n]=0; p[n,1]=0; p[n,n]=0
-
-	# if testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy) > (threshold*10)
-	# 	println("Problem!")
-	# 	println("There were $(i) iterations to solve step2. Estimated Error=$(error)")
-	# 	println("Actual error: $(testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy))")
-	# end
 	# ------------------------ Passo 3 ------------------------
-	navier_stokes_step3!(n, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
+	navier_stokes_step3!(n,       dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 
-end
-
-#testPoisson
-
-function testPoisson(n, dt, mu, p, rho, u, v, u_old, v_old, fx, fy)
-	m = 0.0
-	dx = 1/(n-2)
-	dx2 = dx*dx
-	for i in 2:n-1
-		for j in 2:n-1
-			DIVij = (rho/dt)*(u[i+1,j]-u[i,j]+v[i,j+1]-v[i,j])/dx #este é o u e v estrela
-			m_aux = 0.25*(p[i+1,j]+p[i-1,j]+p[i,j+1]+p[i,j-1]-dx2*DIVij)-p[i,j]
-			if abs(m_aux) > m;	m = abs(m_aux); end
-		end
-	end
-
-	#Processar fronteira esquerda
-	i = 2
-	for j in 2:n-1
-		sum_aux = 2*u_old[i,j]-5*u_old[i+1,j]+4*u_old[i+2,j]-u_old[i+3,j]
-		m_aux = - p[i-1,j] + p[i,j] - (mu/dx)*sum_aux - rho*dx*fx[i,j]
-		if abs(m_aux) > m;	m = abs(m_aux); end
-	end
-
-	#Processar fronteira direita
-	i = n #n é o tamanho da malha escalonada, o tamanho da malha de fato é n-1
-	for j in 2:n-1
-		sum_aux = 2*u_old[i,j]-5*u_old[i-1,j]+4*u_old[i-2,j]-u_old[i-3,j]
-		m_aux  = - p[i,j] + p[i-1,j] + (mu/dx)*sum_aux + rho*dx*fx[i,j]
-		if abs(m_aux) > m;	m = abs(m_aux); end
-	end
-	
-	#Processar fronteira inferior
-	j = 2
-	for i in 2:n-1
-		sum_aux = 2*v_old[i,j]-5*v_old[i,j+1]+4*v_old[i,j+2]-v_old[i,j+3]
-		m_aux = - p[i,j-1] + p[i,j] - (mu/dx)*sum_aux - rho*dx*fy[i,j]
-		if abs(m_aux) > m;	m = abs(m_aux); end
-	end
-
-	#Processar fronteira superior
-	j = n #n é o tamanho da malha escalonada
-	for i in 2:n-1
-		sum_aux = 2*v_old[i,j]-5*v_old[i,j-1]+4*v_old[i,j-2]-v_old[i,j-3]
-		m_aux = - p[i,j] + p[i,j-1] + (mu/dx)*sum_aux + rho*dx*fy[i,j]
-		if abs(m_aux) > m;	m = abs(m_aux); end
-	end
-
-	return m
 end
 
 #isdXok
@@ -281,6 +217,116 @@ function simpson(f, n)
     end
  
     return s * h / 3
+end
+
+#This is used to solve the system Ax = b in step 2
+function getA(n)
+    spn = (n-2)*(n-2) #sparse n
+    #Definir matriz A
+    A = 4*speye(spn, spn)
+    
+    k=0
+    for i in 2:n-1
+        for j in 2:n-1
+            k = j+(i-2)*(n-2) - 1
+            if i-1==1 || i+1==n
+                A[k,k] -= 1
+            end
+            
+            if j-1==1 || j+1==n
+                A[k,k] -= 1
+            end
+        end
+    end
+    
+    for i in 1:spn-1
+		if i % (n-2) != 0 
+            A[i,i+1]=-1
+            A[i+1,i]=-1
+        end
+    end
+    
+    for i in 1:(spn-(n-2))
+		A[i,i+n-2]=-1
+        A[i+n-2,i]=-1
+    end
+    
+    
+    #Escolhe-se um ponto de u e diz-se que o valor é conhecido
+    #Por conveniência, escolho 0, escolho o ponto p_12 arbitrariamente
+    #Nem todo ponto funciona, é bom verificar se a matriz é positiva definida
+    # com o ponto escolhido!
+    A[1,1] = 3 #pelo fato de eu dizer que p_12 = 0
+    
+    return A
+end
+
+function poissonNeumannSparseSolver(n, p, f, A, left, right, upper, lower)
+    spn = (n-2)*(n-2) #sparse n
+    dx = 1/(n-2)
+    dx2 = dx*dx
+    
+    #Construct b vector
+    b = zeros(spn) #remember, we need to solve Ax = b
+    k=0
+    for i in 2:n-1
+        for j in 2:n-1
+            k = j+(i-2)*(n-2) - 1
+            b[k] = dx2*f[i,j]
+            if i-1==1
+                b[k] += dx*left[j]
+            elseif i+1==n
+                b[k] -= dx*right[j]
+            end
+            
+            if j-1==1 
+                b[k] += dx*lower[i]
+            elseif j+1==n
+                b[k] -= dx*upper[i]
+            end
+        end
+    end
+            
+    #p_12 was considered to be 0, then:
+    b[1] -= dx*left[2]
+    
+    #A was modified in order to be positive definite,
+    #before, it was negative definite
+    x = A\b;
+            
+    #arrange result in matrix
+    for i in 2:n-1
+        for j in 2:n-1
+            k = j+(i-2)*(n-2) - 1
+            p[i,j] = -x[k]
+        end
+    end
+            
+    #Processar fronteira esquerda
+	i = 2
+	for j in 2:n-1
+		p[i-1,j] = p[i,j] - dx*left[j]
+	end
+
+	#Processar fronteira direita
+	i = n #n é o tamanho da malha escalonada
+	for j in 2:n-1
+		p[i,j] = p[i-1,j] + dx*right[j]
+	end
+
+	#Processar fronteira inferior
+	j = 2
+	for i in 2:n-1
+		p[i,j-1] = p[i,j] - dx*lower[i]
+	end
+
+	#Processar fronteira superior
+	j = n #n é o tamanho da malha escalonada
+	for i in 2:n-1
+		p[i,j] = p[i,j-1] + dx*upper[i]
+	end
+       
+#    println("p_12 = ", p[1,2])
 end
 
 end
