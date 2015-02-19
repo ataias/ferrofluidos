@@ -36,30 +36,29 @@ function poissonDirichletSparseSolver(n, p, f, A, K, left, right, upper, lower)
 	    b[i] = dx2*f[K[i][1], K[i][2]]-aux;
 	end
     
-    F = lufact(A)
-    y = F[:L]\b
-    x = F[:U]\y
-#    x = A\b
+    #A was modified in order to be positive definite,
+    #before it was negative definite
+    x = A\b;
     #arrange result in matrix
     for i in 1:spn
-		p[K[i][1],K[i][2]] = x[i]
+		p[K[i][1],K[i][2]] = -x[i]
 	end
 end
 
 function getA(n)
     spn = (n-2)*(n-2) #sparse n
     #Definir matriz A
-    A = -4*speye(spn, spn)
+    A = 4*speye(spn, spn)
     for i in 1:spn-1
 		if i % (n-2) != 0 
-            A[i,i+1]=1
-            A[i+1,i]=1
+            A[i,i+1]=-1
+            A[i+1,i]=-1
         end
     end
     
     for i in 1:(spn-(n-2))
-		A[i,i+n-2]=1
-        A[i+n-2,i]=1
+		A[i,i+n-2]=-1
+        A[i+n-2,i]=-1
     end
     
     return A
