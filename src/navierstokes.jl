@@ -1,8 +1,11 @@
 module NavierStokes
 
-export navier_stokes_step1!, navier_stokes_step2!, navier_stokes_step3!
-export solve_navier_stokes!, testPoisson, isdXok, getDt, getA
+#export navier_stokes_step1!, navier_stokes_step2!, navier_stokes_step3!
+export solve_navier_stokes!
 export staggered2not!, simpson
+
+using Poisson
+using NavierTypes
 
 #navier_stokes_step1!
 #Obtem u* e v*, a velocidade antes de se considerar a pressão
@@ -67,10 +70,10 @@ function navier_stokes_step2!(n, A, dt, mu, rho, p, #pressão ter sido inicializ
 	end
 
     #Condições de fronteira de fluxo
-    left = zeros(1,n)
-    right = zeros(1,n)
-    upper = zeros(1,n)
-    lower = zeros(1,n)
+    left = zeros(n)
+    right = zeros(n)
+    upper = zeros(n)
+    lower = zeros(n)
 
 	#Processar fronteira esquerda
 	i = 2
@@ -143,43 +146,23 @@ function navier_stokes_step3!(n, dt, mu, rho, p, #pressão já calculada
 
 end
 
-function solve_navier_stokes!(n, A, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
-    
-    chol = cholfact(A) 
+#function solve_navier_stokes!(n, A, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
+function solve_navier_stokes!(NS::NSEquation)
+        
 	# ------------------------ Passo 1 ------------------------
-	navier_stokes_step1!(n,       dt, mu, rho, u, v, u_old, v_old, fx, fy, uB)
+	navier_stokes_step1!(NS.params.n, NS.params.dt, NS.params.mu, NS.params.rho, 
+                         NS.v.x, NS.v.y, NS.v_old.x, NS.v_old.y, NS.f.x, NS.f.y, NS.uB)
 
 	# ------------------------ Passo 2 ------------------------
-    navier_stokes_step2!(n, chol, dt, mu, rho, p, u, v, u_old, v_old, fx, fy)
+    navier_stokes_step2!(NS.params.n, NS.msystem.chol, NS.params.dt, NS.params.mu, 
+                         NS.params.rho, NS.p, NS.v.x, NS.v.y, NS.v_old.x, NS.v_old.y, 
+                         NS.f.x, NS.f.y)
 
 	# ------------------------ Passo 3 ------------------------
-	navier_stokes_step3!(n,       dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
+	navier_stokes_step3!(NS.params.n, NS.params.dt, NS.params.mu, NS.params.rho, 
+                         NS.p, NS.v.x, NS.v.y, NS.v_old.x, NS.v_old.y, 
+                         NS.f.x, NS.f.y, NS.uB)
 
-end
-
-#isdXok
-#Esta função analisa se o número de pontos escolhido 
-#satisfaz a condição de camada limite hidrodinâmica
-function isdXok(Re, n)
-	dx = 1/(n-2); 
-	if dx < (1/Re) 
-		return true
-	else 
-		return false
-	end
-end
-
-function getDt(n, Re, divFactor=5)
-	dx = 1/(n-2) #n é o tamanho da malha escalonada
-	dt1 = 0.25*Re*dx*dx
-	dt2 = dx
-	dt = 0.0
-	if dt1 < dt2
-		dt = dt1/divFactor
-	else 
-		dt = dt2/divFactor
-	end
-	return dt;
 end
 
 #staggered2notS
@@ -217,116 +200,6 @@ function simpson(f, n)
     end
  
     return s * h / 3
-end
-
-#This is used to solve the system Ax = b in step 2
-function getA(n)
-    spn = (n-2)*(n-2) #sparse n
-    #Definir matriz A
-    A = 4*speye(spn, spn)
-    
-    k=0
-    for i in 2:n-1
-        for j in 2:n-1
-            k = j+(i-2)*(n-2) - 1
-            if i-1==1 || i+1==n
-                A[k,k] -= 1
-            end
-            
-            if j-1==1 || j+1==n
-                A[k,k] -= 1
-            end
-        end
-    end
-    
-    for i in 1:spn-1
-		if i % (n-2) != 0 
-            A[i,i+1]=-1
-            A[i+1,i]=-1
-        end
-    end
-    
-    for i in 1:(spn-(n-2))
-		A[i,i+n-2]=-1
-        A[i+n-2,i]=-1
-    end
-    
-    
-    #Escolhe-se um ponto de u e diz-se que o valor é conhecido
-    #Por conveniência, escolho 0, escolho o ponto p_12 arbitrariamente
-    #Nem todo ponto funciona, é bom verificar se a matriz é positiva definida
-    # com o ponto escolhido!
-    A[1,1] = 3 #pelo fato de eu dizer que p_12 = 0
-    
-    return A
-end
-
-function poissonNeumannSparseSolver(n, p, f, A, left, right, upper, lower)
-    spn = (n-2)*(n-2) #sparse n
-    dx = 1/(n-2)
-    dx2 = dx*dx
-    
-    #Construct b vector
-    b = zeros(spn) #remember, we need to solve Ax = b
-    k=0
-    for i in 2:n-1
-        for j in 2:n-1
-            k = j+(i-2)*(n-2) - 1
-            b[k] = dx2*f[i,j]
-            if i-1==1
-                b[k] += dx*left[j]
-            elseif i+1==n
-                b[k] -= dx*right[j]
-            end
-            
-            if j-1==1 
-                b[k] += dx*lower[i]
-            elseif j+1==n
-                b[k] -= dx*upper[i]
-            end
-        end
-    end
-            
-    #p_12 was considered to be 0, then:
-    b[1] -= dx*left[2]
-    
-    #A was modified in order to be positive definite,
-    #before, it was negative definite
-    x = A\b;
-            
-    #arrange result in matrix
-    for i in 2:n-1
-        for j in 2:n-1
-            k = j+(i-2)*(n-2) - 1
-            p[i,j] = -x[k]
-        end
-    end
-            
-    #Processar fronteira esquerda
-	i = 2
-	for j in 2:n-1
-		p[i-1,j] = p[i,j] - dx*left[j]
-	end
-
-	#Processar fronteira direita
-	i = n #n é o tamanho da malha escalonada
-	for j in 2:n-1
-		p[i,j] = p[i-1,j] + dx*right[j]
-	end
-
-	#Processar fronteira inferior
-	j = 2
-	for i in 2:n-1
-		p[i,j-1] = p[i,j] - dx*lower[i]
-	end
-
-	#Processar fronteira superior
-	j = n #n é o tamanho da malha escalonada
-	for i in 2:n-1
-		p[i,j] = p[i,j-1] + dx*upper[i]
-	end
-       
-#    println("p_12 = ", p[1,2])
 end
 
 end
