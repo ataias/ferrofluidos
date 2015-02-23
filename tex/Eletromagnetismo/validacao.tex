@@ -1,0 +1,116 @@
+\documentclass[validacao.tex]{subfiles}
+\begin{document}
+\section{Validação}
+\paragraph{} A validação do programa foi realizada pela comparação numérica e análise da evolução do erro conforme o número de pontos da malha aumenta.
+
+\subsection{Análise da Ordem do Erro}
+\paragraph{} Para uma dimensão de tamanho $N$ da malha escalonada, avaliou-se a diferença entre o ponto central nessa malha e em outras cujas dimensões eram menores. Pelo fato de toda a discretização realizada ser de ordem dois, deve-se ter que o erro diminui de forma quadrática com o aumento da dimensão $N$.
+
+\paragraph{ADICIONAR GRAFICOS AQUI!}
+
+\subsection{Comparação Numérica}
+
+\paragraph{} Sabe-se que a vorticidade no centro da malha no tempo $t=1$ é $\omega(0.5, 0.5, 1) = -0.63925\pm 0.00005$ e a força no topo é $F = 3.8998\pm 0.0002$.  Os resultados do programa criado são apresentados na Tabela \ref{comparacaonumericatable}. Realizando-se a regressão linear dos 6 últimos pontos, tem-se que $\omega(0.5, 0.5, 1) = -0.639243$ que está dentro da faixa de erro. A força extrapolada é $F = 0.390296$. Talvez haja algum erro no cálculo ou na faixa de erro dada.
+
+\begin{table}[!ht]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+$n$ & $\omega$ & $F$ & t (s)\\ \hline
+50	& -0.63835 &	0.38957 & 	3.2\\ \hline
+70	&-0.63874  &	0.38986 & 	38.4\\ \hline
+80	& -0.63884 &    0.38993	&   65.0\\ \hline
+90	& -0.63891 &	0.38999 &	104.4\\ \hline
+100	& -0.63895 &	0.39003 &	162.5\\ \hline
+120	& -0.63902 &	0.39008 &	328.9\\ \hline
+140	& -0.63905 &	0.39012 &	620.1\\ \hline
+160	& -0.63908 &	0.39014 &	993.3\\ \hline
+180	& -0.63910 &	0.39016 &	1637.7\\ \hline
+200	& -0.63911 &	0.39017 &	2391.8\\ \hline
+220	& -0.63912 &	0.39018 &	3476.0\\ \hline
+\end{tabular}
+\caption{Resultados da simulação e evolução do tempo computacional\label{comparacaonumericatable}}
+\end{table}
+
+\subsection{Cálculo da Força}
+
+\paragraph{} Calcular-se-á a força resultante na parte superior da cavidade. Para isso, primeiro se tem de saber que a tensão cisalhante é calculada pela Equação \ref{tensaocisalhante}:
+
+\begin{equation}
+\tau = \frac{1}{\mathit{Re}} \frac{\partial u}{\partial y}\label{tensaocisalhante}
+\end{equation}
+
+\paragraph{} A integral dessa tensão é a força que desejamos obter, dada pela Equação
+
+\begin{eqnarray}
+F=\int_A {\tau dA}
+\end{eqnarray}
+
+\paragraph{} Calculamos essa força por unidade de área, considerando a produndidade $P_z=1$ e então $dA=P_z dx = dx$. Dessa forma tem-se a Equação \ref{integralforca}. Note que, para o topo da cavidade, $y=1$.
+
+\begin{eqnarray}
+F(x,y)=\frac{1}{\mathit{Re}}\int_0^1 \frac{\partial u}{\partial y} dx \label{integralforca}
+\end{eqnarray}
+
+\paragraph{} O cálculo dessa integral será feito pela regra de Simpson composta.
+
+\subsection{Poisson}
+\paragraph{} O teste da solução real do problema de Poisson com fronteiras de Neumann e o algoritmo desenvolvido será demonstrado nesta seção. Dois problemas analíticos serão testados.
+
+\subsubsection{Problema 1}
+
+\paragraph{} O primeiro problema é definido pela seguinte equação:
+
+\begin{eqnarray}
+\left\{\begin{array}{ccl}
+\nabla^2u(x,y) & = & \cos\pi y\\
+u_x(1,y) & = & \cos\pi y\\
+u_n(x,y) & = & 0, \textrm{caso contrário, na fronteira}
+\end{array}\right.
+\end{eqnarray}
+
+\paragraph{} Este problema foi resolvido pelo método de separação de variáveis e então obteve-se o seguinte:
+
+\begin{eqnarray}
+u(x,y) & = & \left(\frac{\cosh \pi x}{\pi \sinh \pi} - \frac{1}{\pi^2}\right)\cos \pi y
+\end{eqnarray}
+
+\subsubsection{Problema 2}
+
+\paragraph{} O segundo problema é definido pela seguinte equação:
+
+
+\begin{eqnarray}
+\left\{\begin{array}{ccl}
+\nabla^2u(x,y) & = & 0\\
+u_x(1,y) & = & \cos 2\pi y\\
+u_n(x,y) & = & 0, \textrm{caso contrário, na fronteira}
+\end{array}\right.
+\end{eqnarray}
+
+\paragraph{} Este problema foi resolvido pelo método de separação de variáveis e então obteve-se o seguinte:
+
+\begin{eqnarray}
+u(x,y) & = & \frac{\cosh 2\pi x}{2\pi \sinh 2\pi}\cos 2 \pi y
+\end{eqnarray}
+
+
+\subsubsection{Problema 3}
+\paragraph{} Neste caso, temos fronteiras do tipo Dirichlet e o código é um pouco modificado em relação aos casos anteriores. Isto nos permite avaliar se a discretização está condizente.
+
+\begin{eqnarray}
+\left\{\begin{array}{ccl}
+\nabla^2u(x,y) & = & 0\\
+u(x,1) & = & \sin \pi x\\
+u(x,y) & = & 0, \textrm{caso contrário, na fronteira}
+\end{array}\right.
+\end{eqnarray}
+
+\paragraph{} A solução, portanto, é:
+
+\begin{eqnarray}
+u(x,y) & = & \frac{\sinh\pi y}{\sinh\pi} \sin\pi x
+\end{eqnarray}
+
+
+\end{document}

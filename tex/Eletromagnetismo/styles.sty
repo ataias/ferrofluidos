@@ -1,0 +1,64 @@
+\ProvidesPackage{styles}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{tikz}
+\usepackage[portuguese]{babel}
+
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage{graphicx} % Required to insert images
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+\usepackage{enumerate}
+\usepackage{hyperref}
+\usepackage{appendix}
+
+% Margins
+% Esta é uma parte importante, assim mais texto é
+% escrito em cada página, as margens aqui estão 
+% maiores do que o padrão do latex
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.5in
+\headsep=0.25in 
+
+\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{Universidade de Brasília} % Top left header
+\chead{} % Top center header
+\rhead{\firstxmark} % Top right header
+\lfoot{\lastxmark} % Bottom left footer
+\cfoot{\hmwkTitle} % Bottom center footer
+\rfoot{Page\ \thepage\ of\ \pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+%----------------------------------------------------------------------------------------
+%	DETALHES
+%----------------------------------------------------------------------------------------
+
+\newcommand{\hmwkTitle}{Eletromagnetismo} \newcommand{\hmwkSupervisor}{Yuri Dumaresq Sobral} % Teacher/lecturer
+\newcommand{\hmwkAuthorName}{Ataias Pereira Reis} % Your name
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title{
+\vspace{2in}
+\textmd{\textbf{\hmwkTitle}}\\
+\vspace{0.1in}\large{Orientador: \textit{\hmwkSupervisor}}
+\vspace{3in}
+}
+
+\author{\textbf{\hmwkAuthorName}}
+\date{} % Insert date here if you want it to appear below your name
+
+%-------------
