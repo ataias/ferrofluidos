@@ -43,47 +43,18 @@ end
 
 #Falta corrigir com as novas derivadas
 
-#function testPoisson(n, p, f, left, right, upper, lower)
-#	m = 0.0
-#	dx = 1/(n-2)
-#	dx2 = dx*dx
-#	for i in 2:n-1
-#		for j in 2:n-1
-#			m_aux = 0.25*(p[i+1,j]+p[i-1,j]+p[i,j+1]+p[i,j-1]-dx2*f[i,j])-p[i,j]
-#			if abs(m_aux) > m;	m = abs(m_aux); end
-#		end
-#	end
-#
-#	#Processar fronteira esquerda
-#	i = 2
-#	for j in 2:n-1
-#		m_aux = p[i,j] + p[i-1,j] - 2*left[j]
-#		if abs(m_aux) > m;	m = abs(m_aux); end
-#	end
-#
-#	#Processar fronteira direita
-#	i = n #n é o tamanho da malha escalonada, o tamanho da malha de fato é n-1
-#	for j in 2:n-1
-#		m_aux  = p[i,j] + p[i-1,j] - 2*right[j]
-#		if abs(m_aux) > m;	m = abs(m_aux); end
-#	end
-#	
-#	#Processar fronteira inferior
-#	j = 2
-#	for i in 2:n-1
-#		m_aux = p[i,j-1] + p[i,j] - 2*lower[i]
-#		if abs(m_aux) > m;	m = abs(m_aux); end
-#	end
-#
-#	#Processar fronteira superior
-#	j = n #n é o tamanho da malha escalonada
-#	for i in 2:n-1
-#		m_aux = p[i,j] + p[i,j-1] - 2*upper[i]
-#		if abs(m_aux) > m;	m = abs(m_aux); end
-#	end
-#
-#	return m
-#end
+function testPoisson(n, p, f, left, right, upper, lower)
+	m = 0.0
+	dx = 1/(n-2)
+	dx2 = dx*dx
+	for i in 2:n-1
+		for j in 2:n-1
+			m_aux = 0.25*(p[i+1,j]+p[i-1,j]+p[i,j+1]+p[i,j-1]-dx2*f[i,j])-p[i,j]
+			if abs(m_aux) > m;	m = abs(m_aux); end
+		end
+	end
+	return m
+end
 
 function solvePoisson!(n, p, f, left, right, upper, lower)
 	# ------------------------ Método Iterativo ------------------------
@@ -94,33 +65,23 @@ function solvePoisson!(n, p, f, left, right, upper, lower)
 	while error > threshold
 		i = i + 1 #identificar iteração
 		poissonStep!(n, p, f, left, right, upper, lower)
-#		error = testPoisson(n, p, f, left, right, upper, lower)
-##        println(error)
-#		if i == 70000 #Evita loops que sejam muito longos
-#			println("Problema na convergência da pressão")
-#			return(1)
-#		end
-        if i == 500000
-            error = 1e-16
-        end
+		error = testPoisson(n, p, f, left, right, upper, lower)
+		if i == 100000 #Evita loops que sejam muito longos
+			println("Problema na convergência da pressão")
+			return(1)
+		end
 	end
-    #p[:,:] = p - mean(p)
-
 end
 
-function problem1(n = 8)
+function problem1(n = 52)
       dx = 1/(n-2);
       p_solucao = zeros(n-2,n-2);
-      triplets = fill([0.0, 0.0, 0.0], n-2, n-2);
       for i in 1:n-2
           for j in 1:n-2
               #pressão avaliada no centro da célula
               x = (i-1)*dx + (0.5)*dx;
               y = (j-1)*dx + (0.5)*dx;
               p_solucao[i,j] = (sinh(pi*y)/(sinh(pi)))*sin(pi*x);
-              triplets[i,j] = [x, y, p_solucao[i,j]];
-#              println("x = ", x)
-#              println("y = ", y)
           end
       end
 
@@ -139,7 +100,6 @@ function problem1(n = 8)
     solvePoisson!(n, p_staggered, f, left, right, upper, lower)
     pn = zeros(n-2, n-2);
     staggered2not!(p_staggered,pn,n)
-#    println(p_solucao - pn)
     return maximum(abs(p_solucao - pn))
 end
 
