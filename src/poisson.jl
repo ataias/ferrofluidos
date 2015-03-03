@@ -208,7 +208,7 @@ end
 function solveDirichletPoissonExplicit!(n, p, f, left, right, upper, lower)
 	# ------------------------ Método Iterativo ------------------------
 	error = 1.0
-	threshold = 1e-15
+	threshold = 1e-6
     
 	i = 0
 	while error > threshold

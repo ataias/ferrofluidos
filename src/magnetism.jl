@@ -3,6 +3,8 @@ module Magnetism
 using Poisson
 using NavierStokes
 
+export getPhi!, getMH!, getForce!
+
 function getPhi!(n, phi, Mx, My, left, right, upper, lower)
     dx = 1/(n-2)
     
@@ -18,6 +20,7 @@ function getPhi!(n, phi, Mx, My, left, right, upper, lower)
 end #end getPhi!
 
 function getMH!(n, chi, phi, Mx, My, Hx, Hy)
+    dx = 1/(n-2)
     for i in 2:n-1
         for j in 2:n-1
             Hx[i,j] = -(phi[i,j] - phi[i-1,j])/dx
@@ -41,6 +44,7 @@ end #end getMH!
 
 
 function getForce!(n, Cpm, Hx, Hy, Mx, My, fx, fy)
+    dx = 1/(n-2)
     Myt = 0.0
     Mxt = 0.0
     
@@ -64,10 +68,10 @@ function solve!(n = 7)
     Mx = zeros(n,n);
     My = zeros(n,n);
     
-    left = zeros(1,n);
-    right = zeros(1,n);
-    upper = zeros(1,n);
-    lower = zeros(1,n);
+    left = zeros(n);
+    right = zeros(n);
+    upper = zeros(n);
+    lower = zeros(n);
     for i in -1:n-2
       x = (i+0.5)*dx;
       upper[i+2] = (sinpi(x))^2;
@@ -83,6 +87,7 @@ function solve!(n = 7)
     Cpm = 4
     fx = zeros(n,n);
     fy = zeros(n,n);
+    getForce!(n, Cpm, Hx, Hy, Mx, My, fx, fy);
     
 end
 

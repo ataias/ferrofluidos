@@ -1,23 +1,28 @@
 using NavierStokes
 using NavierTypes
+using Magnetism
 
 #modo de usar
 #n   - ARGS[1] é o tamanho da matriz escalonada
 #t   - ARGS[2] é o tempo de simulação, em segundos
 #Re  - ARGS[3] é o número de Reynolds
 #dt  - ARGS[4] dividir o passo de tempo, deve ser maior do que 1
-#save - ARGS[5] se for 1, salva um arquivo com as matrizes evoluindo no tempo
+#chi - ARGS[5]
+#Cpm - ARGS[6]
+#save - ARGS[7] se for 1, salva um arquivo com as matrizes evoluindo no tempo
 #Exemplo:
-# 		julia frames.jl 42 2.5 10.0 1.25 0
+# 		julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0
 # Se quiser salvar num arquivo a saída do terminal:
-#       julia frames.jl 42 2.5 10.0 1.25 0 >> out.txt
+#       julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 >> out.txt
 
 n = int(ARGS[1]);
 t = float(ARGS[2]);
 Re = float(ARGS[3]);
 divFactor = float(ARGS[4]);
 dt = getDt(n, Re, float(ARGS[4]));
-save = bool(int(ARGS[5]))
+chi = float(ARGS[5]);
+Cpm = float(ARGS[6]);
+save = bool(int(ARGS[7]))
 
 println("Dados sobre simulação:\n n\t= ", n, "\n dx\t= ", 1/(n-2), "\n t\t= ", t, "\n Re\t= ", Re, "\n dt\t= ", dt, "\n ", strftime(time()), "\n");
 
@@ -25,7 +30,7 @@ println("Dados sobre simulação:\n n\t= ", n, "\n dx\t= ", 1/(n-2), "\n t\t= ",
 #retorna o valor em regime permanente do ponto 0.5, 0.5
 #resolve equações para um dado n e Re
 #t is time, in seconds, of physical simulation
-function steadyState(n, dt, Re, t, save)
+function steadyState(n, dt, Re, t, chi, Cpm, save)
 
 	dx = 1/(n-2)
 	steps = integer(t/dt)
@@ -56,20 +61,48 @@ function steadyState(n, dt, Re, t, save)
 	numberFrames = integer(60*t)
 	timeToSave = integer(steps/numberFrames)
     
+    #Variáveis para a parte magnética
+    phi = zeros(n,n);
+    Mx = zeros(n,n);
+    My = zeros(n,n);
+    left = zeros(1,n);
+    right = zeros(1,n);
+    upper = zeros(1,n);
+    lower = zeros(1,n);
+    for i in -1:n-2
+      x = (i+0.5)*dx;
+      upper[i+2] = (sinpi(x))^2;
+    end
+    Hx = zeros(n,n)
+    Hy = zeros(n,n)
+    
+    #non-staggered forms
+    Hxn = zeros(n-2, n-2)
+    Hyn = zeros(n-2, n-2)
+    phin = zeros(n-2, n-2)
+    
 	for i in 1:steps
+        getPhi!(n, phi, Mx, My, left, right, upper, lower)
+        getMH!(n, chi, phi, Mx, My, Hx, Hy)
+        getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
+        
 		solve_navier_stokes!(NS)
 
 		if (i % timeToSave == 0) || (i == steps)
-			staggered2not!(NS.v.x, NS.v.y, NS.p, un, vn, pn, n)
+			staggered2not!(NS.v.x, NS.v.y, NS.p, un,  vn,  pn,   n)
+            staggered2not!(Hx,     Hy,     phi,  Hxn, Hyn, phin, n)
             if(save)
                 write(file, un); write(file, vn);
-                write(file, pn)
+                write(file, pn);
+                write(file, Hxn); write(file, Hyn);
+                write(file, phin);
             end
 			println("t = ", i*dt)
 			println("  u[0.5,0.5]\t= ", un[c,c])
 			println("  v[0.5,0.5]\t= ", vn[c,c])
 			vortc =  ((vn[c+1,c]-vn[c-1,c]) - (un[c,c+1]-un[c,c-1]))/(2*dx)
 			println("  ω [0.5,0.5]\t= ", vortc)
+            println("  Pressure values in range\t [", minimum(pn), ", ", maximum(pn), "]")
 			tau = zeros(n-2)
 			for i in 2:n-1
 				tau[i-1] = (1/Re)*((NS.v.x[i,n]-NS.v.x[i,n-1])/dx)
@@ -90,4 +123,4 @@ function steadyState(n, dt, Re, t, save)
 	return 0
 end
 
-@time steadyState(n, dt, Re, t, save)
+@time steadyState(n, dt, Re, t, chi, Cpm, save)

@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+#Example to run this program:
+#./vectorField.py 100 6.0 4 1.0 4
+#arg[1] - mesh size
+#arg[2] - time of simulation
+#arg[3] - step (if size is n, then n/step vectors will be plotted, this makes things neat)
+#arg[4] - chi
+#arg[5] - Cpm
 
 # import useful modules
 import matplotlib 
@@ -9,90 +16,102 @@ import matplotlib.pyplot as plt
 import math
 import sys
 
-from numpy import *
 from pylab import *
+from numpy import *
 import struct
 
-#Da forma abaixo posso ler os valores de um arquivo
-# de pontos flutuantes
-#sys.argv[1] é o n
+def readFromFile(array, file, n):
+    for i in range(n):
+    	for j in range(n):
+            array[i,j] = struct.unpack('d',file.read(8))[0]
 
-f = open('N' + sys.argv[1] + '.dat', 'rb')
-t = 1.0
-n = int(sys.argv[1]) #esta é a dimensão da malha escalonada menos 2
-dx = 1/n
+def batchRead(u, v, p, Hx, Hy, phi, n):
+    readFromFile(u, f, n)
+    readFromFile(v, f, n)
+    readFromFile(p, f, n)
+    readFromFile(Hx, f, n)
+    readFromFile(Hy, f, n)
+    readFromFile(phi, f, n)
 
-numberFrames = round(180*t)
-#f.seek((numberFrames - 1)*n*n*8*3) #get steady state solu   tion
-f.seek(-n*n*8*3, 2)
-u = zeros((n,n), dtype=float64)
-v = zeros((n,n), dtype=float64)
-p = zeros((n,n), dtype=float64)
+def plotVectorField(u, v, x, y, n, step, chi, Cpm, filename):
+    #use LaTeX, choose nice some looking fonts and tweak some settings
+    matplotlib.rc('font', family='serif')
+    matplotlib.rc('font', size=16)
+    matplotlib.rc('legend', fontsize=16)
+    matplotlib.rc('legend', numpoints=1)
+    matplotlib.rc('legend', handlelength=1)
+    matplotlib.rc('legend', frameon=False)
+    matplotlib.rc('xtick.major', pad=7)
+    matplotlib.rc('xtick.minor', pad=7)
+    matplotlib.rc('text', usetex=True)
+    matplotlib.rc('text.latex', 
+                 preamble=[r'\usepackage[T1]{fontenc}',
+                           r'\usepackage{amsmath}',
+                           r'\usepackage{txfonts}',
+                           r'\usepackage{textcomp}'])
 
-for i in range(n):
-	for j in range(n):
-		u[i,j] = struct.unpack('d',f.read(8))[0]
+    close('all')
+    figure(figsize=(8, 8))
+    Q = quiver(x[0:n:step,0:n:step], y[0:n:step,0:n:step], u[0:n:step,0:n:step], v[0:n:step,0:n:step], pivot='middle', headwidth=4, headlength=6)
+    qk = quiverkey(Q, 0.5, 1.0, 1, r'$\mathbf{v}$, mesh $' + str(n) + r'\times' + str(n) + '$, $\chi = ' + str(chi) + '$, Cpm = ' + str(Cpm), fontproperties={'weight': 'bold'})
+    xlabel('$x$')
+    ylabel('$y$')
+    axis([0, 1.0, 0, 1.02])
+    savefig(filename, dpi=300)
 
-for i in range(n):
-	for j in range(n):
-		v[i,j] = struct.unpack('d',f.read(8))[0]
+def plotPressure(x, y, p, filename):
+    #Plotar pressão
+    close('all')
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    surf = ax.plot_surface(x, y, p, rstride=1, cstride=1, cmap=cm.coolwarm,
+           linewidth=0, antialiased=False)
+    pmin = int(amin(p)) - 1
+    pmax = int(amax(p)) + 1
+    ax.set_zlim(pmin, pmax)
+    ax.zaxis.set_major_locator(LinearLocator(10))
+    ax.zaxis.set_major_formatter(FormatStrFormatter('%.01f'))
+    fig.colorbar(surf, shrink=0.5, aspect=5)
+    plt.savefig(filename, dpi=300)
+    
+if __name__ == "__main__":
+    n = int(sys.argv[1]) #esta é a dimensão da malha escalonada menos 2
+    f = open('N' + str(n) + '.dat', 'rb')
+    t = float64(sys.argv[2])
+    step = int(sys.argv[3])
+    chi = float64(sys.argv[4])
+    Cpm = float64(sys.argv[5])
+    
+    dx = 1/n
+    numberFrames = round(180*t)
+    #f.seek((numberFrames - 1)*n*n*8*3) #get steady state solution
+    f.seek(-n*n*8*6, 2)
+    u = zeros((n,n), dtype=float64)
+    v = zeros((n,n), dtype=float64)
+    p = zeros((n,n), dtype=float64)
+    Hx = zeros((n,n), dtype=float64)
+    Hy = zeros((n,n), dtype=float64)
+    phi = zeros((n,n), dtype=float64)
 
-for i in range(n):
-	for j in range(n):
-		p[i,j] = struct.unpack('d',f.read(8))[0]
+    batchRead(u, v, p, Hx, Hy, phi, n)
 
-f.close()
+    f.close()
+    #str(n).zfill(3)
+    # generate grid
+    x=linspace(0, 1 - dx, n) + (dx/2)
+    y=linspace(0, 1 - dx, n) + (dx/2)
+    x, y=meshgrid(x, y)
+    plotVectorField(u, v, x, y, n, step, chi, Cpm, 'vectorField.png')
+    
+    plotPressure(x, y, p, 'pressure.png')
 
-#use LaTeX, choose nice some looking fonts and tweak some settings
-matplotlib.rc('font', family='serif')
-matplotlib.rc('font', size=16)
-matplotlib.rc('legend', fontsize=16)
-matplotlib.rc('legend', numpoints=1)
-matplotlib.rc('legend', handlelength=1)
-matplotlib.rc('legend', frameon=False)
-matplotlib.rc('xtick.major', pad=7)
-matplotlib.rc('xtick.minor', pad=7)
-matplotlib.rc('text', usetex=True)
-matplotlib.rc('text.latex', 
-             preamble=[r'\usepackage[T1]{fontenc}',
-                       r'\usepackage{amsmath}',
-                       r'\usepackage{txfonts}',
-                       r'\usepackage{textcomp}'])
+    ij = math.ceil((n+2)/2-1) - 1
+    w = (v[ij,ij+1]-v[ij,ij-1])/(2*dx) - (u[ij+1,ij]-u[ij-1,ij])/(2*dx)
+    #wc = -0.63925
+    #error = abs(abs(wc)-abs(w))
+    #print("Error in vorticity: ", error)
 
-close('all')
-figure(figsize=(8, 8))
- 
-# generate grid
-x=linspace(0, 1 - dx, n) + (dx/2)
-y=linspace(0, 1 - dx, n) + (dx/2)
-x, y=meshgrid(x, y)
-# calculate vector field
-vx=u
-vy=v
-# plot vecor field
-Q = quiver(x, y, vx, vy, pivot='middle', headwidth=4, headlength=6)
-# qk = quiverkey(Q, 0.5, 0.03, 1, r'$1 \frac{m}{s}$', fontproperties={'weight': 'bold'})
-xlabel('$x$')
-ylabel('$y$')
-axis([0, 1.0, 0, 1.02])
-show()
-# savefig('visualization_vector_fields_1.png')
+    #Da forma abaixo posso ler os valores de um arquivo
+    # de pontos flutuantes
+    #sys.argv[1] é o n
 
-#Plotar pressão
-fig = plt.figure()
-ax = fig.gca(projection='3d')
-surf = ax.plot_surface(x, y, p, rstride=1, cstride=1, cmap=cm.coolwarm,
-       linewidth=0, antialiased=False)
-ax.set_zlim(-1.01, 1.01)
-ax.zaxis.set_major_locator(LinearLocator(10))
-ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-
-fig.colorbar(surf, shrink=0.5, aspect=5)
-
-plt.show()
-
-ij = math.ceil((n+2)/2-1) - 1
-w = (v[ij,ij+1]-v[ij,ij-1])/(2*dx) - (u[ij+1,ij]-u[ij-1,ij])/(2*dx)
-wc = -0.63925
-error = abs(abs(wc)-abs(w))
-print("Error in vorticity: ", error)
