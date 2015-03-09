@@ -5,13 +5,21 @@ using NavierStokes
 
 export getPhi!, getMH!, getForce!
 
+function H0(Br, mu_m, L0, a, b, theta)
+    K = (Br/pi/mu_m)
+    H0x = x -> K*(atan(ab/(x*sqrt(a^2+b^2+x^2))) - atan(ab/((x+L0)*sqrt(a^2+b^2+(x+L0)^2))))
+    Hx = (x,y) -> H0x((sqrt(x^2+y^2)*cos(theta))*cos(theta)
+    Hy = (x,y) -> H0x((sqrt(x^2+y^2)*cos(theta))*sin(theta)
+    return (x,y) -> (Hx(x,y), Hy(x,y))
+end
+
 function getPhi!(n, phi, Mx, My, left, right, upper, lower)
     dx = 1/(n-2)
     
     #f = div M
     f = zeros(n,n); #valor de f no meio da célula
-    for i in 2:n-1
-        for j in 2:n-1
+    for i in 2:n-2
+        for j in 2:n-2
             f[i,j] = (Mx[i+1,j] - Mx[i,j])/dx + (My[i,j+1] - My[i,j])/dx
         end
     end
@@ -79,12 +87,12 @@ function solve!(n = 7)
     
     getPhi!(n, phi, Mx, My, left, right, upper, lower)
     
-    chi = 2
+    chi = 1
     Hx = zeros(n,n)
     Hy = zeros(n,n)
     getMH!(n, chi, phi, Mx, My, Hx, Hy)
     
-    Cpm = 4
+    Cpm = 10
     fx = zeros(n,n);
     fy = zeros(n,n);
     getForce!(n, Cpm, Hx, Hy, Mx, My, fx, fy);

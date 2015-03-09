@@ -58,20 +58,23 @@ function steadyState(n, dt, Re, t, chi, Cpm, save)
 	vn = zeros(n-2,n-2)
 	pn = zeros(n-2,n-2)
 
-	numberFrames = integer(60*t)
+	numberFrames = integer(180*t)
 	timeToSave = integer(steps/numberFrames)
     
     #Variáveis para a parte magnética
     phi = zeros(n,n);
     Mx = zeros(n,n);
     My = zeros(n,n);
-    left = zeros(1,n);
-    right = zeros(1,n);
-    upper = zeros(1,n);
-    lower = zeros(1,n);
+    left = zeros(n);
+    right = zeros(n);
+    upper = zeros(n);
+    lower = zeros(n);
     for i in -1:n-2
       x = (i+0.5)*dx;
-      upper[i+2] = (sinpi(x))^2;
+#      upper[i+2] = 1
+#      left[i+2] = x
+#      right[i+2] = x
+       upper[i+2] = sinpi(x)^2
     end
     Hx = zeros(n,n)
     Hy = zeros(n,n)

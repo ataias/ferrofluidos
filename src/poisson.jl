@@ -208,14 +208,14 @@ end
 function solveDirichletPoissonExplicit!(n, p, f, left, right, upper, lower)
 	# ------------------------ Método Iterativo ------------------------
 	error = 1.0
-	threshold = 1e-6
+	threshold = 1e-10
     
 	i = 0
 	while error > threshold
 		i = i + 1 #identificar iteração
 		poissonDirichletStep!(n, p, f, left, right, upper, lower)
 		error = testPoisson(n, p, f, left, right, upper, lower)
-		if i == 300000 #Evita loops que sejam muito longos
+		if i == 1000000 #Evita loops que sejam muito longos
 			println("Problema na convergência da pressão")
 			return(1)
 		end
@@ -236,10 +236,10 @@ function testPoissonDirichletExplicit(n = 52)
 
       p_staggered = zeros(n,n); #valor da pressão no meio da célula
       f = zeros(n,n); #valor da f também no meio da célula
-      left = zeros(1,n);
-      right = zeros(1,n);
-      upper = zeros(1,n);
-      lower = zeros(1,n);
+      left = zeros(n);
+      right = zeros(n);
+      upper = zeros(n);
+      lower = zeros(n);
       for i in -1:n-2
           x = (i+0.5)*dx;
           upper[i+2] = sinpi(x);
