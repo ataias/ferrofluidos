@@ -3,28 +3,44 @@ module Magnetism
 using Poisson
 using NavierStokes
 
-export getPhi!, getMH!, getForce!
+export getPhi!, getMH!, getForce!, H0
 
-function H0(Br, mu_m, L0, a, b, theta)
+function H0(Br, mu_m, L0, a, b, theta, x0, y0)
     K = (Br/pi/mu_m)
-    H0x = x -> K*(atan(ab/(x*sqrt(a^2+b^2+x^2))) - atan(ab/((x+L0)*sqrt(a^2+b^2+(x+L0)^2))))
-    Hx = (x,y) -> H0x((sqrt(x^2+y^2)*cos(theta))*cos(theta)
-    Hy = (x,y) -> H0x((sqrt(x^2+y^2)*cos(theta))*sin(theta)
-    return (x,y) -> (Hx(x,y), Hy(x,y))
+    H0x = x -> K*(atan(a*b/(x*sqrt(a^2+b^2+x^2))) - atan(a*b/((x+L0)*sqrt(a^2+b^2+(x+L0)^2))))
+    
+    Hx = (x,y) -> H0x(x*cos(theta)+y*sin(theta))*cos(theta)
+    Hy = (x,y) -> H0x(x*cos(theta)+y*sin(theta))*sin(theta)
+    return ((x,y) -> Hx(x-x0,y-y0)), ((x,y) -> Hy(x-x0,y-y0))
 end
 
-function getPhi!(n, phi, Mx, My, left, right, upper, lower)
+#fHx and fHy are functions
+function getPhi!(n, phi, Mx, My, fHx, fHy, A)
     dx = 1/(n-2)
     
     #f = div M
     f = zeros(n,n); #valor de f no meio da célula
-    for i in 2:n-2
-        for j in 2:n-2
+    for i in 2:n-1
+        for j in 2:n-1
             f[i,j] = (Mx[i+1,j] - Mx[i,j])/dx + (My[i,j+1] - My[i,j])/dx
         end
     end
     
-    solveDirichletPoissonExplicit!(n, phi, f, left, right, upper, lower)
+    left = zeros(n);
+    right = zeros(n);
+    upper = zeros(n);
+    lower = zeros(n);
+    
+    for i in -1:n-2
+      x = (i+0.5)*dx;
+      left[i+2]  = Mx[2,i+2] - fHx(0,x)
+      right[i+2] = Mx[n,i+2] - fHx(1,x)
+      upper[i+2] = My[i+2,n] - fHy(x,1)
+      lower[i+2] = My[i+2,2] - fHy(x,0)
+    end
+    #Solve for p with Neumann conditions here
+    poissonNeumannSparseSolver(n, phi, f, A, left, right, upper, lower)
+    
 end #end getPhi!
 
 function getMH!(n, chi, phi, Mx, My, Hx, Hy)
@@ -71,28 +87,40 @@ function getForce!(n, Cpm, Hx, Hy, Mx, My, fx, fy)
 end #end getForce!
 
 function solve!(n = 7)
-    dx = 1/(n-2)
+    dx = 1/(n-2);
     phi = zeros(n,n);
     Mx = zeros(n,n);
     My = zeros(n,n);
+#    
+    fMx = (x,y) -> x
+    fMy = (x,y) -> -y
     
-    left = zeros(n);
-    right = zeros(n);
-    upper = zeros(n);
-    lower = zeros(n);
     for i in -1:n-2
-      x = (i+0.5)*dx;
-      upper[i+2] = (sinpi(x))^2;
+        x = (i+0.5)*dx;
+        for j in -1:n-2
+            y = (j+0.5)*dx;
+            Mx[i+2,j+2] = fMx(x,y)
+            My[i+2,j+2] = fMy(x,y)
+        end
     end
     
-    getPhi!(n, phi, Mx, My, left, right, upper, lower)
+    Br = 1.2;
+    mu_0 = 4pi*1e-7;
+    mu_m = mu_0;
+#    L0 = 0.0254
+    L0 = 2
+    a, b = 0.025, 0.025;
+    x0, y0 = -0.2, 0;
+    theta = 0;
+#    (fHx, fHy) = H0(Br, mu_m, L0, a, b, theta, x0, y0);
+    A = getANeumannSparse(n);
+    getPhi!(n, phi, Mx, My, (x,y) -> 1, (x,y) -> 1, A);
     
-    chi = 1
-    Hx = zeros(n,n)
-    Hy = zeros(n,n)
-    getMH!(n, chi, phi, Mx, My, Hx, Hy)
+    Hx = zeros(n,n);
+    Hy = zeros(n,n);
+    getMH!(n, chi, phi, Mx, My, Hx, Hy);
     
-    Cpm = 10
+    Cpm = 10;
     fx = zeros(n,n);
     fy = zeros(n,n);
     getForce!(n, Cpm, Hx, Hy, Mx, My, fx, fy);
