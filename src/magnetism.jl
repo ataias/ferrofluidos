@@ -3,7 +3,38 @@ module Magnetism
 using Poisson
 using NavierStokes
 
-export getPhi!, getMH!, getForce!, H0
+export getPhi!, getMH!, getForce!, H0, solve!
+
+#Use this for a non-staggered grid
+function divInside(Fx, Fy, n)
+    divMax = 0.0
+    dx = 1/n
+    for i in 2:n-1
+        for j in 2:n-1
+            divF = (Fx[i+1,j]-(Fx[i-1,j]))/(2*dx) + (Fy[i,j+1]-(Fy[i,j-1]))/(2*dx)
+            if abs(divF) > abs(divMax)
+                divMax = divF
+            end
+        end
+    end
+    return divMax
+end
+
+#use this for a non-staggered grid
+function rotInside(Fx, Fy, n)
+    dx = 1/n
+    rotMax = 0.0
+    for i in 2:n-1
+        for j in 2:n-1
+            rotF = (Fy[i+1,j]-(Fy[i-1,j]))/(2*dx) - (Fx[i,j+1]-(Fx[i,j-1]))/(2*dx)
+            if abs(rotF) > abs(rotMax)
+                rotMax = rotF
+#                print("rot(", i, ",", j, ") =", rotF, "\n")
+            end
+        end
+    end
+    return rotMax
+end
 
 function H0(Br, mu_m, L0, a, b, theta, x0, y0)
     K = (Br/pi/mu_m)
@@ -52,18 +83,18 @@ function getMH!(n, chi, phi, Mx, My, Hx, Hy)
         end
     end
     
-    for j in 3:n-1
+    for j in 2:n-1
         Hy[1,j] = -(phi[1,j] - phi[1,j-1])/dx
         Hy[n,j] = -(phi[n,j] - phi[n,j-1])/dx
     end
     
-    for i in 3:n-1
+    for i in 2:n-1
         Hx[i,1] = -(phi[i,1] - phi[i-1,1])/dx
         Hx[i,n] = -(phi[i,n] - phi[i-1,n])/dx
     end
     
-    Mx[:,:] = chi*Hx[:,:]
-    My[:,:] = chi*Hy[:,:]
+#    Mx[:,:] = chi*Hx[:,:]
+#    My[:,:] = chi*Hy[:,:]
 end #end getMH!
 
 
@@ -104,22 +135,29 @@ function solve!(n = 7)
         end
     end
     
-    Br = 1.2;
-    mu_0 = 4pi*1e-7;
-    mu_m = mu_0;
-#    L0 = 0.0254
-    L0 = 2
-    a, b = 0.025, 0.025;
-    x0, y0 = -0.2, 0;
-    theta = 0;
-#    (fHx, fHy) = H0(Br, mu_m, L0, a, b, theta, x0, y0);
     A = getANeumannSparse(n);
     getPhi!(n, phi, Mx, My, (x,y) -> 1, (x,y) -> 1, A);
     
+    chi = 1
     Hx = zeros(n,n);
     Hy = zeros(n,n);
     getMH!(n, chi, phi, Mx, My, Hx, Hy);
     
+    hxn = zeros(n-2, n-2); hyn = zeros(n-2, n-2);
+    mxn = zeros(n-2, n-2); myn = zeros(n-2, n-2);
+    phin = zeros(n-2, n-2);
+    staggered2not!(Hx, Hy, phi, hxn, hyn, phin, n);
+    staggered2not!(Mx, My, phi, mxn, myn, phin, n);
+    file = open("problem0.dat", "w");
+    write(file, mxn)
+    write(file, myn)
+    write(file, hxn)
+    write(file, hyn)
+    write(file, phin)
+    close(file)
+    
+    print("Max div B = ", divInside(mxn+hxn, myn+hyn, n-2), "\n")
+    print("Max rot H = ", rotInside(hxn, hyn, n-2), "\n")
     Cpm = 10;
     fx = zeros(n,n);
     fy = zeros(n,n);

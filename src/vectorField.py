@@ -79,18 +79,23 @@ def plotPressure(x, y, p, filename):
 #Calcula rotacional nos pontos internos e retorna o maior valor de rotacional
 def rotInside(Fx, Fy, n):
     rotMax = 0.0
+    pos = (0, 0)
+    dx = 1/n
     for i in range(2,n-2):
         for j in range(2,n-2):
-            rotF = (Fy[i+1,j]-(Fy[i-1,i]))/(2*dx) - (Fx[i,j+1]-(Fx[i,j-1]))/(2*dx)
+            rotF = (Fy[i,j+1]-Fy[i,j-1])/(2*dx) - (Fx[i+1,j]-Fx[i-1,j])/(2*dx)
             if abs(rotF) > abs(rotMax):
                 rotMax = rotF
-    return rotMax
+                pos = (i, j)
+                
+    return rotMax, pos
 
 def divInside(Fx, Fy, n):
     divMax = 0.0
-    for i in range(2,n-2):
-        for j in range(2,n-2):
-            divF = (Fx[i+1,j]-(Fx[i-1,i]))/(2*dx) + (Fy[i,j+1]-(Fy[i,j-1]))/(2*dx)
+    dx = 1/n
+    for i in range(1,n-1):
+        for j in range(1,n-1):
+            divF = (Fx[i+1,j]-(Fx[i-1,j]))/(2*dx) + (Fy[i,j+1]-(Fy[i,j-1]))/(2*dx)
             if abs(divF) > abs(divMax):
                 divMax = divF
     return divMax
