@@ -4,6 +4,5 @@
 *.o
 .texpadtmp/
 *.dat
-*.png
 *.txt
 .DS_Store
