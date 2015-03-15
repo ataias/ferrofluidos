@@ -57,9 +57,50 @@ f_y & = & \mathrm{Cpm}\left[M_x\cdot \frac{\partial H_y}{\partial x}+M_y\cdot \f
 
 \paragraph{} A pesquisa se centra no $\mathrm{M}$, que depende do campo magnético, da velocidade do escoamento e do material. Na malha escalonada, $\mathbf{H}$ e $\mathbf{M}$ serão localizados da mesma forma que a velocidade $\mathbf{v}$.
 
-\subsection{Problema exemplo}
-\paragraph{} É necessário estudo para se definir as condições de contorno para a Equação \ref{eqcampomag}. Enquanto isso, será feito um teste com condições de contorno de Dirichlet $\phi(x,1) = \sin^2\pi x$ e $\phi(x,y)=0$ na fronteira caso contrário.
+\subsection{Campo Aplicado}
+\paragraph{} Para definir o campo aplicado $\mathbf{H}$, nos basearemos no trabalho de McCaig e Clegg \cite{mccaig}. O livro citado apresenta uma fórmula que condiz com a realidade muito bem. O campo magnético na horizontal, $H_x$, é apresentado na Equação 
 
+\begin{eqnarray}
+H_x &= & \frac{B_{\mathrm{r}}}{\pi \mu_{\mathrm{m}}}\left[\tan^{-1}\left(\frac{ab}{x(a^2+b^2+x^2)^{1/2}}\right) - \tan^{-1}\left(\frac{ab}{(x+L_0)(a^2+b^2+(x+L_0)^2)^{1/2}}\right)\right]
+\end{eqnarray}
+
+\paragraph{} O valor $x$ é a distância perpendicular do centro de um pólo do ímã até um ponto. É desejado que se saiba o vetor campo aplicado - um campo não horizontal - quando o ímã estiver com inclinação $\theta$ em relação ao horizonte e seu centro estiver numa posição $(x_0, y_0)$ em relação à origem. Considerando isto, chegamos na seguinte formulação:
+
+\begin{eqnarray}
+d &=& (x-x_0)\cos\theta + (y-y_0)\sin\theta\\
+\mathbf{H}\cdot \mathbf{i} & = & H_d \cos \theta\\
+\mathbf{H}\cdot \mathbf{j} & = & H_d \sin \theta\\
+\end{eqnarray}
+
+\subsection{Condições de Contorno}
+\paragraph{} A componente normal de $\mathbf{B}$ deve ser contínua através da interface entre o meio de fora (ar) e o de dentro (fluido magnético). Isto é
+
+\begin{equation}
+\left(\mathbf{B}_{\mathrm{f}} - \mathbf{B}_{\mathrm{d}}\right)\cdot \mathbf{n} = 0
+\end{equation}
+
+\paragraph{} Assim
+
+\begin{equation}
+\mu_0 (H_{\mathrm{f}}^{\mathrm{n}} + M_{\mathrm{f}}^{\mathrm{n}}) =  \mu_0(H_{\mathrm{d}}^{\mathrm{n}}+M_{\mathrm{d}}^{\mathrm{n}})
+\end{equation}
+
+\paragraph{} O meio de fora é o ar, logo, a magnetização $M_{\mathrm{f}}$ é zero. Sabe-se que $H = -\nabla\phi$, assim
+
+\begin{eqnarray}
+\nabla\phi_{\mathrm{d}}^{\mathrm{n}} & = & -H_{\mathrm{f}}^{\mathrm{n}} + M_{\mathrm{d}}^{\mathrm{n}}
+\end{eqnarray}
+
+\paragraph{} Desta forma
+
+\begin{eqnarray}
+\left.\frac{\partial \phi}{\partial x}\right|_{\mathrm{left}}\;\;&\approx&- H^{x}_{2,j} + M^{x}_{2,j}\\
+\left.\frac{\partial \phi}{\partial x}\right|_{\mathrm{right}}&\approx&- H^{x}_{n,j} + M^{x}_{n,j}\\
+\left.\frac{\partial \phi}{\partial y}\right|_{\mathrm{lower}}&\approx&- H^{y}_{i,2} + M^{y}_{i,2}\\
+\left.\frac{\partial \phi}{\partial y}\right|_{\mathrm{upper}}&\approx&- H^{y}_{i,n} + M^{y}_{i,n}
+\end{eqnarray}
+
+\subsection{Procedimento}
 \paragraph{} O procedimento para se resolver a Equação de Navier Stokes com o campo magnético, nas condições simples apresentadas, é:
 
 \begin{enumerate}
