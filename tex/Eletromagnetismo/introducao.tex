@@ -30,4 +30,26 @@
 
 \domainOne
 
+\subsection{Matriz de rotação}
+\paragraph{} É útil ter um método de se rotacionar o campo magnético para se testar diferentes configurações do mesmo e analisar simetrias e assimetrias no nosso domínio. Como nosso problema é 2D, tem-se:
+
+\begin{eqnarray}
+R(\theta) & =& \left[\begin{array}{cc}
+\cos(\theta) & -\sin(\theta)\\
+\sin(\theta)  & \cos(\theta)
+\end{array}\right]
+\end{eqnarray}
+\paragraph{} Esta é uma matriz de rotação, logo:
+\begin{itemize}
+	\item $\det R(\theta) = 1$;
+	\item $R^{-1}(\theta) = R^T(\theta)$.
+\end{itemize}
+
+\paragraph{} Considere o campo magnético $\mathbf{f}(\mathbf{x})$, no qual $\mathbf{x} = (x,y)$, rotacionado de um ângulo $\theta$. Neste caso, o ponto $\mathbf{x}$ será dado pelo seguinte:
+
+\begin{eqnarray}
+\mathbf{f}'(\mathbf{x}) & = & R\cdot \mathbf{f}(R'\cdot \mathbf{x})
+\end{eqnarray}
+
+\paragraph{} \textit{Dúvida: se for deslocar o centro do campo magnético, devo fazer isso antes ou depois de rotacionar? Se $\mathbf{f}$ não é linear, fará diferença.}
 \end{document}
