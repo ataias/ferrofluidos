@@ -1,6 +1,7 @@
 using NavierStokes
 using NavierTypes
 using Magnetism
+using Poisson
 
 #modo de usar
 #n   - ARGS[1] é o tamanho da matriz escalonada
@@ -83,9 +84,14 @@ function steadyState(n, dt, Re, t, chi, Cpm, save)
     Hxn = zeros(n-2, n-2)
     Hyn = zeros(n-2, n-2)
     phin = zeros(n-2, n-2)
+    A = getANeumannSparse(n);
     
+    a = 0.5;
+    b = 0.0;
+    fHx = (x,y) ->  1/(2*pi)*(y-b)/((x-a)^2+(y-b)^2)
+    fHy = (x,y) -> -1/(2*pi)*(x-a)/((x-a)^2+(y-b)^2)
 	for i in 1:steps
-        getPhi!(n, phi, Mx, My, left, right, upper, lower)
+        getPhi!(n, phi, Mx, My, fHx, fHy, A)
         getMH!(n, chi, phi, Mx, My, Hx, Hy)
         getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
         

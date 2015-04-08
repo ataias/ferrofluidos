@@ -7,6 +7,8 @@
 #arg[4] - chi
 #arg[5] - Cpm
 #arg[6] - Re    
+#comando para fazer vídeo
+#   convert -quality 100 *.png movie.mpg
 
 # import useful modules
 import matplotlib 
