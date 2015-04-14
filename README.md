@@ -13,6 +13,9 @@ Este é um Projeto de Iniciação Científica na área de fluidos realizado na U
 
 - **Julia:** <http://julialang.org>
 - **Python 3:** <https://www.python.org>
+- **Matploblib:** <http://matplotlib.org>
+- **NumPy:** <http://www.numpy.org>
+- **LaTeX:** <http://latex-project.org>
 
 <a name="Como compilar e executar"/>
 ## Compilar e executar
@@ -24,17 +27,13 @@ Primeiramente, obtenha o código fonte clonando o repositório git. Isto pode se
 	git clone git@github.com:ataias/ferrofluidos.git
 	git clone https://github.com/ataias/ferrofluidos.git
 
-Após isso, entre no diretório `ferrofluidos/` e então terás acesso ao código fonte. Os binários estarão disponíveis em `ferrofluidos/bin/`. Comandos para executar os códigos `frames.jl` e `validate.jl` são os seguintes:
+Após isso, entre no diretório `ferrofluidos/` e então terás acesso ao código fonte. Julia usa compilação Just-In-Time. Para executar o código `frames.jl`, pode-se ir ao terminal e:
 
-	cd ferrofluidos/src
-	julia frames.jl > frames.txt
-	julia validate.jl > validate.txt
+	julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 0.0 > out.txt
 
-Dados da velocidade e pressão estão disponíveis na saída `.dat` de cada um desses programas. Pode-se processar a saída do `frames.jl` com o `vectorField.py`
+Detalhes sobre os parâmetros estão disponíveis no código `frames.jl`. Dados da velocidade e pressão estão disponíveis na saída `.dat` de cada um desses programas. Pode-se processar a saída do `frames.jl` com o `vectorField.py`
 
 	chmod +x vectorField.py
 	./vectorField.py
 
-A saída do `validate.jl` pode ser processada com o programa `plotVvsDX2.jl`
 
-	julia plotVvsDX2.jl
