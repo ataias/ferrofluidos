@@ -12,7 +12,7 @@ mkdir -p $FOLDERTOSAVE
 
 #Parâmetros
 n=22; #tamanho da malha
-t=2.5;
+t=1.0;
 Re=10;
 divFactor=1.25;
 chi=0.5;
@@ -21,7 +21,7 @@ save=1; #para salvar o arquivo de simulação, deve ser setado em 1
 
 FILENAME=N$((n - 2)).dat
 
-step=2; #para plotar png
+step=1; #para plotar png
 
 #simulação
 julia frames.jl $n $t $Re $divFactor $chi $Cpm $save $a $b > out$((n-2)).txt
@@ -36,4 +36,7 @@ mv -v png $FOLDERTOSAVE/png
 ffmpeg -i $FOLDERTOSAVE/png/%4d.png -c:v libx264 -vf fps=30 -pix_fmt yuv420p $FOLDERTOSAVE/$VIDEONAME.mp4
 }
 
-simul 0.0 0.5 /Users/ataias/Documents/ferrisimulacao/sim01 sim01
+#simul 0.0 0.5 /Users/ataias/Documents/ferrisimulacao/sim01 sim01
+simul 0.5 0.5 /Users/ataias/Documents/ferrisimulacao/sim02 sim02
+simul 0.5 1.0 /Users/ataias/Documents/ferrisimulacao/sim03 sim03
+simul 0.0 0.0 /Users/ataias/Documents/ferrisimulacao/sim04 sim04

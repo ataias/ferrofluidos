@@ -16,7 +16,7 @@ using Poisson
 #Exemplo:
 # 		julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 0.0
 # Se quiser salvar num arquivo a saída do terminal:
-#       julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 0.0>> out.txt
+#       julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 0.0 > out.txt
 
 n = int(ARGS[1]);
 t = float(ARGS[2]);
@@ -90,8 +90,6 @@ function steadyState(n, dt, Re, t, chi, Cpm, save)
     phin = zeros(n-2, n-2)
     A = getANeumannSparse(n);
     
-    a = 0.5;
-    b = 0.0;
     fHx = (x,y) ->  1/(2*pi)*(y-b)/((x-a)^2+(y-b)^2)
     fHy = (x,y) -> -1/(2*pi)*(x-a)/((x-a)^2+(y-b)^2)
 	for i in 1:steps

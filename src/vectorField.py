@@ -58,8 +58,12 @@ def plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, filename):
     figure(figsize=(8, 8))
     Q = quiver(x[0:n:step,0:n:step], y[0:n:step,0:n:step], u[0:n:step,0:n:step], v[0:n:step,0:n:step], pivot='middle', headwidth=4, headlength=6)
     qk = quiverkey(Q, 0.5, 1.0, 1, r'$\mathbf{v}$, mesh $' + str(n) + r'\times' + str(n) + '$, $\chi = ' + str(chi) + '$, Cpm = ' + str(Cpm) + ', Re = ' + str(Re), fontproperties={'weight': 'bold'})
-    xlabel('$x$')
-    ylabel('$y$')
+
+#    streamplot(x[0:n:step,0:n:step], y[0:n:step,0:n:step], u[0:n:step,0:n:step], v[0:n:step,0:n:step], color=u, linewidth=2, cmap=cm.autumn, arrowsize=4)
+#    xlabel('$x$')
+#    ylabel('$y$')
+#    title(r'$\mathbf{v}$, mesh $' + str(n) + r'\times' + str(n) + '$, $\chi = ' + str(chi) + '$, Cpm = ' + str(Cpm) + ', Re = ' + str(Re))
+
     axis([0, 1.0, 0, 1.02])
     savefig(filename, dpi=300)
 
@@ -67,15 +71,18 @@ def plotPressure(x, y, p, filename):
     #Plotar pressão
     close('all')
     fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    surf = ax.plot_surface(x, y, p, rstride=1, cstride=1, cmap=cm.coolwarm,
-           linewidth=0, antialiased=False)
-    pmin = int(amin(p)) - 1
-    pmax = int(amax(p)) + 1
-    ax.set_zlim(pmin, pmax)
-    ax.zaxis.set_major_locator(LinearLocator(10))
-    ax.zaxis.set_major_formatter(FormatStrFormatter('%.01f'))
-    fig.colorbar(surf, shrink=0.5, aspect=5)
+#    ax = fig.gca(projection='3d')
+#    surf = ax.plot_surface(x, y, p, rstride=1, cstride=1, cmap=cm.coolwarm,
+#           linewidth=0, antialiased=False)
+#    pmin = int(amin(p)) - 1
+#    pmax = int(amax(p)) + 1
+#    ax.set_zlim(pmin, pmax)
+#    ax.zaxis.set_major_locator(LinearLocator(10))
+#    ax.zaxis.set_major_formatter(FormatStrFormatter('%.01f'))
+#    fig.colorbar(surf, shrink=0.5, aspect=5)
+    CS = plt.contour(x, y, p)
+    plt.clabel(CS, inline=1, fontsize=10)   
+    plt.title('Pressure')
     plt.savefig(filename, dpi=300)
     
 #Calcula rotacional nos pontos internos e retorna o maior valor de rotacional
