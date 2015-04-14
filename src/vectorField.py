@@ -126,9 +126,12 @@ def makePNGforVideo(filename, n):
     y=linspace(0, 1 - dx, n) + (dx/2)
     x, y=meshgrid(x, y)
     
-    for i in range(0, numberFrames-2):
-        batchRead(u, v, p, Hx, Hy, phi, n, f)
-        plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, str(i).zfill(4) + ".png")
+    for i in range(0, numberFrames):
+        try:
+            batchRead(u, v, p, Hx, Hy, phi, n, f)
+            plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, str(i).zfill(4) + ".png")
+        except:
+            break
     
     f.close()
     
@@ -137,7 +140,7 @@ if __name__ == "__main__":
     
     n = int(sys.argv[1]) #esta é a dimensão da malha escalonada menos 2
     f = open('N' + str(n) + '.dat', 'rb')
-#    makePNGforVideo('N' + str(n) + '.dat', n)
+    makePNGforVideo('N' + str(n) + '.dat', n)
     t = float64(sys.argv[2])
     step = int(sys.argv[3])
     chi = float64(sys.argv[4])
@@ -167,10 +170,10 @@ if __name__ == "__main__":
     
     plotPressure(x, y, p, 'pressure.png')
 
-    ij = math.ceil((n+2)/2-1) - 1
-    w = (v[ij,ij+1]-v[ij,ij-1])/(2*dx) - (u[ij+1,ij]-u[ij-1,ij])/(2*dx)
-    print("Max rot inside is {0:.3f}k".format(rotInside(Hx, Hy, n)))
-    print("Max div inside is {0:.3f}k".format(divInside(Hx, Hy, n)))
+#    ij = math.ceil((n+2)/2-1) - 1
+#    w = (v[ij,ij+1]-v[ij,ij-1])/(2*dx) - (u[ij+1,ij]-u[ij-1,ij])/(2*dx)
+#    print("Max rot inside is {0:.3f}k".format(rotInside(Hx, Hy, n)))
+#    print("Max div inside is {0:.3f}k".format(divInside(Hx, Hy, n)))
     #wc = -0.63925
     #error = abs(abs(wc)-abs(w))
     #print("Error in vorticity: ", error)

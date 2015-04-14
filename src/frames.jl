@@ -7,14 +7,16 @@ using Poisson
 #n   - ARGS[1] é o tamanho da matriz escalonada
 #t   - ARGS[2] é o tempo de simulação, em segundos
 #Re  - ARGS[3] é o número de Reynolds
-#dt  - ARGS[4] dividir o passo de tempo, deve ser maior do que 1
+#divFactor  - ARGS[4] dividir o passo de tempo, deve ser maior do que 1
 #chi - ARGS[5]
 #Cpm - ARGS[6]
 #save - ARGS[7] se for 1, salva um arquivo com as matrizes evoluindo no tempo
+#a - ARGS[8] é o deslocamento em x da posição central do campo magnético
+#b - ARGS[9] é o deslocamento em y da posição central do campo magnético
 #Exemplo:
-# 		julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0
+# 		julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 0.0
 # Se quiser salvar num arquivo a saída do terminal:
-#       julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 >> out.txt
+#       julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 0.0>> out.txt
 
 n = int(ARGS[1]);
 t = float(ARGS[2]);
@@ -23,7 +25,9 @@ divFactor = float(ARGS[4]);
 dt = getDt(n, Re, float(ARGS[4]));
 chi = float(ARGS[5]);
 Cpm = float(ARGS[6]);
-save = bool(int(ARGS[7]))
+save = bool(int(ARGS[7]));
+a = float(ARGS[8]);
+b = float(ARGS[9]);
 
 println("Dados sobre simulação:\n n\t= ", n, "\n dx\t= ", 1/(n-2), "\n t\t= ", t, "\n Re\t= ", Re, "\n dt\t= ", dt, "\n ", strftime(time()), "\n");
 
