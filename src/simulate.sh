@@ -11,9 +11,9 @@ rm -rf $FOLDERTOSAVE
 mkdir -p $FOLDERTOSAVE
 
 #Parâmetros
-n=22; #tamanho da malha
+n=52; #tamanho da malha
 t=1.0;
-Re=10;
+Re=30;
 divFactor=1.25;
 chi=0.5;
 Cpm=0.8;
@@ -37,6 +37,6 @@ ffmpeg -i $FOLDERTOSAVE/png/%4d.png -c:v libx264 -vf fps=30 -pix_fmt yuv420p $FO
 }
 
 #simul 0.0 0.5 /Users/ataias/Documents/ferrisimulacao/sim01 sim01
-simul 0.5 0.5 /Users/ataias/Documents/ferrisimulacao/sim02 sim02
-simul 0.5 1.0 /Users/ataias/Documents/ferrisimulacao/sim03 sim03
-simul 0.0 0.0 /Users/ataias/Documents/ferrisimulacao/sim04 sim04
+#simul 0.5 0.5 /Users/ataias/Documents/ferrisimulacao/sim02 sim02
+#simul 0.5 1.0 /Users/ataias/Documents/ferrisimulacao/sim03 sim03
+simul  0.0 -0.05 /Users/ataias/Documents/ferrisimulacao/sim04 sim04

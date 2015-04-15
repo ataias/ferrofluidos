@@ -31,6 +31,14 @@ b = float(ARGS[9]);
 
 println("Dados sobre simulação:\n n\t= ", n, "\n dx\t= ", 1/(n-2), "\n t\t= ", t, "\n Re\t= ", Re, "\n dt\t= ", dt, "\n ", strftime(time()), "\n");
 
+function chif(i,chi) 
+    if i <= 100
+        return chi*i/100
+    else
+        return chi
+    end
+end 
+
 #steadyState
 #retorna o valor em regime permanente do ponto 0.5, 0.5
 #resolve equações para um dado n e Re
@@ -89,12 +97,14 @@ function steadyState(n, dt, Re, t, chi, Cpm, save)
     Hyn = zeros(n-2, n-2)
     phin = zeros(n-2, n-2)
     A = getANeumannSparse(n);
+    gamma = 5;
+    fHx = (x,y) ->  gamma/(2*pi)*(y-b)/((x-a)^2+(y-b)^2)
+    fHy = (x,y) -> -gamma/(2*pi)*(x-a)/((x-a)^2+(y-b)^2)
     
-    fHx = (x,y) ->  1/(2*pi)*(y-b)/((x-a)^2+(y-b)^2)
-    fHy = (x,y) -> -1/(2*pi)*(x-a)/((x-a)^2+(y-b)^2)
 	for i in 1:steps
         getPhi!(n, phi, Mx, My, fHx, fHy, A)
-        getMH!(n, chi, phi, Mx, My, Hx, Hy)
+        newchi = chif(i,chi)
+        getMH!(n, newchi, phi, Mx, My, Hx, Hy)
         getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
         
 		solve_navier_stokes!(NS)
