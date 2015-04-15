@@ -37,7 +37,7 @@ def batchRead(u, v, p, Hx, Hy, phi, n, f):
     readFromFile(Hy, f, n)
     readFromFile(phi, f, n)
 
-def plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, filename):
+def plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, time, filename):
     #use LaTeX, choose nice some looking fonts and tweak some settings
     matplotlib.rc('font', family='serif')
     matplotlib.rc('font', size=16)
@@ -60,11 +60,11 @@ def plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, filename):
     #qk = quiverkey(Q, 0.5, 1.0, 1, r'$\mathbf{v}$, mesh $' + str(n) + r'\times' + str(n) + '$, $\chi = ' + str(chi) + '$, Cpm = ' + str(Cpm) + ', Re = ' + str(Re), fontproperties={'weight': 'bold'})
 
 
-    streamplot(x[0:n:step,0:n:step], y[0:n:step,0:n:step], u[0:n:step,0:n:step], v[0:n:step,0:n:step], color=u, linewidth=2, cmap=cm.winter, arrowsize=4)
+    streamplot(x[0:n:step,0:n:step], y[0:n:step,0:n:step], u[0:n:step,0:n:step], v[0:n:step,0:n:step], color=u, linewidth=1.3, cmap=cm.winter, arrowsize=4)
     colorbar()
     xlabel('$x$')
     ylabel('$y$')
-    title(r'$\mathbf{v}$, mesh $' + str(n) + r'\times' + str(n) + '$, $\chi = ' + str(chi) + '$, Cpm = ' + str(Cpm) + ', Re = ' + str(Re))
+    title(r'$\mathbf{v}$, mesh $' + str(n) + r'\times' + str(n) + '$, $\chi = ' + str(chi) + '$, Cpm = ' + str(Cpm) + ', Re = ' + str(Re) + ', t = ' + '{:.4}'.format(time))
 
     axis([0, 1.0, 0, 1.02])
     savefig(filename, dpi=300)
@@ -134,11 +134,13 @@ def makePNGforVideo(filename, n):
     x=linspace(0, 1 - dx, n) + (dx/2)
     y=linspace(0, 1 - dx, n) + (dx/2)
     x, y=meshgrid(x, y)
+    time = 0.0
     
     for i in range(0, numberFrames):
+        time = (i+1)/180.0
         try:
             batchRead(u, v, p, Hx, Hy, phi, n, f)
-            plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, str(i).zfill(4) + ".png")
+            plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, time, str(i).zfill(4) + ".png")
         except:
             break
     
@@ -174,8 +176,8 @@ if __name__ == "__main__":
     x=linspace(0, 1 - dx, n) + (dx/2)
     y=linspace(0, 1 - dx, n) + (dx/2)
     x, y=meshgrid(x, y)
-    plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, 'vectorField.png')
-    plotVectorField(Hx, Hy, x, y, n, step, chi, Cpm, Re, 'vectorFieldH.png')
+    plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, 1, 'vectorField.png')
+    plotVectorField(Hx, Hy, x, y, n, step, chi, Cpm, Re, 1, 'vectorFieldH.png')
     
     plotPressure(x, y, p, 'pressure.png')
 
