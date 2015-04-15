@@ -55,14 +55,16 @@ def plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, filename):
                            r'\usepackage{textcomp}'])
 
     close('all')
-    figure(figsize=(8, 8))
-    Q = quiver(x[0:n:step,0:n:step], y[0:n:step,0:n:step], u[0:n:step,0:n:step], v[0:n:step,0:n:step], pivot='middle', headwidth=4, headlength=6)
-    qk = quiverkey(Q, 0.5, 1.0, 1, r'$\mathbf{v}$, mesh $' + str(n) + r'\times' + str(n) + '$, $\chi = ' + str(chi) + '$, Cpm = ' + str(Cpm) + ', Re = ' + str(Re), fontproperties={'weight': 'bold'})
+    #figure(figsize=(8, 8))
+    #Q = quiver(x[0:n:step,0:n:step], y[0:n:step,0:n:step], u[0:n:step,0:n:step], v[0:n:step,0:n:step], pivot='middle', headwidth=4, headlength=6)
+    #qk = quiverkey(Q, 0.5, 1.0, 1, r'$\mathbf{v}$, mesh $' + str(n) + r'\times' + str(n) + '$, $\chi = ' + str(chi) + '$, Cpm = ' + str(Cpm) + ', Re = ' + str(Re), fontproperties={'weight': 'bold'})
 
-#    streamplot(x[0:n:step,0:n:step], y[0:n:step,0:n:step], u[0:n:step,0:n:step], v[0:n:step,0:n:step], color=u, linewidth=2, cmap=cm.autumn, arrowsize=4)
-#    xlabel('$x$')
-#    ylabel('$y$')
-#    title(r'$\mathbf{v}$, mesh $' + str(n) + r'\times' + str(n) + '$, $\chi = ' + str(chi) + '$, Cpm = ' + str(Cpm) + ', Re = ' + str(Re))
+
+    streamplot(x[0:n:step,0:n:step], y[0:n:step,0:n:step], u[0:n:step,0:n:step], v[0:n:step,0:n:step], color=u, linewidth=2, cmap=cm.winter, arrowsize=4)
+    colorbar()
+    xlabel('$x$')
+    ylabel('$y$')
+    title(r'$\mathbf{v}$, mesh $' + str(n) + r'\times' + str(n) + '$, $\chi = ' + str(chi) + '$, Cpm = ' + str(Cpm) + ', Re = ' + str(Re))
 
     axis([0, 1.0, 0, 1.02])
     savefig(filename, dpi=300)
