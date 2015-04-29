@@ -146,7 +146,6 @@ function navier_stokes_step3!(n, dt, mu, rho, p, #pressão já calculada
 
 end
 
-#function solve_navier_stokes!(n, A, dt, mu, rho, p, u, v, u_old, v_old, fx, fy, uB)
 function solve_navier_stokes!(NS::NSEquation)
         
 	# ------------------------ Passo 1 ------------------------

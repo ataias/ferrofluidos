@@ -13,10 +13,11 @@ using Poisson
 #save - ARGS[7] se for 1, salva um arquivo com as matrizes evoluindo no tempo
 #a - ARGS[8] é o deslocamento em x da posição central do campo magnético
 #b - ARGS[9] é o deslocamento em y da posição central do campo magnético
+#gamma - ARGS[10] é a intensidade do campo magnético
 #Exemplo:
-# 		julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 0.0
+# 		julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 0.0 3
 # Se quiser salvar num arquivo a saída do terminal:
-#       julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 0.0 > out.txt
+#       julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 0.0 3 > out.txt
 
 n = int(ARGS[1]);
 t = float(ARGS[2]);
@@ -28,14 +29,15 @@ Cpm = float(ARGS[6]);
 save = bool(int(ARGS[7]));
 a = float(ARGS[8]);
 b = float(ARGS[9]);
+gamma = float(ARGS[10]);
 
 println("Dados sobre simulação:\n n\t= ", n, "\n dx\t= ", 1/(n-2), "\n t\t= ", t, "\n Re\t= ", Re, "\n dt\t= ", dt, "\n ", strftime(time()), "\n");
 
-function chif(i,chi) 
+function factor(i) 
     if i <= 100
-        return chi*i/100
+        return i/100.0
     else
-        return chi
+        return 1.0
     end
 end 
 
@@ -43,17 +45,16 @@ end
 #retorna o valor em regime permanente do ponto 0.5, 0.5
 #resolve equações para um dado n e Re
 #t is time, in seconds, of physical simulation
-function steadyState(n, dt, Re, t, chi, Cpm, save)
+function steadyState(n, dt, Re, t, chi, Cpm, gamma, save)
 
 	dx = 1/(n-2)
 	steps = integer(t/dt)
 	c = integer(n/2); #center, non-staggered grid
-#	ce = integer(n/2) #center, staggered grid
 
     NS = createNSObject(n, Re, divFactor)
 
 	for i in -1:n-2
-		NS.uB[i+2] = (sinpi(i*dx))^2
+		NS.uB[i+2] = 0*(sinpi(i*dx))^2
 	end
 
     #Condições de contorno, basta editar em v_old
@@ -67,9 +68,9 @@ function steadyState(n, dt, Re, t, chi, Cpm, save)
 	   file = open("N" * string(n-2) * ".dat", "w")
     end
 
-	un = zeros(n-2,n-2) #malha não escalonada
-	vn = zeros(n-2,n-2)
-	pn = zeros(n-2,n-2)
+	un = zeros(n-2,n-2)+1e-15 #malha não escalonada
+	vn = zeros(n-2,n-2)+1e-15
+	pn = zeros(n-2,n-2)+1e-15
 
 	numberFrames = integer(180*t)
 	timeToSave = integer(steps/numberFrames)
@@ -93,18 +94,29 @@ function steadyState(n, dt, Re, t, chi, Cpm, save)
     Hy = zeros(n,n)
     
     #non-staggered forms
-    Hxn = zeros(n-2, n-2)
-    Hyn = zeros(n-2, n-2)
-    phin = zeros(n-2, n-2)
+    Hxn = zeros(n-2, n-2)+1e-15
+    Hyn = zeros(n-2, n-2)+1e-15
+    phin = zeros(n-2, n-2)+1e-15
     A = getANeumannSparse(n);
-    gamma = 5;
+#    gamma = 5;
     fHx = (x,y) ->  gamma/(2*pi)*(y-b)/((x-a)^2+(y-b)^2)
     fHy = (x,y) -> -gamma/(2*pi)*(x-a)/((x-a)^2+(y-b)^2)
     
+    fact = 0
+    if(save)
+        write(file, un); write(file, vn);
+        write(file, pn);
+        write(file, Hxn); write(file, Hyn);
+        write(file, phin);
+    end
+    
 	for i in 1:steps
+        fact = factor(i)
+        for i in -1:n-2
+		  NS.uB[i+2] = fact*(sinpi(i*dx))^2
+	    end
         getPhi!(n, phi, Mx, My, fHx, fHy, A)
-        newchi = chif(i,chi)
-        getMH!(n, newchi, phi, Mx, My, Hx, Hy)
+        getMH!(n, chi*fact, phi, Mx, My, Hx, Hy)
         getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
         
 		solve_navier_stokes!(NS)
@@ -144,4 +156,4 @@ function steadyState(n, dt, Re, t, chi, Cpm, save)
 	return 0
 end
 
-@time steadyState(n, dt, Re, t, chi, Cpm, save)
+@time steadyState(n, dt, Re, t, chi, Cpm, gamma, save)

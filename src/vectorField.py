@@ -37,7 +37,7 @@ def batchRead(u, v, p, Hx, Hy, phi, n, f):
     readFromFile(Hy, f, n)
     readFromFile(phi, f, n)
 
-def plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, time, filename):
+def plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, gamma, time, filename):
     #use LaTeX, choose nice some looking fonts and tweak some settings
     matplotlib.rc('font', family='serif')
     matplotlib.rc('font', size=16)
@@ -55,7 +55,7 @@ def plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, time, filename):
                            r'\usepackage{textcomp}'])
 
     close('all')
-    #figure(figsize=(8, 8))
+    figure(figsize=(12, 8))
     #Q = quiver(x[0:n:step,0:n:step], y[0:n:step,0:n:step], u[0:n:step,0:n:step], v[0:n:step,0:n:step], pivot='middle', headwidth=4, headlength=6)
     #qk = quiverkey(Q, 0.5, 1.0, 1, r'$\mathbf{v}$, mesh $' + str(n) + r'\times' + str(n) + '$, $\chi = ' + str(chi) + '$, Cpm = ' + str(Cpm) + ', Re = ' + str(Re), fontproperties={'weight': 'bold'})
 
@@ -64,7 +64,12 @@ def plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, time, filename):
     colorbar()
     xlabel('$x$')
     ylabel('$y$')
-    title(r'$\mathbf{v}$, mesh $' + str(n) + r'\times' + str(n) + '$, $\chi = ' + str(chi) + '$, Cpm = ' + str(Cpm) + ', Re = ' + str(Re) + ', t = ' + '{:.4}'.format(time))
+    text(1.21, 1.0, r'Re = ' + str(Re))
+    text(1.21, 0.95, r'$\chi = ' + str(chi) + '$')
+    text(1.21, 0.9, r'Cpm = ' + str(Cpm))
+    text(1.21, 0.85, r'$n = ' + str(n) + '$')
+    text(1.21, 0.8, r'$\gamma = ' + str(gamma) + '$')
+    title(r'$\mathbf{v}$, ' + 't = ' + '{:9.8}'.format(round(time+1e-15,8)))
 
     axis([0, 1.0, 0, 1.02])
     savefig(filename, dpi=300)
@@ -120,6 +125,7 @@ def makePNGforVideo(filename, n):
     chi = float64(sys.argv[4])
     Cpm = float64(sys.argv[5])
     Re = float64(sys.argv[6])
+    gamma = float64(sys.argv[7])
     dx = 1/n
     
     u = zeros((n,n), dtype=float64)
@@ -137,10 +143,10 @@ def makePNGforVideo(filename, n):
     time = 0.0
     
     for i in range(0, numberFrames):
-        time = (i+1)/180.0
+        time = (i)/180.0
         try:
             batchRead(u, v, p, Hx, Hy, phi, n, f)
-            plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, time, str(i).zfill(4) + ".png")
+            plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, gamma, time, str(i).zfill(4) + ".png")
         except:
             break
     
@@ -157,6 +163,7 @@ if __name__ == "__main__":
     chi = float64(sys.argv[4])
     Cpm = float64(sys.argv[5])
     Re = float64(sys.argv[6])
+    gamma = float64(sys.argv[7])
     
     dx = 1/n
     numberFrames = round(180*t)
@@ -176,8 +183,8 @@ if __name__ == "__main__":
     x=linspace(0, 1 - dx, n) + (dx/2)
     y=linspace(0, 1 - dx, n) + (dx/2)
     x, y=meshgrid(x, y)
-    plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, 1, 'vectorField.png')
-    plotVectorField(Hx, Hy, x, y, n, step, chi, Cpm, Re, 1, 'vectorFieldH.png')
+    plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, gamma, 1, 'vectorField.png')
+    plotVectorField(Hx, Hy, x, y, n, step, chi, Cpm, Re, gamma, 1, 'vectorFieldH.png')
     
     plotPressure(x, y, p, 'pressure.png')
 

@@ -11,12 +11,13 @@ rm -rf $FOLDERTOSAVE
 mkdir -p $FOLDERTOSAVE
 
 #Parâmetros
-n=52; #tamanho da malha
-t=1.0;
-Re=30;
+n=22; #tamanho da malha
+t=0.5;
+Re=10;
 divFactor=1.25;
 chi=0.5;
 Cpm=0.8;
+gamma=5;
 save=1; #para salvar o arquivo de simulação, deve ser setado em 1
 
 FILENAME=N$((n - 2)).dat
@@ -24,11 +25,11 @@ FILENAME=N$((n - 2)).dat
 step=1; #para plotar png
 
 #simulação
-julia frames.jl $n $t $Re $divFactor $chi $Cpm $save $a $b > out$((n-2)).txt
+julia frames.jl $n $t $Re $divFactor $chi $Cpm $save $a $b $gamma > out$((n-2)).txt
 rm -rf png
 mkdir -p png && cd png
 mv -v ../$FILENAME .
-../vectorField.py $((n-2)) $t $step $chi $Cpm $Re
+../vectorField.py $((n-2)) $t $step $chi $Cpm $Re $gamma
 mv -v $FILENAME $FOLDERTOSAVE/
 cd ..
 mv -v out$((n-2)).txt $FOLDERTOSAVE/
@@ -39,4 +40,4 @@ ffmpeg -i $FOLDERTOSAVE/png/%4d.png -c:v libx264 -vf fps=30 -pix_fmt yuv420p $FO
 #simul 0.0 0.5 /Users/ataias/Documents/ferrisimulacao/sim01 sim01
 #simul 0.5 0.5 /Users/ataias/Documents/ferrisimulacao/sim02 sim02
 #simul 0.5 1.0 /Users/ataias/Documents/ferrisimulacao/sim03 sim03
-simul  0.0 -0.05 /Users/ataias/Documents/ferrisimulacao/sim04 sim04
+simul  0.0 -0.05 /Users/ataias/Documents/simulacao/sim04 sim04
