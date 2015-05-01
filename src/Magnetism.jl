@@ -3,7 +3,7 @@ module Magnetism
 using Poisson
 using NavierStokes
 
-export getPhi!, getMH!, getForce!, H0, solve!
+export getPhi!, getMH!, getForce!, H0, solve!, Angle!
 
 #Use this for a non-staggered grid
 function divInside(Fx, Fy, n)

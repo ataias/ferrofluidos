@@ -44,7 +44,7 @@ end
 #steadyState
 #retorna o valor em regime permanente do ponto 0.5, 0.5
 #resolve equações para um dado n e Re
-#t is time, in seconds, of physical simulation
+#t is time, in dimensioless unit, of physical simulation
 function steadyState(n, dt, Re, t, chi, Cpm, gamma, save)
 
 	dx = 1/(n-2)
@@ -54,7 +54,7 @@ function steadyState(n, dt, Re, t, chi, Cpm, gamma, save)
     NS = createNSObject(n, Re, divFactor)
 
 	for i in -1:n-2
-		NS.uB[i+2] = 0*(sinpi(i*dx))^2
+		NS.uB[i+2] = 0*(sinpi(i*dx))^2 #inicialmente, repouso
 	end
 
     #Condições de contorno, basta editar em v_old
@@ -98,7 +98,7 @@ function steadyState(n, dt, Re, t, chi, Cpm, gamma, save)
     Hyn = zeros(n-2, n-2)+1e-15
     phin = zeros(n-2, n-2)+1e-15
     A = getANeumannSparse(n);
-#    gamma = 5;
+
     fHx = (x,y) ->  gamma/(2*pi)*(y-b)/((x-a)^2+(y-b)^2)
     fHy = (x,y) -> -gamma/(2*pi)*(x-a)/((x-a)^2+(y-b)^2)
     
