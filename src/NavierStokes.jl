@@ -180,6 +180,15 @@ function staggered2not!(u, v, p, un, vn, pn, n)
 	end
 end
 
+function staggered2not!(u, v, un, vn, n) 
+	for i in 2:n-1 
+		for j in 2:n-1 
+			un[i-1,j-1] = (u[i,j] + u[i,j-1])/2
+			vn[i-1,j-1] = (v[i,j] + v[i-1,j])/2
+		end 
+	end
+end
+
 
 #f é um vetor com o valor a ser integrado
 #este vetor tem n pontos e a distância entre eles é de 1/n

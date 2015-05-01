@@ -5,6 +5,9 @@ using NavierStokes
 
 export getPhi!, getMH!, getForce!, H0, solve!, Angle!
 
+function R(theta)
+    return [cos(theta) -sin(theta); sin(theta) cos(theta)]
+end
 #Use this for a non-staggered grid
 function divInside(Fx, Fy, n)
     divMax = 0.0
@@ -38,23 +41,22 @@ end
 
 # Calcula ângulo entre dois vetores para as matrizes H e M
 #cada ponto deve ser um número complexo
-function Angle(a, b)
-    angles = zeros(size(a,1), size(a,2));
-    for i in 1:size(a, 1)
-        for j in 1:size(a,2)
-            angles[i,j] = angle(reim(a[i,j]),reim(b[i,j]))
+#as entradas devem ser non-staggered
+function Angle!(Hx, Hy, Mx, My, angles, n)
+    for i in 1:n
+        for j in 1:n
+            angles[i,j] = angle(Hx[i,j],Hy[i,j], Mx[i,j], My[i,j])
         end
     end
     return angles;
 end
 
-function angle(a, b)
-  return acosd(dot(a,b)/norm(a)/norm(b))
+function angle(hx, hy, mx, my)
+  theta = atan2(hy,hx)
+  x, y = R(theta)'*[mx; my]
+  return atan2(y,x)*180/pi
 end
 
-function angle(a::(Number,Number), b::(Number,Number))
-    return angle([a[1], a[2]], [b[1], b[2]])
-end
 
 
 function H0(Br, mu_m, L0, a, b, theta, x0, y0)
@@ -148,7 +150,7 @@ function solve!(n = 7)
     fMy = (x,y) -> -y
 
     theta = pi/4
-    R = theta -> [cos(theta) -sin(theta); sin(theta) cos(theta)]
+    
     Rt = R(theta)
 
     for i in -1:n-2
@@ -170,17 +172,22 @@ function solve!(n = 7)
     Hy = zeros(n,n);
     getMH!(n, chi, phi, Mx, My, Hx, Hy);
 
-    hxn = zeros(n-2, n-2); hyn = zeros(n-2, n-2);
-    mxn = zeros(n-2, n-2); myn = zeros(n-2, n-2);
-    phin = zeros(n-2, n-2);
-    staggered2not!(Hx, Hy, phi, hxn, hyn, phin, n);
-    staggered2not!(Mx, My, phi, mxn, myn, phin, n);
+    hxn = zeros(n-2, n-2)
+    hyn = zeros(n-2, n-2)
+    mxn = zeros(n-2, n-2)
+    myn = zeros(n-2, n-2)
+    phin = zeros(n-2, n-2)
+    angles = zeros(n-2,n-2)
+    staggered2not!(Hx, Hy, phi, hxn, hyn, phin, n)
+    staggered2not!(Mx, My, phi, mxn, myn, phin, n)
+    Angle(hxn, hyn, mxn, myn, angles, n-2)
     file = open("problem0.dat", "w");
     write(file, mxn)
     write(file, myn)
     write(file, hxn)
     write(file, hyn)
     write(file, phin)
+    write(file, angles)
     close(file)
 
     print("Max div B = ", divInside(mxn+hxn, myn+hyn, n-2), "\n")

@@ -23,19 +23,24 @@ from pylab import *
 from numpy import *
 import struct
 
+#to plot angles
+from matplotlib.colors import BoundaryNorm 
+from matplotlib.ticker import MaxNLocator
+
 def readFromFile(array, file, n):
     for i in range(n):
     	for j in range(n):
             array[i,j] = struct.unpack('d',file.read(8))[0]
 
 #file "f"
-def batchRead(u, v, p, Hx, Hy, phi, n, f):
+def batchRead(u, v, p, Hx, Hy, phi, angles, n, f):
     readFromFile(u, f, n)
     readFromFile(v, f, n)
     readFromFile(p, f, n)
     readFromFile(Hx, f, n)
     readFromFile(Hy, f, n)
     readFromFile(phi, f, n)
+    readFromFile(angles, f, n)
 
 def plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, gamma, time, filename):
     #use LaTeX, choose nice some looking fonts and tweak some settings
@@ -92,6 +97,20 @@ def plotPressure(x, y, p, filename):
     plt.title('Pressure')
     plt.savefig(filename, dpi=300)
     
+def plotAngle(x, y, angles, n, filename):
+  close('all')
+  fig = plt.figure()
+  dx = dy = 1.0/n #quadrado de lado 1
+  cmap = plt.get_cmap('PiYG')
+  levels = MaxNLocator(nbins=15).tick_values(angles.min(), angles.max())
+  plt.contourf(x, y, angles, levels=levels, cmap=cmap)
+  plt.colorbar()
+  plt.title(r'Angle between $\mathbf{H}_{\mathrm{calc}}$ and $\mathbf{M}$')
+  xlabel(r'$x$')
+  ylabel(r'$y$')  
+  plt.savefig(filename, dpi=300)
+  
+    
 #Calcula rotacional nos pontos internos e retorna o maior valor de rotacional
 def rotInside(Fx, Fy, n):
     rotMax = 0.0
@@ -134,6 +153,7 @@ def makePNGforVideo(filename, n):
     Hx = zeros((n,n), dtype=float64)
     Hy = zeros((n,n), dtype=float64)
     phi = zeros((n,n), dtype=float64)
+    angles = zeros((n,n), dtype=float64)
     
     numberFrames = int(round(180*t))
     
@@ -145,7 +165,7 @@ def makePNGforVideo(filename, n):
     for i in range(0, numberFrames):
         time = (i)/180.0
         try:
-            batchRead(u, v, p, Hx, Hy, phi, n, f)
+            batchRead(u, v, p, Hx, Hy, phi, angles, n, f)
             plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, gamma, time, str(i).zfill(4) + ".png")
         except:
             break
@@ -157,7 +177,7 @@ if __name__ == "__main__":
     
     n = int(sys.argv[1]) #esta é a dimensão da malha escalonada menos 2
     f = open('N' + str(n) + '.dat', 'rb')
-    makePNGforVideo('N' + str(n) + '.dat', n)
+#    makePNGforVideo('N' + str(n) + '.dat', n)
     t = float64(sys.argv[2])
     step = int(sys.argv[3])
     chi = float64(sys.argv[4])
@@ -168,15 +188,16 @@ if __name__ == "__main__":
     dx = 1/n
     numberFrames = round(180*t)
     #f.seek((numberFrames - 1)*n*n*8*3) #get steady state solution
-    f.seek(-n*n*8*6, 2)
+    f.seek(-n*n*8*7, 2)
     u = zeros((n,n), dtype=float64)
     v = zeros((n,n), dtype=float64)
     p = zeros((n,n), dtype=float64)
     Hx = zeros((n,n), dtype=float64)
     Hy = zeros((n,n), dtype=float64)
     phi = zeros((n,n), dtype=float64)
+    angles = zeros((n,n), dtype=float64)
 
-    batchRead(u, v, p, Hx, Hy, phi, n, f)
+    batchRead(u, v, p, Hx, Hy, phi, angles, n, f)
 
     f.close()
     # generate grid
@@ -187,7 +208,7 @@ if __name__ == "__main__":
     plotVectorField(Hx, Hy, x, y, n, step, chi, Cpm, Re, gamma, 1, 'vectorFieldH.png')
     
     plotPressure(x, y, p, 'pressure.png')
-
+    plotAngle(x,y,angles,n, 'angle.png')
 #    ij = math.ceil((n+2)/2-1) - 1
 #    w = (v[ij,ij+1]-v[ij,ij-1])/(2*dx) - (u[ij+1,ij]-u[ij-1,ij])/(2*dx)
 #    print("Max rot inside is {0:.3f}k".format(rotInside(Hx, Hy, n)))

@@ -96,6 +96,8 @@ function steadyState(n, dt, Re, t, chi, Cpm, gamma, save)
     #non-staggered forms
     Hxn = zeros(n-2, n-2)+1e-15
     Hyn = zeros(n-2, n-2)+1e-15
+    Mxn = zeros(n-2, n-2)+1e-15
+    Myn = zeros(n-2, n-2)+1e-15
     phin = zeros(n-2, n-2)+1e-15
     A = getANeumannSparse(n);
 
@@ -103,11 +105,13 @@ function steadyState(n, dt, Re, t, chi, Cpm, gamma, save)
     fHy = (x,y) -> -gamma/(2*pi)*(x-a)/((x-a)^2+(y-b)^2)
     
     fact = 0
+    angles = zeros(n-2, n-2)+1e-15;
     if(save)
         write(file, un); write(file, vn);
         write(file, pn);
         write(file, Hxn); write(file, Hyn);
         write(file, phin);
+        write(file, angles);
     end
     
 	for i in 1:steps
@@ -124,11 +128,15 @@ function steadyState(n, dt, Re, t, chi, Cpm, gamma, save)
 		if (i % timeToSave == 0) || (i == steps)
 			staggered2not!(NS.v.x, NS.v.y, NS.p, un,  vn,  pn,   n)
             staggered2not!(Hx,     Hy,     phi,  Hxn, Hyn, phin, n)
+            staggered2not!(Mx,     My,           Mxn, Myn,       n)
+            Angle!(Hxn, Hyn, Mxn, Myn, angles, n-2)
             if(save)
                 write(file, un); write(file, vn);
                 write(file, pn);
                 write(file, Hxn); write(file, Hyn);
                 write(file, phin);
+                write(file, angles)
+                
             end
 			println("t = ", i*dt)
 			println("  u[0.5,0.5]\t= ", un[c,c])
