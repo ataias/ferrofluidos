@@ -177,7 +177,7 @@ if __name__ == "__main__":
     
     n = int(sys.argv[1]) #esta é a dimensão da malha escalonada menos 2
     f = open('N' + str(n) + '.dat', 'rb')
-#    makePNGforVideo('N' + str(n) + '.dat', n)
+    makePNGforVideo('N' + str(n) + '.dat', n)
     t = float64(sys.argv[2])
     step = int(sys.argv[3])
     chi = float64(sys.argv[4])
