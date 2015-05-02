@@ -21,13 +21,13 @@ step = 1
 main = homedir()*"/Documents/simulacao"
 
 function simulation(j, k, i, chi, Cpm, gamma, a, b, mag)
-  folder = string(mag) * "Re" * string(i)
+  folder = string(mag) * "Re" * string(i) * "N" * string(j-2)
   filename = folder * ".txt"
   f = open(filename, "w")
   redirect_stdout(f)
   @time transient(j, k, i, t, chi, Cpm, gamma, a, b, save)
     #File operations
-  try rm(main * folder, recursive=true) end
+  try rm(main * "/" * folder, recursive=true) end
   try mkdir(main * "/" * folder) end
   try rm("png", recursive=true) end
   try mkdir("png") end
