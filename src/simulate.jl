@@ -2,7 +2,7 @@ using Transient
 using NavierTypes
 
 t = 3.0;
-Re = vcat(1,10:10:30)
+Re = vcat(1,10:10:100)
 #n = map(x -> (x + 10) - (x+10) % 10, Re + 20) + 2 #se quiser ter malhas diferentes...
 n = ones(Int64, size(Re))*110 + 2 #Considerando que a simulação ocorrerá até Re 100, uma malha de 110x110 deve ser ok para todos
 dt = zeros(size(n))
@@ -43,10 +43,23 @@ function simulation(n, dt, Re, chi, Cpm, gamma, a, b, mag)
   mv("png", main*"/"*folder*"/png")
 end
 
-for i in 1:size(n,1)
-  simulation(n[i], dt[i], Re[i]*1.0, 0.0, 0.0, 0.0, a, b, "nomag") #without magnetism
-end
+s = int(ARGS[1]) #simulation number
 
-for i in 1:size(n,1)
-  simulation(n[i], dt[i], Re[i]*1.0, 0.5, 0.8, 3.5, a, b, "mag") #with magnetism
+#for i in 1:size(n,1)
+#  simulation(n[i], dt[i], Re[i]*1.0, 0.0, 0.0, 0.0, a, b, "nomag") #without magnetism
+#end
+#
+#for i in 1:size(n,1)
+#  simulation(n[i], dt[i], Re[i]*1.0, 0.5, 0.8, 3.5, a, b, "mag") #with magnetism
+#end
+
+#Há 11 simulações de cada tipo
+#Argumentos entre 1 e 11 realizam as simulações nomag
+#Argumentos entre 12 e 22 realizam as simulações mag
+if 1 <= s <= size(Re,1)
+    simulation(n[s], dt[s], Re[s]*1.0, 0.0, 0.0, 0.0, a, b, "nomag")
+elseif s <= int(2*size(Re,1))
+    simulation(n[s%11], dt[s%11], Re[s%11]*1.0, 0.5, 0.8, 3.5, a, b, "mag")
+else
+    println("Invalid simulation number")
 end
