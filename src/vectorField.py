@@ -177,7 +177,7 @@ def makePNGforVideo(filename, n):
 if __name__ == "__main__":
     
     n = int(sys.argv[1]) #esta é a dimensão da malha escalonada menos 2
-#    makePNGforVideo('N' + str(n) + '.dat', n)
+    makePNGforVideo('N' + str(n) + '.dat', n)
     f = open('N' + str(n) + '.dat', 'rb')
     t = float64(sys.argv[2])
     step = int(sys.argv[3])
