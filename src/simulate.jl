@@ -35,7 +35,7 @@ function simulation(j, k, i, chi, Cpm, gamma, a, b, mag)
   simulfile =  "N"*string(j - 2)*".dat"
   mv("../" * simulfile, "./" * simulfile)
   run(`../vectorField.py $((j-2)) $t $step $chi $Cpm $i $gamma`)
-  mv("simulfile", main*folder)
+  mv("simulfile", main*"/"*folder)
   cd("..")
   close(f)
   mv(filename, main*"/"*folder)
