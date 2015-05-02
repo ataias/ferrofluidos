@@ -3,7 +3,8 @@ using NavierTypes
 
 t = 3.0;
 Re = vcat(1,10:10:30)
-n = map(x -> (x + 10) - (x+10) % 10, Re + 20) + 2
+#n = map(x -> (x + 10) - (x+10) % 10, Re + 20) + 2 #se quiser ter malhas diferentes...
+n = ones(size(Re))*110 #Considerando que a simulação ocorrerá até Re 100, uma malha de 110x110 deve ser ok para todos
 dt = zeros(size(n))
 divFactor = 1.25
 for i=1:size(n,1)
