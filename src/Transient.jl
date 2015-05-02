@@ -20,7 +20,7 @@ end
 #retorna o valor em cada tempo para o 0.5, 0.5
 #resolve equações para um dado n e Re
 #t is time, in dimensioless units, of physical simulation
-function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, divFactor, save)
+function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
     println("Dados sobre simulação:\n n\t= ", n, "\n dx\t= ", 1/(n-2), "\n t\t= ", t, "\n Re\t= ", Re, "\n dt\t= ", dt, "\n ");
     println(" chi\t= ", chi, "\n Cpm\t= ", Cpm, "\n gamma\t= ", gamma, "\n")
     println(strftime(time()), "\n")
@@ -29,7 +29,7 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, divFactor, save)
 	steps = integer(t/dt)
 	c = integer(n/2); #center, non-staggered grid
 
-    NS = createNSObject(n, Re, divFactor)
+    NS = createNSObject(n, Re)
 
 	for i in -1:n-2
 		NS.uB[i+2] = 0*(sinpi(i*dx))^2 #inicialmente, repouso

@@ -188,7 +188,6 @@ if __name__ == "__main__":
     
     dx = 1/n
     numberFrames = round(180*t)
-    #f.seek((numberFrames - 1)*n*n*8*3) #get steady state solution
     f.seek(-n*n*8*7, 2)
     u = zeros((n,n), dtype=float64)
     v = zeros((n,n), dtype=float64)
@@ -211,6 +210,7 @@ if __name__ == "__main__":
     plotAngle(x,y,angles,n, 'angle.png')
     
     plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, gamma, 1, 'vectorField.png')
-    plotVectorField(Hx, Hy, x, y, n, step, chi, Cpm, Re, gamma, 1, 'vectorFieldH.png')
+    if(gamma>1e-15):
+      plotVectorField(Hx, Hy, x, y, n, step, chi, Cpm, Re, gamma, 1, 'vectorFieldH.png')
     
 

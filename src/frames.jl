@@ -31,5 +31,5 @@ gamma = float(ARGS[10]);
 filename = "Re" * ARGS[3] * "N" * string(n-2) *".txt"
 file = open(filename, "w")
 redirect_stdout(file)
-@time transient(n, dt, Re, t, chi, Cpm, gamma, a, b, divFactor, save)
+@time transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
 close(file)
