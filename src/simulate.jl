@@ -38,8 +38,8 @@ function simulation(j, k, i, chi, Cpm, gamma, a, b, mag)
   mv("simulfile", main*folder)
   cd("..")
   close(f)
-  mv(filename, main*folder)
-  mv("png", main*folder*"png")
+  mv(filename, main*"/"*folder)
+  mv("png", main*"/"*folder*"/png")
 end
 
 for i=Re, j=n, k=dt
