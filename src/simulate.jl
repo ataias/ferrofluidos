@@ -28,7 +28,7 @@ function simulation(j, k, i, chi, Cpm, gamma, a, b, mag)
   @time transient(j, k, i, t, chi, Cpm, gamma, a, b, save)
     #File operations
   try rm(main * folder, recursive=true) end
-  try mkdir(main * folder) end
+  try mkdir(main * "/" * folder) end
   try rm("png", recursive=true) end
   try mkdir("png") end
   cd("./png")
