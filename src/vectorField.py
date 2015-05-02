@@ -77,7 +77,7 @@ def plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, gamma, time, filename):
     title(r'$\mathbf{v}$, ' + 't = ' + '{:10.8f}'.format(time))
 
     axis([0, 1.0, 0, 1.02])
-    savefig(filename, dpi=300)
+    savefig(filename, dpi=200)
 
 def plotPressure(x, y, p, filename):
     #Plotar pressão
@@ -95,7 +95,7 @@ def plotPressure(x, y, p, filename):
     CS = plt.contour(x, y, p)
     plt.clabel(CS, inline=1, fontsize=10)   
     plt.title('Pressure')
-    plt.savefig(filename, dpi=300)
+    plt.savefig(filename, dpi=200)
     
 def plotAngle(x, y, angles, n, filename):
   close('all')
@@ -109,7 +109,7 @@ def plotAngle(x, y, angles, n, filename):
   plt.title(r'Angle between $\mathbf{H}_{\mathrm{calc}}$ and $\mathbf{M}$')
   xlabel(r'$x$')
   ylabel(r'$y$')  
-  plt.savefig(filename, dpi=300)
+  plt.savefig(filename, dpi=200)
   
     
 #Calcula rotacional nos pontos internos e retorna o maior valor de rotacional
