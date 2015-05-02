@@ -13,8 +13,8 @@ rm -rf $FOLDERTOSAVE
 mkdir -p $FOLDERTOSAVE
 
 #Parâmetros
-n=122; #tamanho da malha
-t=3.0;
+n=32; #tamanho da malha
+t=1.5;
 divFactor=1.25;
 chi=0.5;
 Cpm=0.8;
@@ -40,27 +40,27 @@ mv -v png $FOLDERTOSAVE/png
 
 #Simulações sem magnetismo, gamma = 0
 gamma=0
-Re=1; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
-Re=10; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
+#Re=1; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
+#Re=10; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
 Re=20; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
-Re=30; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
-Re=40; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
-Re=50; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
-Re=60; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
-Re=70; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
-Re=80; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
-Re=90; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
-Re=100; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
+#Re=30; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
+#Re=40; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
+#Re=50; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
+#Re=60; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
+#Re=70; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
+#Re=80; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
+#Re=90; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
+#Re=100; simul $Re 0.0 -0.05 ~/Documents/simulacao/Re$Re Re$Re $gamma
 
 gamma=5
-Re=1; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
+#Re=1; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
 Re=10; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
-Re=20; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
-Re=30; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
-Re=40; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
-Re=50; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
-Re=60; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
-Re=70; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
-Re=80; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
-Re=90; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
-Re=100; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
+#Re=20; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
+#Re=30; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
+#Re=40; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
+#Re=50; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
+#Re=60; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
+#Re=70; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
+#Re=80; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
+#Re=90; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma
+#Re=100; simul $Re 0.0 -0.05 ~/Documents/simulacao/mRe$Re Re$Re $gamma

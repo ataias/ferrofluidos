@@ -74,7 +74,7 @@ def plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, gamma, time, filename):
     text(1.21, 0.9, r'Cpm = ' + str(Cpm))
     text(1.21, 0.85, r'$n = ' + str(n) + '$')
     text(1.21, 0.8, r'$\gamma = ' + str(gamma) + '$')
-    title(r'$\mathbf{v}$, ' + 't = ' + '{:9.8}'.format(round(time+1e-15,8)))
+    title(r'$\mathbf{v}$, ' + 't = ' + '{:10.8f}'.format(time))
 
     axis([0, 1.0, 0, 1.02])
     savefig(filename, dpi=300)
@@ -102,7 +102,8 @@ def plotAngle(x, y, angles, n, filename):
   fig = plt.figure()
   dx = dy = 1.0/n #quadrado de lado 1
   cmap = plt.get_cmap('PiYG')
-  levels = MaxNLocator(nbins=15).tick_values(angles.min(), angles.max())
+#  levels = MaxNLocator(nbins=15).tick_values(angles.min(), angles.max())
+  levels = MaxNLocator(nbins=15).tick_values(-180.0, 180.0)
   plt.contourf(x, y, angles, levels=levels, cmap=cmap)
   plt.colorbar()
   plt.title(r'Angle between $\mathbf{H}_{\mathrm{calc}}$ and $\mathbf{M}$')
@@ -176,8 +177,8 @@ def makePNGforVideo(filename, n):
 if __name__ == "__main__":
     
     n = int(sys.argv[1]) #esta é a dimensão da malha escalonada menos 2
-    f = open('N' + str(n) + '.dat', 'rb')
     makePNGforVideo('N' + str(n) + '.dat', n)
+    f = open('N' + str(n) + '.dat', 'rb')
     t = float64(sys.argv[2])
     step = int(sys.argv[3])
     chi = float64(sys.argv[4])
@@ -203,22 +204,13 @@ if __name__ == "__main__":
     # generate grid
     x=linspace(0, 1 - dx, n) + (dx/2)
     y=linspace(0, 1 - dx, n) + (dx/2)
+    
     x, y=meshgrid(x, y)
-    plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, gamma, 1, 'vectorField.png')
-    plotVectorField(Hx, Hy, x, y, n, step, chi, Cpm, Re, gamma, 1, 'vectorFieldH.png')
     
     plotPressure(x, y, p, 'pressure.png')
     plotAngle(x,y,angles,n, 'angle.png')
-#    ij = math.ceil((n+2)/2-1) - 1
-#    w = (v[ij,ij+1]-v[ij,ij-1])/(2*dx) - (u[ij+1,ij]-u[ij-1,ij])/(2*dx)
-#    print("Max rot inside is {0:.3f}k".format(rotInside(Hx, Hy, n)))
-#    print("Max div inside is {0:.3f}k".format(divInside(Hx, Hy, n)))
-    #wc = -0.63925
-    #error = abs(abs(wc)-abs(w))
-    #print("Error in vorticity: ", error)
-
-    #Da forma abaixo posso ler os valores de um arquivo
-    # de pontos flutuantes
-    #sys.argv[1] é o n
+    
+    plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, gamma, 1, 'vectorField.png')
+    plotVectorField(Hx, Hy, x, y, n, step, chi, Cpm, Re, gamma, 1, 'vectorFieldH.png')
     
 
