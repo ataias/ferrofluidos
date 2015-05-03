@@ -36,4 +36,8 @@ Detalhes sobre os parâmetros estão disponíveis no código `frames.jl`. Dados 
 	chmod +x vectorField.py
 	./vectorField.py
 
+É recomendável adicionar a linha 
 
+	push!(LOAD_PATH,"/home/ataias/ferrofluidos/src")
+
+ao arquivo `~/.juliarc.jl`, lembrando de adicionar o diretório correto onde `ferrofluidos/src` está.
