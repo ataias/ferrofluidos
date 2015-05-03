@@ -60,7 +60,7 @@ s = int(ARGS[1]) #simulation number
 if 1 <= s <= size(Re,1)
     simulation(n[s], dt[s], Re[s]*1.0, 0.0, 0.0, 0.0, a, b, "n") #no magnetism
 elseif s <= int(2*size(Re,1))
-    simulation(n[s%11], dt[s%11], Re[s%11]*1.0, 0.5, 0.8, 3.5, a, b, "w") #with magnetism
+    simulation(n[s-11], dt[s-11], Re[s-11]*1.0, 0.5, 0.8, 3.5, a, b, "w") #with magnetism
 else
     println("Invalid simulation number")
 end
