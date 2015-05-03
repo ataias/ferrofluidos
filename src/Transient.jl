@@ -21,11 +21,20 @@ end
 #resolve equações para um dado n e Re
 #t is time, in dimensioless units, of physical simulation
 function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
-    println("Dados sobre simulação:\n n\t= ", n, "\n dx\t= ", 1/(n-2), "\n t\t= ", t, "\n Re\t= ", Re, "\n dt\t= ", dt, "\n ");
-    println(" chi\t= ", chi, "\n Cpm\t= ", Cpm, "\n gamma\t= ", gamma, "\n")
+    dx = 1/(n-2)
+    
+    println("Dados sobre simulação: ")
+    println(" n\t= ", n)
+    println(" dx\t= ", dx)
+    println(" t\t= ", t)
+    println(" Re\t= ", Re)
+    println(" dt\t= ", dt)
+    println(" chi\t= ", chi)
+    println(" Cpm\t= ", Cpm)
+    println(" gamma\t= ", gamma)
     println(strftime(time()), "\n")
     
-	dx = 1/(n-2)
+	
 	steps = integer(t/dt)
 	c = integer(n/2); #center, non-staggered grid
 
