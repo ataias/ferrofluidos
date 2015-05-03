@@ -89,15 +89,7 @@ end
 
 function getDt(n, Re, divFactor=1.25)
 	dx = 1/(n-2) #n é o tamanho da malha escalonada
-	dt1 = 0.25*Re*dx*dx
-	dt2 = dx
-	dt = 0.0
-	if dt1 < dt2
-		dt = dt1/divFactor
-	else 
-		dt = dt2/divFactor
-	end
-	return dt;
+	return min(0.25*Re*dx*dx,dx)/divFactor
 end
 
 end #NavierTypes
