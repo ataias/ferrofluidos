@@ -1,31 +1,22 @@
 #!/usr/bin/env python3
 #Example to run this program:
-#./vectorField.py 100 3.0 4 1.0 4 30
+#./vectorField.py 100 3.0 4 1.0 4 30 3
 #arg[1] - mesh size
 #arg[2] - time of simulation
 #arg[3] - step (if size is n, then n/step vectors will be plotted, this makes things neat)
 #arg[4] - chi
 #arg[5] - Cpm
 #arg[6] - Re    
-#comando para fazer vídeo
-#   convert -quality 100 *.png movie.mpg
+#arg[7] - gamma
+#Comando para criar vídeo
+#Este na pasta que contém a pasta "png" e execute isso
+#ffmpeg -i png/%4d.png -c:v libx264 -vf fps=30 -pix_fmt yuv420p out.mp4
 
 # import useful modules
-import matplotlib 
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
-import matplotlib.pyplot as plt
-import math
-import sys
-
+from matplotlib import *
 from pylab import *
-from numpy import *
 import struct
-
-#to plot angles
-from matplotlib.colors import BoundaryNorm 
-from matplotlib.ticker import MaxNLocator
+import sys
 
 def readFromFile(array, file, n):
     for i in range(n):
@@ -44,16 +35,16 @@ def batchRead(u, v, p, Hx, Hy, phi, angles, n, f):
 
 def plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, gamma, time, filename):
     #use LaTeX, choose nice some looking fonts and tweak some settings
-    matplotlib.rc('font', family='serif')
-    matplotlib.rc('font', size=16)
-    matplotlib.rc('legend', fontsize=16)
-    matplotlib.rc('legend', numpoints=1)
-    matplotlib.rc('legend', handlelength=1)
-    matplotlib.rc('legend', frameon=False)
-    matplotlib.rc('xtick.major', pad=7)
-    matplotlib.rc('xtick.minor', pad=7)
-    matplotlib.rc('text', usetex=True)
-    matplotlib.rc('text.latex', 
+    rc('font', family='serif')
+    rc('font', size=16)
+    rc('legend', fontsize=16)
+    rc('legend', numpoints=1)
+    rc('legend', handlelength=1)
+    rc('legend', frameon=False)
+    rc('xtick.major', pad=7)
+    rc('xtick.minor', pad=7)
+    rc('text', usetex=True)
+    rc('text.latex', 
                  preamble=[r'\usepackage[T1]{fontenc}',
                            r'\usepackage{amsmath}',
                            r'\usepackage{txfonts}',
@@ -64,9 +55,10 @@ def plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, gamma, time, filename):
     #Q = quiver(x[0:n:step,0:n:step], y[0:n:step,0:n:step], u[0:n:step,0:n:step], v[0:n:step,0:n:step], pivot='middle', headwidth=4, headlength=6)
     #qk = quiverkey(Q, 0.5, 1.0, 1, r'$\mathbf{v}$, mesh $' + str(n) + r'\times' + str(n) + '$, $\chi = ' + str(chi) + '$, Cpm = ' + str(Cpm) + ', Re = ' + str(Re), fontproperties={'weight': 'bold'})
 
-    step = 1 #for streamplot, let step = 1 always
-    streamplot(x[0:n:step,0:n:step], y[0:n:step,0:n:step], u[0:n:step,0:n:step], v[0:n:step,0:n:step], color=u, linewidth=1.3, cmap=cm.winter, arrowsize=4)
-    colorbar()
+    #1 é a velocidade máxima na malha, ela varia se a condição de contorno for modificada
+    norm = Normalize(vmin=-1.0, vmax=1.0)
+    streamplot(x, y, u, v, color=u, linewidth=1.3, cmap=cm.winter, arrowsize=4, norm=norm)
+    colorbar(norm=norm, cmap=cm.winter, ticks=[-1, 0, 1])
     xlabel('$x$')
     ylabel('$y$')
     text(1.21, 1.0, r'Re = ' + str(Re))
@@ -82,34 +74,25 @@ def plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, gamma, time, filename):
 def plotPressure(x, y, p, filename):
     #Plotar pressão
     close('all')
-    fig = plt.figure()
-#    ax = fig.gca(projection='3d')
-#    surf = ax.plot_surface(x, y, p, rstride=1, cstride=1, cmap=cm.coolwarm,
-#           linewidth=0, antialiased=False)
-#    pmin = int(amin(p)) - 1
-#    pmax = int(amax(p)) + 1
-#    ax.set_zlim(pmin, pmax)
-#    ax.zaxis.set_major_locator(LinearLocator(10))
-#    ax.zaxis.set_major_formatter(FormatStrFormatter('%.01f'))
-#    fig.colorbar(surf, shrink=0.5, aspect=5)
-    CS = plt.contour(x, y, p)
-    plt.clabel(CS, inline=1, fontsize=10)   
-    plt.title('Pressure')
-    plt.savefig(filename, dpi=200)
+    fig = figure()
+    CS = contour(x, y, p)
+    clabel(CS, inline=1, fontsize=10)   
+    title('Pressure')
+    savefig(filename, dpi=200)
     
 def plotAngle(x, y, angles, n, filename):
   close('all')
-  fig = plt.figure()
+  fig = figure()
   dx = dy = 1.0/n #quadrado de lado 1
-  cmap = plt.get_cmap('PiYG')
+  cmap = get_cmap('PiYG')
 #  levels = MaxNLocator(nbins=15).tick_values(angles.min(), angles.max())
-  levels = MaxNLocator(nbins=15).tick_values(-180.0, 180.0)
-  plt.contourf(x, y, angles, levels=levels, cmap=cmap)
-  plt.colorbar()
-  plt.title(r'Angle between $\mathbf{H}_{\mathrm{calc}}$ and $\mathbf{M}$')
+  levels = MaxNLocator(nbins=30).tick_values(-180.0, 180.0)
+  contourf(x, y, angles, levels=levels, cmap=cmap)
+  colorbar()
+  title(r'Angle between $\mathbf{H}_{\mathrm{calc}}$ and $\mathbf{M}$')
   xlabel(r'$x$')
   ylabel(r'$y$')  
-  plt.savefig(filename, dpi=200)
+  savefig(filename, dpi=200)
   
     
 #Calcula rotacional nos pontos internos e retorna o maior valor de rotacional
@@ -136,8 +119,6 @@ def divInside(Fx, Fy, n):
                 divMax = divF
     return divMax
 
-#To create video:
-#ffmpeg -i png/%4d.png -c:v libx264 -vf fps=30 -pix_fmt yuv420p out.mp4
 def makePNGforVideo(filename, n):
     f = open('N' + str(n) + '.dat', 'rb')
     t = float64(sys.argv[2])
@@ -212,5 +193,3 @@ if __name__ == "__main__":
     plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, gamma, t, 'vectorField.png')
     if(gamma>1e-15):
       plotVectorField(Hx, Hy, x, y, n, step, chi, Cpm, Re, gamma, t, 'vectorFieldH.png')
-    
-
