@@ -75,6 +75,9 @@ def plotPressure(x, y, p, filename):
     #Plotar pressão
     close('all')
     fig = figure()
+    maxl = max(p)
+    minl = min(p)
+    levels = arange(minl, maxl, (maxl - minl)/10.0)
     CS = contour(x, y, p)
     clabel(CS, inline=1, fontsize=10)   
     title('Pressure')
