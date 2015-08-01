@@ -73,35 +73,83 @@ Magnetic fluids, Navier~Stokes, PDE, Poisson, Laplace, Finite~differences
 \IEEEpeerreviewmaketitle
 
 \section{Introduction}
-The goal of this study
+This project aims at studying magnetic fluids in a 2D lid-driven cavity. The ideal cavity used here is a square of side equal to unity. All the boundaries but the top are with null velocities. The lid has a stationary velocity pattern that will be presented. Even though this may seem a simplistic method, papers have been presented not only in the last century but also in this century to study real problems. Garandet \cite{Garandet2012149} uses a similar approach to study solute segregations. On the field of biomagnetic fluids, Tzirtzilakis \cite{Tzirtzilakis2013} has also considered a cavity and analysed the stationary solutions under different conditions of the Reynolds numbers and magnetic parameters. Differently from this last researcher, our project has not considered a method to find directly the steady state, but has evolved in discrete time steps from time 0 to an end time defined. The advantage is that animations can be created to show how the flow evolves. 
 
-O objetivo deste estudo é estudar essa instabilidade por meio de métodos numéricos auxiliados por computador. A equação de Navier Stokes deve ser discretizada e então resolvida numericamente. Ela é uma equação diferencial parcial altamente não-linear e de difícil resolução. No caso da instabilidade de Saffman-Taylor, no qual a fronteira está em movimento, que é a interface entre os dois fluidos, faz-se necessário algoritmos numéricos capazes de lidar com este movimento sem causar complicações extremas que impossibilitem a obtenção de soluções práticas\cite{immersed_boundary_methods} \cite{immersed_boundary_methods2}. 
-
-Tais ferramentas numéricas e decisão de métodos/algoritmos a se utilizar são a primeira etapa neste projeto, para então, após se ter tais ferramentas, estudar a física do problema e propor soluções para o problema com a utilização de um ferrofluido. Este relatório mostrará até onde se alcançou na codificação dos algoritmos numéricos para resolução do problema proposto. Iniciou-se com o estudo de equações diferenciais parciais bastante conhecidas, como a equação do Calor, de Laplace, e métodos de solução numérica, especificamente o método de diferenças finitas. Após isso, estudou-se em específico a equação de Navier Stokes\cite{notas_de_aula_john}.
-
-A metologia aqui proposta resume as tarefas realizadas ao longo da execução do projeto:
-\begin{enumerate}
-  \item[A.] Técnicas de Computação Básica
-  \item[B.] Solução da equação de Laplace
-  \item[C.] Solução da equação de Poisson
-  \item[D.] Solução da equação de Navier Stokes
-  \begin{enumerate}
-  \item [] Considerações gerais sobre a equação
-  \item[1.] Desconsiderando a pressão
-  \item[2.] Obtendo a pressão
-  \item[3.] Avançando no tempo
-  \end{enumerate}
-\end{enumerate}
 \section{Governing Equations}
-The equations that dictate the flow and the possibilities of parameters to solve it include continuous and discr
+Equations \ref{navierstokes} and \ref{navierincompressibilidade} govern the flow of an incompressible fluid. The first one is the Navier Stokes equation, while the second one is the condition for incompressibility.
 
 \begin{eqnarray}
 \rho\left( \frac{\partial {\textbf{v}}}{\partial t}+\textbf{v}\cdot\nabla \textbf{v} \right)=-\nabla p+\mu\nabla^2 \textbf{v} + \textbf{f}\label{navierstokes}\\
-\nabla\cdot\textbf{v}=0
+\nabla\cdot\textbf{v}=0\label{navierincompressibilidade}
+\end{eqnarray}
+
+Computer solutions require certain conditions on the time step and spacing of grid points. The requirements are: stable diffusion, Equation \ref{stablediffusion}; stable advection, Equation \ref{stableadvection} and hydrodynamic boundary layer, Equation \ref{boundarylayer}. $U$ is the maximum speed in the cavity. If those equations are not satisfied, the solution will be wrong as the program may be trying to solve faster than the laws of physics allow. The program may not even converge and stay on an infinite loop.
+
+\begin{eqnarray}
+\Delta t &<& \frac{1}{4}\mathit{Re}\Delta x^2 \label{stablediffusion}\\
+\Delta t &<& \frac{\Delta x}{U} \label{stableadvection}\\
+\Delta x &<& \frac{1}{\mathit{Re}} \label{boundarylayer}
+\end{eqnarray}
+
+The Navier Stokes equation is thorough, encompassing several types of flow. A specific solution is found by specifying its boundary conditions. For the current work, the conditions are
+
+\begin{eqnarray}
+u(x,1) & = & \sin^2(\pi x),\\
+u(x,0) & = & u(0,y) = u(1,y) = 0\\
+v(x,0) & = & v(x,1) = v(0, y) = v(1, y) = 0
+\end{eqnarray}
+
+Besides the hydrodynamics equations and conditions, the magnetic force - $\mathbf{f}$ - must be computed. From Maxwell's theory, Equations \ref{firstmagneticequation} and \ref{secondmagneticequation} are obtained. 
+
+\begin{eqnarray}
+\mathbf{B} &=& \mu_0(\mathbf{M}+\mathbf{H})\label{firstmagneticequation}\\
+\nabla\cdot \mathbf{B} & = & 0\label{secondmagneticequation}
+\end{eqnarray}
+
+From the latter equations, it is possible to conclude that 
+
+\begin{eqnarray}
+\nabla\cdot \mathbf{M} = -\nabla\cdot\mathbf{H}	\label{mh1}.
+\end{eqnarray}
+
+The magnetostatic regime implies $\nabla\times \mathbf{H} = \mathbf{0}$ which indicates there is a potential field $\phi$ that satisfies $\mathbf{H} = -\nabla \phi$. With these last equations, it is possible to obtain Equation \ref{eqcampomag}. This is a Poisson equation that will give $\phi$ according the the applied field $\mathbf{H}$. The superparamagnetic case is being considered, what implies $\mathbf{M} = \chi \mathbf{H}$.
+
+\begin{eqnarray}
+\nabla^2\phi &=& \nabla\cdot \mathbf{M}\label{eqcampomag}
+\end{eqnarray}
+
+Nevertheless, the potential $\phi$ cannot be introduced directly in the Navier Stokes equation. What is needed is a relation that gives the magnetic force, which could then be incorporated in the fluid equations. Equation \ref{magneticforce} stands for the magnetic force, while Equation \ref{cpm} is the magnetic reynolds number.
+
+\begin{eqnarray}
+\mathbf{f} & = & \mathrm{Cpm} \mathbf{M}\cdot \nabla \mathbf{H}\label{magneticforce}\\
+\mathrm{Cpm} & = & \frac{\mu_0 H_0^2}{\rho u^2}\label{cpm}
 \end{eqnarray}
 
 
+One thing that is missing is the boundary conditions for the potential field $\phi$. To understand how they are derived, first consider an applied magnetic field $\mathbf{H}$. A condition that is imposed is continuity of the normal component of $\mathbf{B}$ - $\mathbf{B}$ can be obtained by Equation \ref{firstmagneticequation}. This continuity can be mathematically represented by Equation \ref{normalconditionB}. From this, Equation \ref{normalConditionB2} can be obtained.
+
+\begin{eqnarray}
+\left(\mathbf{B}_{\mathrm{out}} - \mathbf{B}_{\mathrm{in}}\right)\cdot \mathbf{n} &=& 0 \label{normalconditionB}\\
+\mu_0 (H_{\mathrm{out}}^{\mathrm{n}} + M_{\mathrm{out}}^{\mathrm{n}}) &=&  \mu_0(H_{\mathrm{in}}^{\mathrm{n}}+M_{\mathrm{in}}^{\mathrm{n}})\label{normalConditionB2}
+\end{eqnarray}
+
 \section{Solution Method}
+
+In order to solve the flow with a computer, the latter equations should be expanded to its 2D form and then discretized. Nevertheless, the fluid flow equation is highly non-linear due to its convective term - $\mathbf{v}\cdot \nabla \mathbf{v}$. Another problem is that the pressure needed at each time step is not known and need to be solved. The pressure is needed to know the velocity and the velocity is needed to obtain the pressure. To solve this dilemma, the Chorin method \cite{Chorin1997118} was used. This method is the time splitting. To understand this method, one can start by using finite differences for the velocity derivative with respect to time and then doing a smart manipulation with two new terms. This is presented in Equation \ref{vdottimesplitting}.
+
+\begin{equation}
+\frac{\partial \textbf{v}}{\partial t}\approx \frac{\textbf{v}^{n+1}-\textbf{v}^n}{\Delta t}=\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t} \label{vdottimesplitting}
+\end{equation}
+
+The idea of time-splitting is to impose each parcel of Equation \ref{vdottimesplitting} to a different part of the Navier Stokes equation. The last term in the right hand side is used to solve Equation \label{equacaovestrela}, in which pressure is not considered, while the term just before it is used to obtain the next time step from the pressure calculated with $\mathbf{v}^{*}$.
+
+\begin{eqnarray}
+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}&=& \nu\nabla ^2 \textbf{v} + \frac{\textbf{f}}{\rho} - \textbf{v}\cdot \nabla \textbf{v}\label{equacaovestrela}\\
+\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}&=&-\frac{1}{\rho}\nabla p\label{equacaoprepressao}
+\end{eqnarray}
+
+
+
 
 \begin{figure}[!ht]
 \centering
@@ -302,13 +350,18 @@ O programa para resolver a equação de Navier Stokes na malha escalonada está 
 \section*{Acknowledgments}
 
 Primeiramente agradeço a Deus pela oportunidade de ter feito parte deste trabalho. Agradeço também ao professor Yuri Dumaresq pelas orientações e ânimo no ensino que eu vi nele e que também me animaram na resolução destes problemas numéricos. Agradeço também ao CNPq pela bolsa de incentivo à pesquisa.
+%
+%\begin{thebibliography}{4}
+%\bibitem{magnetic_fluids} Rosensweig, R.E. 1987. Magnetic Fluids. Annu. Rev. Fluid Mech. 19:437-461.
+%\bibitem{immersed_boundary_methods} Mittal R, Iaccarino G. 2005. Immersed Boundary Methods. Annu. Rev. Fluid Mech. 37:239-61.
+%\bibitem{immersed_boundary_methods2} Perkin, C. S. 2002. The immersed boundary method. Act. Numerica p. 479:517
+%\bibitem{notas_de_aula_john} Hinch, E.J. Lecture notes on Computational Fluid Dynamics: Part I - A first problem. 
+%\bibitem{fingering} Babchin, A., Brailovsky, I. Gordon, P., Sivashinsky, G. Fingering instability in immiscible displacement. . Phys. Rev. E , 77, 026301, (2008).
+%\bibitem{time_splitting} Chorin, A. J. A numerical method for solving incompressible viscous flow problems. J. Computational Physics, v. 2, 1967, p. 12
+%\end{thebibliography}
 
-\begin{thebibliography}{4}
-\bibitem{magnetic_fluids} Rosensweig, R.E. 1987. Magnetic Fluids. Annu. Rev. Fluid Mech. 19:437-461.
-\bibitem{immersed_boundary_methods} Mittal R, Iaccarino G. 2005. Immersed Boundary Methods. Annu. Rev. Fluid Mech. 37:239-61.
-\bibitem{immersed_boundary_methods2} Perkin, C. S. 2002. The immersed boundary method. Act. Numerica p. 479:517
-\bibitem{notas_de_aula_john} Hinch, E.J. Lecture notes on Computational Fluid Dynamics: Part I - A first problem. 
-\bibitem{fingering} Babchin, A., Brailovsky, I. Gordon, P., Sivashinsky, G. Fingering instability in immiscible displacement. . Phys. Rev. E , 77, 026301, (2008).
-\bibitem{time_splitting} Chorin, A. J. A numerical method for solving incompressible viscous flow problems. J. Computational Physics, v. 2, 1967, p. 12
-\end{thebibliography}
+\bibliographystyle{plain}
+\bibliography{pibic}
+
+
 \end{document}
