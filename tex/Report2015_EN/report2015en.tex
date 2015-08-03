@@ -59,7 +59,7 @@ This work aims at studying how magnetic fluids behave in a 2D lid-driven cavity.
 
 % Note that keywords are not normally used for peerreview papers.
 \begin{IEEEkeywords}
-Magnetic fluids, Navier~Stokes, PDE, Poisson, Laplace, Finite~differences
+Magnetic fluid, Driven Cavity, Finite~differences, Magnetohydrodynamics
 \end{IEEEkeywords}
 
 % For peer review papers, you can put extra information on the cover
@@ -73,9 +73,87 @@ Magnetic fluids, Navier~Stokes, PDE, Poisson, Laplace, Finite~differences
 \IEEEpeerreviewmaketitle
 
 \section{Introduction}
-This project aims at studying magnetic fluids in a 2D lid-driven cavity. The ideal cavity used here is a square of side equal to unity. All the boundaries but the top are with null velocities. The lid has a stationary velocity pattern that will be presented. Even though this may seem a simplistic method, papers have been presented not only in the last century but also in this century to study real problems. Garandet \cite{Garandet2012149} uses a similar approach to study solute segregations. On the field of biomagnetic fluids, Tzirtzilakis \cite{Tzirtzilakis2013} has also considered a cavity and analysed the stationary solutions under different conditions of the Reynolds numbers and magnetic parameters. Differently from this last researcher, our project has not considered a method to find directly the steady state, but has evolved in discrete time steps from time 0 to an end time defined. The advantage is that animations can be created to show how the flow evolves. 
+This project aims at studying magnetic fluids in a 2D lid-driven cavity. The ideal cavity used here is a square of side equal to unity. All the boundaries but the top are with null velocities. The lid has a stationary velocity pattern that will be presented. Even though this may seem a simplistic method, papers have been presented not only in the last century but also in this century to study real problems. Garandet \cite{Garandet2012149} uses a similar approach to study solute segregations. On the field of biomagnetic fluids, Tzirtzilakis \cite{Tzirtzilakis2013} has also considered a cavity and analysed the stationary solutions under different conditions of the Reynolds numbers and magnetic parameters. Differently from this last researcher, our project has not considered a method to find directly the steady state, but has evolved in discrete time steps from time 0 to an end time defined. The advantage is that more data can be analysed, so that it is possible to know when vortices start to appear and if there is any that disappear. Animations were made in order to investigate this.
+
+A colloidal magnetic fluid, or ferrofluid, consists typically of a suspension of monodomain ferromagnetic particles such as magnetite in a nonmagnetic carrier fluid. Particle-to-particle agglomeration is avoided by surfactants covering the particles, and Brownian motion prevents particle sedimentation in gravitational or magnetic fields.  \cite{RosensweigMagneticFluids}. A magnetic fluid has usually around $10^{23}$ particles per cubic meter and is opaque at visible light.
+
+The method chosen to solve the differential equations is finite differences \cite{zbMATH03010997}. This method approximates each derivative by discrete terms involving differences. The domain in which the problem is to be solved must be turned into a mesh. The smaller the cells of the mesh, the better the finite differences solution will be. All the finite differences used here are of second order, which means that the error decays quadratically as the mesh size is lowered. The mesh that is being used is not the trivial one, but a staggered grid. In such a grid, not every information is stored in the same point. For cell $ij$, the pressure will be in position $i+\frac{1}{2}j+\frac{1}{2}$, while velocity in the $x$ direction will be $u_{ij+\frac{1}{2}}$ and the $y$ direction will be $v_{i+\frac{1}{2}j}$. This avoids spurious pressure modes \cite{hinchLectureNotes}. A cell of this grid is presented in Figure \ref{grid-cell}. An example of the mesh is presented in Figure \ref{staggered-grid}. The simulation will have to use all the round points presented, and almost all the velocities marked, except the extreme left and bottom ones. After the solution is obtained, an interpolation can be made to obtain the values at a specified point. It was decided to save the results in the middle point of each cell. The pressure is already in that position, but the velocities are not. Therefore, averages were computed to obtain those values in the middle point.
+
+\begin{figure}[!ht]
+\centering
+\begin{tikzpicture}
+\draw (0,0) rectangle (2,2);
+\draw (1.35,1.2) node {$p_{i+\frac{1}{2}j+\frac{1}{2}}$};
+\draw[->] (1,-0.2) -- (1,0.2);
+\draw (1,-0.3) node {$v_{i+\frac{1}{2}j}$};
+\draw[->] (-0.2,1) -- (0.2,1);
+\draw (-0.5,1.3) node {$u_{ij+\frac{1}{2}}$};
+\draw (1,1) circle (2pt);
+
+\draw (0,0) circle (2pt);
+\draw (-0.25,-0.25) node {$ij$};
+\end{tikzpicture}
+\caption{Cell of the staggered grid\label{grid-cell}}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\tikzstyle{help lines}+=[dashed]% aaarghhh!!!
+\begin{tikzpicture}
+%axes
+\draw[->] (0,5) -- (xyz cs:y=6);
+\draw (0,6.3) node {$y(j)$};
+\draw[->] (5,0) -- (xyz cs:x=6);
+\draw (6.5,0) node {$x(i)$};
+\draw (-0.18,-0.18) node {$O$};
+%grid
+\draw[style=help lines] (-1,-1) grid +(7,7);
+\draw (0,0) grid +(5,5);
+%internal p points
+\foreach \x in {0.5,1.5,2.5,3.5,4.5}
+  \foreach \y in {0.5,1.5,2.5,3.5,4.5}
+  {
+  \fill (canvas cs:x=\x cm,y=\y cm) circle (2pt);
+}
+%External p points
+\foreach \x in {0.5,1.5,2.5,3.5,4.5}
+  \draw (\x,-0.5) circle (2pt);
+\foreach \y in {0.5,1.5,2.5,3.5,4.5}
+  \draw (5.5,\y) circle (2pt);
+\foreach \y in {0.5,1.5,2.5,3.5,4.5}
+  \draw (-0.5,\y) circle (2pt);
+\foreach \x in {0.5,1.5,2.5,3.5,4.5}
+  \draw (\x,5.5) circle (2pt);
+%Internal Horizontal Velocities Points
+\foreach \x in {-1.2,-0.2,0.8,1.8,2.8,3.8,4.8}
+  \foreach \y in {0.5,1.5,2.5,3.5,4.5}
+  {
+  \draw[->] (\x,\y) -- (\x+0.4,\y);
+}
+%External Horizontal Velocities Points
+\foreach \x in {-.2,0.8,1.8,2.8,3.8}
+  \draw[->] (\x,5.5) -- (\x+0.4,5.5);
+\foreach \x in {-.2,0.8,1.8,2.8,3.8}
+  \draw[->] (\x,-.5) -- (\x+0.4,-.5);
+%Internal Vertical Velocities Points
+\foreach \x in {0.5,1.5,2.5,3.5,4.5}
+  \foreach \y in {-1.2,-0.2,0.8,1.8,2.8,3.8,4.8}
+  {
+  \draw[->] (\x,\y) -- (\x,\y+0.4);
+}
+%External Vertical Velocities Points
+\foreach \y in {-0.2,0.8,1.8,2.8,3.8}
+  \draw[->] (5.5,\y) -- (5.5,\y+0.4);
+\foreach \y in {-0.2,0.8,1.8,2.8,3.8}
+  \draw[->] (-.5,\y) -- (-.5,\y+0.4);
+\end{tikzpicture}
+\caption{Staggered-grid. Dark circles are internal points, while empty ones are part of the extra layer\label{staggered-grid}}
+\end{figure}
+
+The code for the simulator was made with aid of programming language Julia\footnote{http://julialang.org}. This language offers several linear algebra packages that were easy to use. Graphics were made using Python's graphical packages. Codes and articles are hosted on GitHub\footnote{https://github.com/ataias/ferrofluidos}. In the Julia language, matrices are indexed from 1 to $n$. This is different from C, because its indexing starts from 0.
 
 \section{Governing Equations}
+\subsection{Hidrodynamics}
 Equations \ref{navierstokes} and \ref{navierincompressibilidade} govern the flow of an incompressible fluid. The first one is the Navier Stokes equation, while the second one is the condition for incompressibility.
 
 \begin{eqnarray}
@@ -99,6 +177,7 @@ u(x,0) & = & u(0,y) = u(1,y) = 0\\
 v(x,0) & = & v(x,1) = v(0, y) = v(1, y) = 0
 \end{eqnarray}
 
+\subsection{Magnetism}
 Besides the hydrodynamics equations and conditions, the magnetic force - $\mathbf{f}$ - must be computed. From Maxwell's theory, Equations \ref{firstmagneticequation} and \ref{secondmagneticequation} are obtained. 
 
 \begin{eqnarray}
@@ -133,8 +212,22 @@ One thing that is missing is the boundary conditions for the potential field $\p
 \mu_0 (H_{\mathrm{out}}^{\mathrm{n}} + M_{\mathrm{out}}^{\mathrm{n}}) &=&  \mu_0(H_{\mathrm{in}}^{\mathrm{n}}+M_{\mathrm{in}}^{\mathrm{n}})\label{normalConditionB2}
 \end{eqnarray}
 
-\section{Solution Method}
+The medium outside is air and therefore its magnetization, $M_{\mathrm{out}}^{\mathrm{n}}$ is zero. It is possible to use $\mathbf{H} = -\nabla \phi$ in the remaining outer term to obtain Equation \ref{nablaphid}.
 
+\begin{eqnarray}
+\nabla\phi_{\mathrm{d}}^{\mathrm{n}} & = & -H_{\mathrm{f}}^{\mathrm{n}} + M_{\mathrm{d}}^{\mathrm{n}} \label{nablaphid}
+\end{eqnarray}
+
+From that, Neumann boundary conditions can be obtained. For the sake of clarity, they are presented in Equations \ref{condition1phi} to \ref{condition4phi}. The subscripts are indicating matrix indices.
+
+\begin{eqnarray}
+\left.\frac{\partial \phi}{\partial x}\right|_{\mathrm{left}}\;\;&\approx&- H^{x}_{2,j} + M^{x}_{2,j}\label{condition1phi}\\
+\left.\frac{\partial \phi}{\partial x}\right|_{\mathrm{right}}&\approx&- H^{x}_{n,j} + M^{x}_{n,j}\\
+\left.\frac{\partial \phi}{\partial y}\right|_{\mathrm{lower}}&\approx&- H^{y}_{i,2} + M^{y}_{i,2}\\
+\left.\frac{\partial \phi}{\partial y}\right|_{\mathrm{upper}}&\approx&- H^{y}_{i,n} + M^{y}_{i,n}\label{condition4phi}
+\end{eqnarray}
+
+\section{Solution Method}
 In order to solve the flow with a computer, the latter equations should be expanded to its 2D form and then discretized. Nevertheless, the fluid flow equation is highly non-linear due to its convective term - $\mathbf{v}\cdot \nabla \mathbf{v}$. Another problem is that the pressure needed at each time step is not known and need to be solved. The pressure is needed to know the velocity and the velocity is needed to obtain the pressure. To solve this dilemma, the Chorin method \cite{Chorin1997118} was used. This method is the time splitting. To understand this method, one can start by using finite differences for the velocity derivative with respect to time and then doing a smart manipulation with two new terms. This is presented in Equation \ref{vdottimesplitting}.
 
 \begin{equation}
@@ -227,76 +320,7 @@ Como se nota, a resolução é direta, mas o algoritmo para se resolver este sis
 
 \section{Results}
 
-\begin{figure}[!ht]
-\centering
-\begin{tikzpicture}
-\draw (0,0) rectangle (2,2);
-\draw (1.35,1.2) node {$p_{i+\frac{1}{2}j+\frac{1}{2}}$};
-\draw[->] (1,-0.2) -- (1,0.2);
-\draw (1,-0.3) node {$v_{i+\frac{1}{2}j}$};
-\draw[->] (-0.2,1) -- (0.2,1);
-\draw (-0.5,1.3) node {$u_{ij+\frac{1}{2}}$};
-\draw (1,1) circle (2pt);
 
-\draw (0,0) circle (2pt);
-\draw (-0.25,-0.25) node {$ij$};
-\end{tikzpicture}
-\caption{Elemento de malha escalonada}
-\end{figure}
-
-\begin{figure}[!ht]
-\centering
-\tikzstyle{help lines}+=[dashed]% aaarghhh!!!
-\begin{tikzpicture}
-%axes
-\draw[->] (0,5) -- (xyz cs:y=6);
-\draw (0,6.3) node {$y(j)$};
-\draw[->] (5,0) -- (xyz cs:x=6);
-\draw (6.5,0) node {$x(i)$};
-\draw (-0.18,-0.18) node {$O$};
-%grid
-\draw[style=help lines] (-1,-1) grid +(7,7);
-\draw (0,0) grid +(5,5);
-%internal p points
-\foreach \x in {0.5,1.5,2.5,3.5,4.5}
-  \foreach \y in {0.5,1.5,2.5,3.5,4.5}
-  {
-  \fill (canvas cs:x=\x cm,y=\y cm) circle (2pt);
-}
-%External p points
-\foreach \x in {0.5,1.5,2.5,3.5,4.5}
-  \draw (\x,-0.5) circle (2pt);
-\foreach \y in {0.5,1.5,2.5,3.5,4.5}
-  \draw (5.5,\y) circle (2pt);
-\foreach \y in {0.5,1.5,2.5,3.5,4.5}
-  \draw (-0.5,\y) circle (2pt);
-\foreach \x in {0.5,1.5,2.5,3.5,4.5}
-  \draw (\x,5.5) circle (2pt);
-%Internal Horizontal Velocities Points
-\foreach \x in {-1.2,-0.2,0.8,1.8,2.8,3.8,4.8}
-  \foreach \y in {0.5,1.5,2.5,3.5,4.5}
-  {
-  \draw[->] (\x,\y) -- (\x+0.4,\y);
-}
-%External Horizontal Velocities Points
-\foreach \x in {-.2,0.8,1.8,2.8,3.8}
-  \draw[->] (\x,5.5) -- (\x+0.4,5.5);
-\foreach \x in {-.2,0.8,1.8,2.8,3.8}
-  \draw[->] (\x,-.5) -- (\x+0.4,-.5);
-%Internal Vertical Velocities Points
-\foreach \x in {0.5,1.5,2.5,3.5,4.5}
-  \foreach \y in {-1.2,-0.2,0.8,1.8,2.8,3.8,4.8}
-  {
-  \draw[->] (\x,\y) -- (\x,\y+0.4);
-}
-%External Vertical Velocities Points
-\foreach \y in {-0.2,0.8,1.8,2.8,3.8}
-  \draw[->] (5.5,\y) -- (5.5,\y+0.4);
-\foreach \y in {-0.2,0.8,1.8,2.8,3.8}
-  \draw[->] (-.5,\y) -- (-.5,\y+0.4);
-\end{tikzpicture}
-\caption{Malha escalonada. Círculos são pontos internos e de fronteira enquanto circunferências indicam fronteira imaginária adicionada\label{malha_escalonada}}
-\end{figure}
 
 \begin{figure}
 \centering
