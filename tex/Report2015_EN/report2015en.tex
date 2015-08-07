@@ -40,7 +40,7 @@
 \author{Ataias~Pereira~Reis, Yuri~Dumaresq~Sobral, Francisco~Ricardo~da~Cunha\\Universidade de Brasília\\Departamento de Matemática\\Brasília, Brasil\\ataiasreis@gmail.com}
 
 % The paper headers
-\markboth{Scientific Initiation Program, July~2015}%
+\markboth{Scientific Initiation Program, August~2015}%
 {Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for Journals}
 
 \maketitle
@@ -415,23 +415,137 @@ The equations just presented can be coded to define matrix $A$ and vector $b$, b
 
 For the magnetism parts, it was only necessary to use finite differences on the governing equations. The Poisson implicit elements obtained in this section are also used for the magnetic part. The rest are explicit applications of the finite differences equations obtained.
 
+It is important to validate the code. As part of the solution method, tests of the Poisson routine and of the discretization of the Navier Stokes equation are made. The Poisson test is to check the error when comparing a computed result with the actual analytical function that solves the PDE. The second test applies to the Navier Stokes equation and also for the Poisson one: verifying how the error decays according to an increase in mesh size. As all the discrete formulas used are of second order, this error should decay quadratically. The Results section will present both of these tests. Also, Navier Stokes with magnetism will be tested to check the order of the discretization.
+
 \section{Results}
+\subsection{Validation}
+
+The first test for the Poisson routine is presented on Equation \ref{poissonTest1} and the analytical solution is on Equation \ref{solutionPoissonTest1}. The Poisson validation routine returns the middle point difference on the grid that was found, this value is then divided by the real value on that point and multiplied by 100 to get a percentage. The maximum grid size used was $320\times 320$. This one had an error smaller than $0.05\%$. The results for different grid sizes are presented in Figure \ref{errorPoissonTest}. It is easy to see that the error decays quadratically, what was expected due to the second order finite differences that were used.
+
+\begin{eqnarray}
+\left\{\begin{array}{ccl}
+\nabla^2u(x,y) & = & 0\\
+u_x(1,y) & = & \cos 2\pi y\\
+u_n(x,y) & = & 0, \textrm{otherwise, on the boundary}
+\end{array}\right.\label{poissonTest1}
+\end{eqnarray}
+
+\begin{eqnarray}
+u(x,y) & = & \frac{\cosh 2\pi x}{2\pi \sinh 2\pi}\cos 2 \pi y \label{solutionPoissonTest1}
+\end{eqnarray}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\linewidth]{figures/validatePoissonP2}
+\caption{Error evolving according to grid size. Higher grid sizes are closer to left-bottom corner. Error decays quadratically. Comparison with analytical solution. Grid sizes from $40\times 40$ to $320\times 320$. \label{errorPoissonTest}}
+\end{figure}
+
+Validation for the hydrodynamics is presented on Figure \ref{hydrodynamicsTest}. Reynolds is chosen to be 40. The error will be compared against the solution of grid size $200\times 200$, as access to the analytical solution is not possible. The important point to evaluate is that the error decays quadratically, what can be assessed from the image. Vorticity was used instead of velocity because it is a scalar that accounts for both velocity terms. 
+
+A similar test was used to test equation when magnetism is present. The difference is that the force $\mathbf{f}$ is different of zero. Magnetic parameters chosen are $\chi=0.5$, $\mathrm{Cpm}=0.8$, $\gamma=3$ and a center for the magnetic field located close the left-bottom corner. The applied magnetic field is that of Figure \ref{magneticField}. The error evolution for this case is presented on Figure \ref{magneticTest}. The values were compared in steady-state.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/vectorFieldH}
+\caption{Applied magnetic field. All tests were made with this specific magnetic field. $\gamma$ values may change the actual intensity of field, but the streamlines are similar.\label{magneticField}}
+\end{figure}
+
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/validateHydrodynamicsRe40}
+\caption{Error evolving according to grid size. Higher grid sizes are closer to left-bottom corner. Error decays quadratically. Comparison with solution of $200\times 200$ grid. Grid sizes from $70\times 70$ to $170\times 170$. \label{hydrodynamicsTest}}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/validateMagnetismRe40}
+\caption{Error evolving according to grid size. Higher grid sizes are closer to left-bottom corner. Error decays quadratically. Comparison with solution of $200\times 200$ grid. Grid sizes from $70\times 70$ to $170\times 170$. \label{magneticTest}}
+\end{figure}
+
+
+
+\subsection{Tests}
+Some Reynolds numbers were chosen and then several tests were executed for some fixed magnetic parameters. The magnetic parameters are $\chi=0.5$, $\mathrm{Cpm}=0.8$ and $\gamma=3.5$. Reynolds numbers presented here are 1, 50 and 100. Figures \ref{Re001nVectorField} to \ref{Re100wPressure} present streamlines for the velocity and contour lines for the pressure. Images with magnetic parameters set to 0 are the ones without magnetization. All results are in steady state. The angle between $\mathbf{M}$ and $\mathbf{H}$ was also computed for every point in those simulations, but it was zero, as $\mathbf{M}=\chi\mathbf{H}$ is one consideration for the magnetization in the current work.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re001/n/vectorField}
+\caption{Steady state solution without magnetic field. No extra vortices appear.\label{Re001nVectorField}}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re001/n/pressure}
+\caption{Contour plot for pressure of the last figure. \label{Re001nPressure}}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re050/n/vectorField}
+\caption{Steady state solution without magnetic field. No extra vortices appear. \label{Re050nVectorField}}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re050/n/pressure}
+\caption{Contour plot for pressure of the last figure. \label{Re050nPressure}}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re100/n/vectorField}
+\caption{Steady state solution without magnetic field. No extra vortices appear. \label{Re100nVectorField}}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re100/n/pressure}
+\caption{Contour plot for pressure of the last figure. \label{Re100nPressure}}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re001/w/vectorField}
+\caption{Steady state solution without magnetic field. A new vortex starts to appear. \label{Re001wVectorField}}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re001/w/pressure}
+\caption{Contour plot for pressure of the last figure. \label{Re001wPressure}}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re050/w/vectorField}
+\caption{Steady state solution without magnetic field. The new vortex is already bigger than the initial one. \label{Re050wVectorField}}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re050/w/pressure}
+\caption{Contour plot for pressure of the last figure. \label{Re050wPressure}}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re100/w/vectorField}
+\caption{Steady state solution without magnetic field. Vortex increased in comparison with $\mathrm{Re} = 50$. \label{Re100wVectorField}}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re100/w/pressure}
+\caption{Contour plot for pressure of the last figure. \label{Re100wPressure}}
+\end{figure}
 
 \section{Conclusion}
 
+
 \section*{Acknowledgments}
 
-%Primeiramente agradeço a Deus pela oportunidade de ter feito parte deste trabalho. Agradeço também ao professor Yuri Dumaresq pelas orientações e ânimo no ensino que eu vi nele e que também me animaram na resolução destes problemas numéricos. Agradeço também ao CNPq pela bolsa de incentivo à pesquisa.
-%
-%\begin{thebibliography}{4}
-%\bibitem{magnetic_fluids} Rosensweig, R.E. 1987. Magnetic Fluids. Annu. Rev. Fluid Mech. 19:437-461.
-%\bibitem{immersed_boundary_methods} Mittal R, Iaccarino G. 2005. Immersed Boundary Methods. Annu. Rev. Fluid Mech. 37:239-61.
-%\bibitem{immersed_boundary_methods2} Perkin, C. S. 2002. The immersed boundary method. Act. Numerica p. 479:517
-%\bibitem{notas_de_aula_john} Hinch, E.J. Lecture notes on Computational Fluid Dynamics: Part I - A first problem. 
-%\bibitem{fingering} Babchin, A., Brailovsky, I. Gordon, P., Sivashinsky, G. Fingering instability in immiscible displacement. . Phys. Rev. E , 77, 026301, (2008).
-%\bibitem{time_splitting} Chorin, A. J. A numerical method for solving incompressible viscous flow problems. J. Computational Physics, v. 2, 1967, p. 12
-%\end{thebibliography}
-
+Firstly, I thank God for this opportunity. I appreciate professor Yuri Dumaresq for his orientations so that this work could be done. Also, many thanks to CNPq for the scholarship.
 
 
 \bibliographystyle{plain}
