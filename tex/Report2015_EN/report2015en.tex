@@ -516,6 +516,21 @@ Some Reynolds numbers were chosen and then several tests were executed for some 
 \caption{Contour plot for pressure of the last figure. \label{Re001wPressure}}
 \end{figure}
 
+
+
+\section{Conclusion}
+
+It is important for the code to be correct, otherwise it is meaningless to analyse the simulation results. The validation step shows that certainly the system is behaving as second order. An incorrect equation would break this and then the bug would appear in those graphics (Figures \ref{errorPoissonTest}, \ref{hydrodynamicsTest} and \ref{magneticTest}). Chances of a program bug are small, given that those validation tests behave well.
+
+Although not presented in the last sections, it is interesting to observe that one problem that appeared was when physics was disregarded. Trying to apply an arbitrary magnetic field has a good chance of generating results that converge but are incorrect when the governing equations are checked. The results presented comply to the laws that we claim to be following. This is also good evidence of correctness.
+
+Regarding the results with no magnetic field, Figures \ref{Re001nVectorField} to \ref{Re100nPressure} present very similar results. Although the Reynolds number changes by a factor of 100, no major changes in the steady state flow were able to be observed. This changes dramatically when a magnetic field is in action. A small vortex already appears in Figure \ref{Re001wVectorField} and just grows larger as the Reynolds number increases up to 100 (Figures \ref{Re050wVectorField} and \ref{Re100wVectorField}). Pressure also varies much more and a particular concentration of contour lines is observable close to the origin (the magnetic field is applied just a little off the origin) as presented in Figures \ref{Re001wPressure}, \ref{Re050wPressure} and \ref{Re100wPressure}.
+
+\section{Future work}
+The results presented do not include Reynolds greater than 100 because the code is not currently abiding by any upwind scheme. This is something that is planned to be implemented. Also, a different magnetic field will be used, particularly the one of a Neodymium magnet, instead of the magnetic field of a wire, as used here.
+
+
+
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\linewidth]{figures/Re050/w/vectorField}
@@ -528,6 +543,12 @@ Some Reynolds numbers were chosen and then several tests were executed for some 
 \caption{Contour plot for pressure of the last figure. \label{Re050wPressure}}
 \end{figure}
 
+
+
+\section*{Acknowledgments}
+
+Firstly, I thank God for this opportunity. I appreciate professor Yuri Dumaresq for his orientations so that this work could be done. Also, many thanks to CNPq for the scholarship.
+
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\linewidth]{figures/Re100/w/vectorField}
@@ -539,14 +560,6 @@ Some Reynolds numbers were chosen and then several tests were executed for some 
 \includegraphics[width=\linewidth]{figures/Re100/w/pressure}
 \caption{Contour plot for pressure of the last figure. \label{Re100wPressure}}
 \end{figure}
-
-\section{Conclusion}
-
-
-\section*{Acknowledgments}
-
-Firstly, I thank God for this opportunity. I appreciate professor Yuri Dumaresq for his orientations so that this work could be done. Also, many thanks to CNPq for the scholarship.
-
 
 \bibliographystyle{plain}
 \bibliography{pibic}
