@@ -73,11 +73,11 @@ Magnetic fluid, Driven Cavity, Finite~differences, Magnetohydrodynamics
 \IEEEpeerreviewmaketitle
 
 \section{Introduction}
-This project aims at studying magnetic fluids in a 2D lid-driven cavity. The ideal cavity used here is a square of side equal to unity. All the boundaries but the top are with null velocities. The lid has a stationary velocity pattern that will be presented. Even though this may seem a simplistic method, papers have been presented not only in the last century but also in this century to study real problems. Garandet \cite{Garandet2012149} uses a similar approach to study solute segregations. On the field of biomagnetic fluids, Tzirtzilakis \cite{Tzirtzilakis2013} has also considered a cavity and analysed the stationary solutions under different conditions of the Reynolds numbers and magnetic parameters. Differently from this last researcher, our project has not considered a method to find directly the steady state, but has evolved in discrete time steps from time 0 to an end time defined. The advantage is that more data can be analysed, so that it is possible to know when vortices start to appear and if there is any that disappear. Animations were made in order to investigate this.
+This project aims at studying magnetic fluids in a 2D lid-driven cavity. The ideal cavity used here is a square whose side is equal to unity. All the boundaries but the top have null velocities. The lid has a stationary velocity pattern that will be presented. Even though this may seem a simplistic method, papers have been presented not only in the last century but also in this century to study real problems. Garandet \cite{Garandet2012149} uses a similar approach to study solute segregations. On the field of biomagnetic fluids, Tzirtzilakis \cite{Tzirtzilakis2013} has also considered a cavity and analyzed the stationary solutions under different conditions of the Reynolds numbers and magnetic parameters. Differently from this last researcher, our project has not considered a method to find directly the steady state, but has evolved in discrete time steps from time 0 to an end time defined. The advantage is that more data can be analyzed, so that it is possible to know when vortices start to appear and if there are any that disappear. Animations were made in order to investigate this.
 
 A colloidal magnetic fluid, or ferrofluid, consists typically of a suspension of monodomain ferromagnetic particles such as magnetite in a nonmagnetic carrier fluid. Particle-to-particle agglomeration is avoided by surfactants covering the particles, and Brownian motion prevents particle sedimentation in gravitational or magnetic fields.  \cite{RosensweigMagneticFluids}. A magnetic fluid has usually around $10^{23}$ particles per cubic meter and is opaque at visible light.
 
-The method chosen to solve the differential equations is finite differences \cite{zbMATH03010997}. This method approximates each derivative by discrete terms involving differences. The domain in which the problem is to be solved must be turned into a mesh. The smaller the cells of the mesh, the better the finite differences solution will be. All the finite differences used here are of second order, which means that the error decays quadratically as the mesh size is lowered. The mesh that is being used is not the trivial one, but a staggered grid. In such a grid, not every information is stored in the same point. For cell $ij$, the pressure will be in position $i+\frac{1}{2}j+\frac{1}{2}$, while velocity in the $x$ direction will be $u_{ij+\frac{1}{2}}$ and the $y$ direction will be $v_{i+\frac{1}{2}j}$. This avoids spurious pressure modes \cite{hinchLectureNotes}. A cell of this grid is presented in Figure \ref{grid-cell}. An example of the mesh is presented in Figure \ref{staggered-grid}. The simulation will have to use all the round points presented, and almost all the velocities marked, except the extreme left and bottom ones. After the solution is obtained, an interpolation can be made to obtain the values at a specified point. It was decided to save the results in the middle point of each cell. The pressure is already in that position, but the velocities are not. Therefore, averages were computed to obtain those values in the middle point.
+The method chosen to solve the differential equations is finite differences \cite{zbMATH03010997}. This method approximates each derivative by discrete terms involving differences. The domain in which the problem is to be solved must be turned into a mesh. The smaller the cells of the mesh, the better the finite differences solution will be. All the finite differences used here are of second order, which means that the error decays quadratically as the mesh size increases. The mesh that is being used is not the trivial one, but a staggered grid. In such a grid, not every information is stored in the same point. For cell $ij$, the pressure will be in position $i+\frac{1}{2}j+\frac{1}{2}$, while velocity in the $x$ direction will be $u_{ij+\frac{1}{2}}$ and the $y$ direction will be $v_{i+\frac{1}{2}j}$. This avoids spurious pressure modes \cite{hinchLectureNotes}. A cell of this grid is presented in Figure \ref{grid-cell}. An example of the mesh is presented in Figure \ref{staggered-grid}. The simulation will have to use all the round points presented, and almost all the velocities marked, except the extreme left and bottom ones. After the solution is obtained, an interpolation can be made to obtain the values at a specified point. It was decided to save the results in the middle point of each cell. The pressure is already in that position, but the velocities are not. Therefore, averages were computed to obtain those values in the middle point.
 
 \begin{figure}[!ht]
 \centering
@@ -191,13 +191,13 @@ From the latter equations, it is possible to conclude that
 \nabla\cdot \mathbf{M} = -\nabla\cdot\mathbf{H}	\label{mh1}.
 \end{eqnarray}
 
-The magnetostatic regime implies $\nabla\times \mathbf{H} = \mathbf{0}$ which indicates there is a potential field $\phi$ that satisfies $\mathbf{H} = -\nabla \phi$. With these last equations, it is possible to obtain Equation \ref{eqcampomag}. This is a Poisson equation that will give $\phi$ according the the applied field $\mathbf{H}$. The superparamagnetic case is being considered, what implies $\mathbf{M} = \chi \mathbf{H}$.
+The magnetostatic regime implies $\nabla\times \mathbf{H} = \mathbf{0}$ which indicates there is a potential field $\phi$ that satisfies $\mathbf{H} = -\nabla \phi$. With these last equations, it is possible to obtain Equation \ref{eqcampomag}. This is a Poisson equation that will give $\phi$ according the the applied field $\mathbf{H}$. The superparamagnetic case is being considered, what implies $\mathbf{M} = \chi \mathbf{H}$. 
 
 \begin{eqnarray}
 \nabla^2\phi &=& \nabla\cdot \mathbf{M}\label{eqcampomag}
 \end{eqnarray}
 
-Nevertheless, the potential $\phi$ cannot be introduced directly in the Navier Stokes equation. What is needed is a relation that gives the magnetic force, which could then be incorporated in the fluid equations. Equation \ref{magneticforce} stands for the magnetic force, while Equation \ref{cpm} is the magnetic reynolds number.
+Nevertheless, the potential $\phi$ cannot be introduced directly in the Navier Stokes equation. What is needed is a relation that gives the magnetic force, which could then be incorporated in the fluid equations. Equation \ref{magneticforce} stands for the magnetic force, while Equation \ref{cpm} is the magnetic Reynolds number.
 
 \begin{eqnarray}
 \mathbf{f} & = & \mathrm{Cpm} \mathbf{M}\cdot \nabla \mathbf{H}\label{magneticforce}\\
@@ -205,7 +205,7 @@ Nevertheless, the potential $\phi$ cannot be introduced directly in the Navier S
 \end{eqnarray}
 
 
-One thing that is missing is the boundary conditions for the potential field $\phi$. To understand how they are derived, first consider an applied magnetic field $\mathbf{H}$. A condition that is imposed is continuity of the normal component of $\mathbf{B}$ - $\mathbf{B}$ can be obtained by Equation \ref{firstmagneticequation}. This continuity can be mathematically represented by Equation \ref{normalconditionB}. From this, Equation \ref{normalConditionB2} can be obtained.
+The boundary conditions are missing for the potential field $\phi$. To understand how they are derived, first consider an applied magnetic field $\mathbf{H}$. A condition that is imposed is continuity of the normal component of $\mathbf{B}$ ($\mathbf{B}$ can be obtained by Equation \ref{firstmagneticequation}). This continuity can be mathematically represented by Equation \ref{normalconditionB}. From this, Equation \ref{normalConditionB2} can be obtained.
 
 \begin{eqnarray}
 \left(\mathbf{B}_{\mathrm{out}} - \mathbf{B}_{\mathrm{in}}\right)\cdot \mathbf{n} &=& 0 \label{normalconditionB}\\
@@ -228,7 +228,7 @@ From that, Neumann boundary conditions can be obtained. For the sake of clarity,
 \end{eqnarray}
 
 \section{Solution Method}
-In order to solve the flow with a computer, the Navier Stokes equation must be expanded in equations for directions $x$ and $y$ and then discretized. Nevertheless, a naive application of the discretized formulas will not yield a proper solution, as the fluid flow equation is highly non-linear due to its convective term - $\mathbf{v}\cdot \nabla \mathbf{v}$. Another problem is that the pressure needed at each time step is also an unknown that must be solved: the pressure is needed to know the velocity and the velocity is needed to obtain the pressure. To solve this dilemma, the Chorin method \cite{Chorin1997118} was used. This method is referred to as time splitting. In order to come to grips with this method, one can start by using finite differences for the velocity derivative with respect to time and then doing a smart manipulation with two new terms. This is presented in Equation \ref{vdottimesplitting}.
+In order to solve the flow with a computer, the Navier Stokes equation must be expanded in equations for directions $x$ and $y$ and then discretized. Nevertheless, a naive application of the discretized formulas will not yield a proper solution, as the fluid flow equation is highly non-linear due to its convective term - $\mathbf{v}\cdot \nabla \mathbf{v}$. Another problem is that the pressure needed at each time step is also an unknown that must be solved: the pressure is needed to know the velocity and the velocity is needed to obtain the pressure. To solve this dilemma, the Chorin method \cite{Chorin1997118} was used. This method is referred to as time-splitting. In order to come to grips with this method, one can start by using finite differences for the velocity derivative with respect to time and then doing a smart manipulation with two new terms. This is presented in Equation \ref{vdottimesplitting}.
 
 \begin{equation}
 \frac{\partial \textbf{v}}{\partial t}\approx \frac{\textbf{v}^{n+1}-\textbf{v}^n}{\Delta t}=\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t} \label{vdottimesplitting}
@@ -360,7 +360,7 @@ If term $p_{ij}$ is isolated in Equation \ref{poissonSecond}, an explicit equati
 -4p_{24} + p_{34} + \boldsymbol{p_{14}} + \boldsymbol{p_{25}} + p_{23} &=& \Delta x^2 g_{24}\label{internalPoissonEq3}
 \end{eqnarray}
 
-The bold pressure points are boundary points. This means there exists an equation that can account for them. There are twelve external points and from the boundary conditions it is easy to get the twelve equations. Equations \ref{pressureBoundary1} to \ref{pressureBoundary4} can have its indices substituted in order to get 12 equations.
+The pressure points written in bold letters are boundary points. This means there exists an equation that can account for them. There are twelve external points and from the boundary conditions it is easy to get the twelve equations. Equations \ref{pressureBoundary1} to \ref{pressureBoundary4} can have its indices substituted in order to get 12 equations.
 
 \begin{eqnarray}
 \frac{\partial p}{\partial x}\left(0, y\right) &=& p_x\left(0, y\right)  \approx  (p_{2j} - p_{1j})/\Delta x \label{pressureBoundary1}\\
@@ -516,6 +516,30 @@ Some Reynolds numbers were chosen and then several tests were executed for some 
 \caption{Contour plot for pressure of the last figure. \label{Re001wPressure}}
 \end{figure}
 
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re050/w/vectorField}
+\caption{Steady state solution without magnetic field. The new vortex is already bigger than the initial one. \label{Re050wVectorField}}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re050/w/pressure}
+\caption{Contour plot for pressure of the last figure. \label{Re050wPressure}}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re100/w/vectorField}
+\caption{Steady state solution without magnetic field. Vortex increased in comparison with $\mathrm{Re} = 50$. \label{Re100wVectorField}}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re100/w/pressure}
+\caption{Contour plot for pressure of the last figure. \label{Re100wPressure}}
+\end{figure}
+
 
 
 \section{Conclusion}
@@ -531,35 +555,11 @@ The results presented do not include Reynolds greater than 100 because the code 
 
 
 
-\begin{figure}[!t]
-\centering
-\includegraphics[width=\linewidth]{figures/Re050/w/vectorField}
-\caption{Steady state solution without magnetic field. The new vortex is already bigger than the initial one. \label{Re050wVectorField}}
-\end{figure}
-
-\begin{figure}[!t]
-\centering
-\includegraphics[width=\linewidth]{figures/Re050/w/pressure}
-\caption{Contour plot for pressure of the last figure. \label{Re050wPressure}}
-\end{figure}
-
-
 
 \section*{Acknowledgments}
 
 Firstly, I thank God for this opportunity. I appreciate professor Yuri Dumaresq for his orientations so that this work could be done. Also, many thanks to CNPq for the scholarship.
 
-\begin{figure}[!t]
-\centering
-\includegraphics[width=\linewidth]{figures/Re100/w/vectorField}
-\caption{Steady state solution without magnetic field. Vortex increased in comparison with $\mathrm{Re} = 50$. \label{Re100wVectorField}}
-\end{figure}
-
-\begin{figure}[!t]
-\centering
-\includegraphics[width=\linewidth]{figures/Re100/w/pressure}
-\caption{Contour plot for pressure of the last figure. \label{Re100wPressure}}
-\end{figure}
 
 \bibliographystyle{plain}
 \bibliography{pibic}
