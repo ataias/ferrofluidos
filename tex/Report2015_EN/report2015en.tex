@@ -228,7 +228,7 @@ From that, Neumann boundary conditions can be obtained. For the sake of clarity,
 \end{eqnarray}
 
 \section{Solution Method}
-In order to solve the flow with a computer, the Navier Stokes equation must be expanded in equations for directions $x$ and $y$ and then discretized. Nevertheless, a naive application of the discretized formulas will not yield a proper solution, as the fluid flow equation is highly non-linear due to its convective term - $\mathbf{v}\cdot \nabla \mathbf{v}$. Another problem is that the pressure needed at each time step is also an unknown that must be solved: the pressure is needed to know the velocity and the velocity is needed to obtain the pressure. To solve this dilemma, the Chorin method \cite{Chorin1997118} was used. This method is referred to as time-splitting. In order to come to grips with this method, one can start by using finite differences for the velocity derivative with respect to time and then doing a smart manipulation with two new terms. This is presented in Equation \ref{vdottimesplitting}.
+In order to solve the flow with a computer, the Navier Stokes equation must be expanded in equations for directions $x$ and $y$ and then discretized. Nevertheless, a naive application of the discretized formulas will not yield a proper solution, as the fluid flow equation is highly non-linear due to its convective term $\mathbf{v}\cdot \nabla \mathbf{v}$. Another problem is that the pressure needed at each time step is also an unknown that must be solved: the pressure is needed to know the velocity and the velocity is needed to obtain the pressure. To solve this dilemma, the Chorin method \cite{Chorin1997118} was used. This method is referred to as time-splitting. In order to come to grips with this method, one can start by using finite differences for the velocity derivative with respect to time and then doing a smart manipulation with two new terms. This is presented in Equation \ref{vdottimesplitting}.
 
 \begin{equation}
 \frac{\partial \textbf{v}}{\partial t}\approx \frac{\textbf{v}^{n+1}-\textbf{v}^n}{\Delta t}=\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t} \label{vdottimesplitting}
@@ -245,7 +245,7 @@ Even though there is a straightforward formula to obtain $\mathbf{v}^{*}$, how t
 
 \begin{eqnarray}
 	-\frac{1}{\rho}\nabla\cdot\nabla p\nonumber & = &\nabla\cdot \left(\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}\right)\\
-	\nabla^2 p\nonumber & = &\frac{\rho}{\Delta t}\nabla\cdot \textbf{v}^*	\label{pressureVStar}
+\nabla^2 p & = & \frac{\rho}{\Delta t}\nabla\cdot \textbf{v}^{*}	 \label{pressureVStar}
 \end{eqnarray}
 
 Now that Equation \ref{pressureVStar} is available, it is easier to devise a solution to the problem, as only $\mathbf{v}^*$ is needed and it is already a known value because of Equation \ref{equacaovestrela}. However, nothing was stated about the boundary conditions this problem involves. For that, it is better to expand the Navier Stokes equation, as in Equations \ref{navierX} and \ref{navierY}.
@@ -270,7 +270,7 @@ u}{\partial x^2}\Bigg|_{\textrm{wall}}+\rho f_x\label{paredesVerticais}\\
 v}{\partial y^2}\Bigg|_{\textrm{wall}}+\rho f_y\label{paredesHorizontais}
 \end{eqnarray}
 
-As the four wall have flux conditions, there are many solutions that differ only by a constant. A point in the mesh can be specified arbitrarily so that the program converges to a specific solution. This is allowed in our problem, as pressure itself is not directly needed, but it is gradient.
+As the four walls have flux conditions, there are many solutions that differ only by a constant. A point in the mesh can be specified arbitrarily so that the program converges to a specific solution. This is allowed in our problem, as pressure itself is not directly needed, but only its gradient.
 
 There is one last step to obtain $\mathbf{v}^{n+1}$, but this is quite straightforward: Equation \ref{nextStepV} must be computed. It is an explicit equation with known terms at this stage.
 
@@ -278,7 +278,7 @@ There is one last step to obtain $\mathbf{v}^{n+1}$, but this is quite straightf
 	\mathbf{v}^{n+1} & = & \mathbf{v}^*  - \frac{\Delta t}{\rho} \nabla p \label{nextStepV}
 \end{eqnarray}
 
-The three time-splitting steps were presented, but not their discretizations. The discretization for step 1 is on Equations \ref{step1-1} to \ref{step1-4}. For each inner point of the mesh, the equations there presented are applied in an explicit form.
+The three time-splitting steps were presented, but not all their discretizations. The discretization for step 1 is on Equations \ref{step1-3} and \ref{step1-4}. Equations \ref{step1-1} and \ref{step1-2} are variables made do ease the understanding of the main equations for this step. Equation \ref{step1-1} is the sum of cell points around $ij$, while \ref{step1-2} is a linear interpolation to obtain $u$ and $v$ at desired points that are not available directly in the staggered grid.  For each inner point of the mesh, the equations presented are applied in an explicit form.
 
 \begin{eqnarray}
 \textbf{v}_{ij}^s&=&(\SumFour{u})\textbf{i} \nonumber \\&+& (\SumFour{v})\textbf{j} \label{step1-1}\\
@@ -369,7 +369,7 @@ The pressure points written in bold letters are boundary points. This means ther
 \frac{\partial p}{\partial y}\left(x, 0\right) &=& u_y\left(x, 0\right)  \approx  (p_{i5} - p_{i4})/\Delta x\label{pressureBoundary4}
 \end{eqnarray}
 
-From the 21 equations obtained, a rearrangement can be done to obtain matrix $A$. Equation \ref{matrixAnulleigen} has this matrix. The $b$ vector is in Equation \ref{bPartnulleigen}. Nevertheless, one of its Eigenvalues is zero, so the matrix is not invertible. This problem has to do with the fact that all boundary conditions are Neumann conditions and many solution are possible, only differing by a constant. To solve this problem, one value of the mesh must be imposed and this is arbitrary with the exception of the corner points not influencing anything, as they don't take any part on the equations. 
+From the 21 equations obtained, a rearrangement can be done to obtain matrix $A$. Equation \ref{matrixAnulleigen} has this matrix. The $b$ vector is in Equation \ref{bPartnulleigen}. Nevertheless, one of the Eigenvalues of this system is zero, so the matrix is not invertible. This problem has to do with the fact that there are only Neumann boundary conditions and many differing-by-constant solutions are possible. To solve this problem, one value of the mesh must be imposed and the cell to be chosen can be any but one of the corner points, as they don't take any part on the equations. 
 
 \begin{eqnarray}
 \left[\begin{array}{ccccccccc}
@@ -411,16 +411,16 @@ A[1,1] &=& -3 \label{aupdate} \\
 b[1] & = & p_y\left(\frac{\Delta x}{2},0\right)\Delta x + \Delta x^2 g_{22} \label{bupdate}
 \end{eqnarray}
 
-The equations just presented can be coded to define matrix $A$ and vector $b$, but to actually obtain the vector $x$ of pressure points the system must be solved. A sparse matrix solver available in Julialang\footnote{http://julialang.org} is used. It uses a Cholesky factorization in order to solve the system. As the matrix is fixed, the factorization can be done once and for every other time-step the fatorized matrix is used. This is a performance-wise decision.
+The equations just presented can be coded to define matrix $A$ and vector $b$, but to actually obtain the vector $x$ of pressure points the system must be solved. A sparse matrix solver available in Julia\footnote{http://julialang.org} is used. It uses a Cholesky factorization in order to solve the system. As the matrix is fixed, the factorization can be done once and for every other time-step the fatorized matrix is used. This is a performance-wise decision.
 
 For the magnetism parts, it was only necessary to use finite differences on the governing equations. The Poisson implicit elements obtained in this section are also used for the magnetic part. The rest are explicit applications of the finite differences equations obtained.
 
-It is important to validate the code. As part of the solution method, tests of the Poisson routine and of the discretization of the Navier Stokes equation are made. The Poisson test is to check the error when comparing a computed result with the actual analytical function that solves the PDE. The second test applies to the Navier Stokes equation and also for the Poisson one: verifying how the error decays according to an increase in mesh size. As all the discrete formulas used are of second order, this error should decay quadratically. The Results section will present both of these tests. Also, Navier Stokes with magnetism will be tested to check the order of the discretization.
+It is important to validate the code. As part of the solution method, tests of the Poisson routine and of the discretization of the Navier Stokes equation are made. The Poisson test is to check the error when comparing a computed result with the actual analytical function that solves the PDE. The second test applies to the Navier Stokes equation and also for the Poisson one: verifying how the error decays according to an increase in mesh size. As all the discrete formulas used are of second order, this error should decay quadratically. The ``Results'' section will present both of these tests. Also, Navier Stokes with magnetism will be tested to check the order of the discretization.
 
 \section{Results}
 \subsection{Validation}
 
-The first test for the Poisson routine is presented on Equation \ref{poissonTest1} and the analytical solution is on Equation \ref{solutionPoissonTest1}. The Poisson validation routine returns the middle point difference on the grid that was found, this value is then divided by the real value on that point and multiplied by 100 to get a percentage. The maximum grid size used was $320\times 320$. This one had an error smaller than $0.05\%$. The results for different grid sizes are presented in Figure \ref{errorPoissonTest}. It is easy to see that the error decays quadratically, what was expected due to the second order finite differences that were used.
+A few tests were made to evaluate the Poisson routine. Only one of them is presented here, and it is shown on Equation \ref{poissonTest1} and its analytical solution is on Equation \ref{solutionPoissonTest1}. The Poisson validation routine returns the middle point difference on the grid that was found, this value is then divided by the real value on that point and multiplied by 100 to get a percentage. The maximum grid size used was $320\times 320$. This one had an error smaller than $0.05\%$. The results for different grid sizes are presented in Figure \ref{errorPoissonTest}. It is easy to see that the error decays quadratically, what was expected due to the second order finite differences that were used.
 
 \begin{eqnarray}
 \left\{\begin{array}{ccl}
@@ -442,7 +442,7 @@ u(x,y) & = & \frac{\cosh 2\pi x}{2\pi \sinh 2\pi}\cos 2 \pi y \label{solutionPoi
 
 Validation for the hydrodynamics is presented on Figure \ref{hydrodynamicsTest}. Reynolds is chosen to be 40. The error will be compared against the solution of grid size $200\times 200$, as access to the analytical solution is not possible. The important point to evaluate is that the error decays quadratically, what can be assessed from the image. Vorticity was used instead of velocity because it is a scalar that accounts for both velocity terms. 
 
-A similar test was used to test equation when magnetism is present. The difference is that the force $\mathbf{f}$ is different of zero. Magnetic parameters chosen are $\chi=0.5$, $\mathrm{Cpm}=0.8$, $\gamma=3$ and a center for the magnetic field located close the left-bottom corner. The applied magnetic field is that of Figure \ref{magneticField}. The error evolution for this case is presented on Figure \ref{magneticTest}. The values were compared in steady-state.
+A similar test was used when magnetism is present. This case has a force $\mathbf{f}$ that differs from zero. Magnetic parameters chosen are $\chi=0.5$, $\mathrm{Cpm}=0.8$, $\gamma=3$ and a center for the magnetic field located close the left-bottom corner. The applied magnetic field is that of Figure \ref{magneticField}. The error evolution for this case is presented on Figure \ref{magneticTest}. The values were compared in steady-state.
 
 \begin{figure}[!t]
 \centering
@@ -540,6 +540,7 @@ Some Reynolds numbers were chosen and then several tests were executed for some 
 \caption{Contour plot for pressure of the last figure. \label{Re100wPressure}}
 \end{figure}
 
+Regarding the results with no magnetic field, Figures \ref{Re001nVectorField} to \ref{Re100nPressure} present very similar results. Although the Reynolds number changes by a factor of 100, no major changes in the steady state flow were able to be observed. This changes dramatically when a magnetic field is in action. A small vortex already appears in Figure \ref{Re001wVectorField} and just grows larger as the Reynolds number increases up to 100 (Figures \ref{Re050wVectorField} and \ref{Re100wVectorField}). Pressure also varies much more and a particular concentration of contour lines is observable close to the origin (the magnetic field is applied just a little off the origin) as presented in Figures \ref{Re001wPressure}, \ref{Re050wPressure} and \ref{Re100wPressure}.
 
 
 \section{Conclusion}
@@ -548,7 +549,8 @@ It is important for the code to be correct, otherwise it is meaningless to analy
 
 Although not presented in the last sections, it is interesting to observe that one problem that appeared was when physics was disregarded. Trying to apply an arbitrary magnetic field has a good chance of generating results that converge but are incorrect when the governing equations are checked. The results presented comply to the laws that we claim to be following. This is also good evidence of correctness.
 
-Regarding the results with no magnetic field, Figures \ref{Re001nVectorField} to \ref{Re100nPressure} present very similar results. Although the Reynolds number changes by a factor of 100, no major changes in the steady state flow were able to be observed. This changes dramatically when a magnetic field is in action. A small vortex already appears in Figure \ref{Re001wVectorField} and just grows larger as the Reynolds number increases up to 100 (Figures \ref{Re050wVectorField} and \ref{Re100wVectorField}). Pressure also varies much more and a particular concentration of contour lines is observable close to the origin (the magnetic field is applied just a little off the origin) as presented in Figures \ref{Re001wPressure}, \ref{Re050wPressure} and \ref{Re100wPressure}.
+This work was a challenge in the aspect that an analytical solution was not available to check against, so it is important to state the importance of the validation step. The results were satisfactory and the tools here coded for exploring magnetic fluids are starting to get usable, when compared with the stage of one year ago.
+
 
 \section{Future work}
 The results presented do not include Reynolds greater than 100 because the code is not currently abiding by any upwind scheme. This is something that is planned to be implemented. Also, a different magnetic field will be used, particularly the one of a Neodymium magnet, instead of the magnetic field of a wire, as used here.
