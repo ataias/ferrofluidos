@@ -48,7 +48,8 @@
 
 \begin{abstract}
 %\boldmath
-This work aims at studying how magnetic fluids behave in a 2D lid-driven cavity. In order to achieve this goal, a computer program was developed to solve the Navier Stokes equation using finite differences. In addition to that, models of the magnetostatic force were introduced. Solving the Poisson equation is done by means of an implicit method with sparse matrices and Cholesky factorization. Once the hydrodynamic and magnetostatic parts are solved, vector fields and streamlines are plotted for analysis of the flow. A few distinct Reynolds numbers are tested, as well as some different magnetic parameters. The governing equations in continuous form and also in discrete form are presented, as well as the vectors fields resulted from computations.
+This work aims at studying how magnetic fluids behave in a 2D lid-driven cavity. In order to achieve this goal, a computer program was developed to solve the Navier-Stokes equation using finite differences. In addition to that, different equations for the evolution were introduced. The governing equations in continuous form and also in discrete form are presented, as well as the vectors fields resulted from computations. Solving the Poisson equation is done by means of an implicit method with sparse matrices and Cholesky factorization. Once the hydrodynamic and magnetostatic parts are solved, vector fields and streamlines are plotted for analysis of the flow. A few distinct Reynolds numbers are tested, as well as some different magnetic parameters. We observe that the magnetic field strongly influences the flow on the cavity.
+
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
@@ -73,11 +74,11 @@ Magnetic fluid, Driven Cavity, Finite~differences, Magnetohydrodynamics
 \IEEEpeerreviewmaketitle
 
 \section{Introduction}
-This project aims at studying magnetic fluids in a 2D lid-driven cavity. The ideal cavity used here is a square whose side is equal to unity. All the boundaries but the top have null velocities. The lid has a stationary velocity pattern that will be presented. Even though this may seem a simplistic method, papers have been presented not only in the last century but also in this century to study real problems. Garandet \cite{Garandet2012149} uses a similar approach to study solute segregations. On the field of biomagnetic fluids, Tzirtzilakis \cite{Tzirtzilakis2013} has also considered a cavity and analyzed the stationary solutions under different conditions of the Reynolds numbers and magnetic parameters. Differently from this last researcher, our project has not considered a method to find directly the steady state, but has evolved in discrete time steps from time 0 to an end time defined. The advantage is that more data can be analyzed, so that it is possible to know when vortices start to appear and if there are any that disappear. Animations were made in order to investigate this.
+This project aims at studying magnetic fluids in a 2D lid-driven cavity. The ideal cavity used here is a square whose side is equal to unity. All the boundaries but the top have null velocities. The lid has a stationary velocity pattern that will be presented. Even though this may seem a simplistic method, papers have been presented not only in the last century but also in this century to study real problems. Garandet \cite{Garandet2012149} uses a similar approach to study solute segregations. On the field of biomagnetic fluids, Tzirtzilakis \cite{Tzirtzilakis2013} has also considered a cavity and analyzed the stationary solutions under different conditions of the Reynolds numbers and magnetic parameters. Differently from this last work, our project has not considered a method to find directly the steady-state flow, but has evolved in discrete time steps from rest until the steady state is reached. The advantage is that more data can be analyzed, so that it is possible to know when vortices start to appear and if there are any that disappear during the evolution to steady-state. Animations were made in order to better examine those results.
 
-A colloidal magnetic fluid, or ferrofluid, consists typically of a suspension of monodomain ferromagnetic particles such as magnetite in a nonmagnetic carrier fluid. Particle-to-particle agglomeration is avoided by surfactants covering the particles, and Brownian motion prevents particle sedimentation in gravitational or magnetic fields.  \cite{RosensweigMagneticFluids}. A magnetic fluid has usually around $10^{23}$ particles per cubic meter and is opaque at visible light.
+A colloidal magnetic fluid, or ferrofluid, consists typically of a suspension of monodomain ferromagnetic particles such as magnetite in a nonmagnetic carrier fluid. Particle-to-particle agglomeration is avoided by surfactants covering the particles, and Brownian motion prevents particle sedimentation in gravitational or magnetic fields.  \cite{RosensweigMagneticFluids}. A magnetic fluid has usually around $10^{23}$ magnetic nano-particles per cubic meter and is opaque at visible light since most of them are oil-based.
 
-The method chosen to solve the differential equations is finite differences \cite{zbMATH03010997}. This method approximates each derivative by discrete terms involving differences. The domain in which the problem is to be solved must be turned into a mesh. The smaller the cells of the mesh, the better the finite differences solution will be. All the finite differences used here are of second order, which means that the error decays quadratically as the mesh size increases. The mesh that is being used is not the trivial one, but a staggered grid. In such a grid, not every information is stored in the same point. For cell $ij$, the pressure will be in position $i+\frac{1}{2}j+\frac{1}{2}$, while velocity in the $x$ direction will be $u_{ij+\frac{1}{2}}$ and the $y$ direction will be $v_{i+\frac{1}{2}j}$. This avoids spurious pressure modes \cite{hinchLectureNotes}. A cell of this grid is presented in Figure \ref{grid-cell}. An example of the mesh is presented in Figure \ref{staggered-grid}. The simulation will have to use all the round points presented, and almost all the velocities marked, except the extreme left and bottom ones. After the solution is obtained, an interpolation can be made to obtain the values at a specified point. It was decided to save the results in the middle point of each cell. The pressure is already in that position, but the velocities are not. Therefore, averages were computed to obtain those values in the middle point.
+The method chosen to solve the differential equations is finite differences \cite{zbMATH03010997}. This method approximates each derivative by discrete terms involving differences. The domain in which the problem is to be solved must be turned into a mesh. The smaller the cells of the mesh, the better the finite differences solution will be. All the finite differences used here are of second order, which means that the error decays quadratically as the number of points in the mesh increases. The mesh that is being used is not the trivial one, but a staggered grid. In such a grid, not every information is stored in the same point. For instance, on the cell $ij$, the pressure will be in position $i+\frac{1}{2}j+\frac{1}{2}$, while velocity in the $x$ direction will be $u_{ij+\frac{1}{2}}$ and the $y$ direction will be $v_{i+\frac{1}{2}j}$. This avoids spurious pressure modes as described in \cite{hinchLectureNotes}. A cell of this grid is presented in Figure \ref{grid-cell}. An example of the mesh is presented in Figure \ref{staggered-grid}. The simulation will have to use all the round points presented, and almost all the velocities marked, except the extreme left and bottom ones. After the solution is obtained, an interpolation can be made to obtain the values at any specified point. We have chosen to plot all the results in the middle point of each cell. The pressure is already in that position, but the velocities are not. Therefore, averages were computed to obtain those values in the middle point.
 
 \begin{figure}[!ht]
 \centering
@@ -98,7 +99,7 @@ The method chosen to solve the differential equations is finite differences \cit
 
 \begin{figure}[!ht]
 \centering
-\tikzstyle{help lines}+=[dashed]% aaarghhh!!!
+\tikzstyle{help lines}+=[dashed]
 \begin{tikzpicture}
 %axes
 \draw[->] (0,5) -- (xyz cs:y=6);
@@ -150,66 +151,95 @@ The method chosen to solve the differential equations is finite differences \cit
 \caption{Staggered-grid. Dark circles are internal points, while empty ones are part of the extra layer\label{staggered-grid}}
 \end{figure}
 
-The code for the simulator was made with aid of programming language Julia\footnote{http://julialang.org}. This language offers several linear algebra packages that were easy to use. Graphics were made using Python's graphical packages. Codes and articles are hosted on GitHub\footnote{https://github.com/ataias/ferrofluidos}. In the Julia language, matrices are indexed from 1 to $n$. This is different from C, because its indexing starts from 0.
+The code for the simulator was made with aid of programming language Julia, more information about this language is available at \cite{JuliaProgramming}. Julia offers several linear algebra packages that are easy to use and very efficient. Graphics were made using Python's graphical packages \cite{matplotlib}. Codes and articles are hosted on GitHub\footnote{https://github.com/ataias/ferrofluidos}. %In the Julia language, matrices are indexed from 1 to $n$. This is different from C, because its indexing starts from 0.
 
 \section{Governing Equations}
 \subsection{Hidrodynamics}
-Equations \ref{navierstokes} and \ref{navierincompressibilidade} govern the flow of an incompressible fluid. The first one is the Navier Stokes equation, while the second one is the condition for incompressibility.
+Equations \ref{navierstokes} and \ref{navierincompressibilidade} govern the flow of an incompressible fluid. The first one is the Navier-Stokes equation \cite{batchelor}, while the second one is the condition for incompressibility:
 
 \begin{eqnarray}
-\rho\left( \frac{\partial {\textbf{v}}}{\partial t}+\textbf{v}\cdot\nabla \textbf{v} \right)=-\nabla p+\mu\nabla^2 \textbf{v} + \textbf{f}\label{navierstokes}\\
-\nabla\cdot\textbf{v}=0\label{navierincompressibilidade}
+\left( \frac{\partial {\textbf{v}}}{\partial t}+\textbf{v}\cdot\nabla \textbf{v} \right)=-\nabla p+\frac{1}{\mathit{Re}}\nabla^2 \textbf{v} + \textbf{f}\label{navierstokes},\\
+\nabla\cdot\textbf{v}=0.\label{navierincompressibilidade}
 \end{eqnarray}
 
-Computer solutions require certain conditions on the time step and spacing of grid points. The requirements are: stable diffusion, Equation \ref{stablediffusion}; stable advection, Equation \ref{stableadvection} and hydrodynamic boundary layer, Equation \ref{boundarylayer}. $U$ is the maximum speed in the cavity. If those equations are not satisfied, the solution will be wrong as the program may be trying to solve faster than the laws of physics allow. The program may not even converge and stay on an infinite loop.
+In the latter equations, some terms are presented: $\mathbf{v}$ is the velocity, $p$ stands for pressure and $\mathbf{f}$ is the force acting on the fluid. In our case, the force created by a magnetic field. The Reynolds number $\mathit{Re}$ is given by 
 
 \begin{eqnarray}
-\Delta t &<& \frac{1}{4}\mathit{Re}\Delta x^2 \label{stablediffusion}\\
-\Delta t &<& \frac{\Delta x}{U} \label{stableadvection}\\
-\Delta x &<& \frac{1}{\mathit{Re}} \label{boundarylayer}
+\mathit{Re}=\frac{\rho L U}{\mu},
 \end{eqnarray}
 
-The Navier Stokes equation is thorough, encompassing several types of flow. A specific solution is found by specifying its boundary conditions. For the current work, the conditions are
+in which $\rho$ is the density of the fluid, $L$ is a characteristic linear dimension, $U$ is maximum speed in the cavity and $\mu$ is the dynamic viscosity.
+
+Computer solutions require certain conditions on the time step and spacing of grid points. As well described on \cite{hinchLectureNotes}, the requirements are: stable diffusion, 
+\begin{equation}
+\Delta t < \frac{1}{4}\mathit{Re}\Delta x^2, \label{stablediffusion}
+\end{equation} 
+
+stable advection, the CFL condition,
+\begin{equation}
+\Delta t < \frac{\Delta x}{U}, \label{stableadvection}
+\end{equation}
+
+ and to resolve well the hydrodynamic boundary layer,  
+ \begin{eqnarray}
+\Delta x &<& \frac{1}{\mathit{Re}}. \label{boundarylayer}
+\end{eqnarray} 
+
+If those conditions for the time-stepping of the equations are not satisfied, the solution will be wrong as the program may be trying to solve faster than the laws of physics allow. The program may not even converge.
+
+
+The Navier-Stokes equation is thorough, encompassing several types of flow. A specific solution is found by specifying its boundary conditions. For the current work, the conditions are
 
 \begin{eqnarray}
 u(x,1) & = & \sin^2(\pi x),\\
-u(x,0) & = & u(0,y) = u(1,y) = 0\\
-v(x,0) & = & v(x,1) = v(0, y) = v(1, y) = 0
+u(x,0) & = & u(0,y) = u(1,y) = 0,\\
+v(x,0) & = & v(x,1) = v(0, y) = v(1, y) = 0.
 \end{eqnarray}
 
 \subsection{Magnetism}
-Besides the hydrodynamics equations and conditions, the magnetic force - $\mathbf{f}$ - must be computed. From Maxwell's theory, Equations \ref{firstmagneticequation} and \ref{secondmagneticequation} are obtained. 
+Besides the hydrodynamics equations and conditions, the magnetic force  in Equation 1, $\mathbf{f}$, must be computed. From Maxwell's theory, Equation \ref{secondmagneticequation} is obtained:
 
 \begin{eqnarray}
-\mathbf{B} &=& \mu_0(\mathbf{M}+\mathbf{H})\label{firstmagneticequation}\\
-\nabla\cdot \mathbf{B} & = & 0\label{secondmagneticequation}
+\nabla\cdot \mathbf{B} & = & 0\label{secondmagneticequation}.
+\end{eqnarray}
+
+and, from a magnetizable medium, we have Equation \ref{firstmagneticequation}:
+
+\begin{eqnarray}
+\mathbf{B} &=& \mu_0(\mathbf{M}+\mathbf{H}).\label{firstmagneticequation}
 \end{eqnarray}
 
 From the latter equations, it is possible to conclude that 
 
 \begin{eqnarray}
-\nabla\cdot \mathbf{M} = -\nabla\cdot\mathbf{H}	\label{mh1}.
+\nabla\cdot\mathbf{H} = -\nabla\cdot \mathbf{M}\label{mh1}.
 \end{eqnarray}
 
-The magnetostatic regime implies $\nabla\times \mathbf{H} = \mathbf{0}$ which indicates there is a potential field $\phi$ that satisfies $\mathbf{H} = -\nabla \phi$. With these last equations, it is possible to obtain Equation \ref{eqcampomag}. This is a Poisson equation that will give $\phi$ according the the applied field $\mathbf{H}$. The superparamagnetic case is being considered, what implies $\mathbf{M} = \chi \mathbf{H}$. 
+The magnetostatic regime of the Maxwell's equations implies \begin{equation}\nabla\times \mathbf{H} = \mathbf{0}.
+\end{equation} 
 
-\begin{eqnarray}
-\nabla^2\phi &=& \nabla\cdot \mathbf{M}\label{eqcampomag}
+which indicates there is a potential field $\phi$ that satisfies $\mathbf{H} = -\nabla \phi$. With these last equations, it is possible to obtain \begin{eqnarray}
+\nabla^2\phi &=& \nabla\cdot \mathbf{M}.\label{eqcampomag}
 \end{eqnarray}
+
+This is a Poisson equation that will give $\phi$ according the the local magnetization of the ferrofluid. The superparamagnetic case is being considered, what implies 
+\begin{equation}\mathbf{M} = \chi \mathbf{H}.\end{equation}
+
 
 Nevertheless, the potential $\phi$ cannot be introduced directly in the Navier Stokes equation. What is needed is a relation that gives the magnetic force, which could then be incorporated in the fluid equations. Equation \ref{magneticforce} stands for the magnetic force, while Equation \ref{cpm} is the magnetic Reynolds number.
 
 \begin{eqnarray}
-\mathbf{f} & = & \mathrm{Cpm} \mathbf{M}\cdot \nabla \mathbf{H}\label{magneticforce}\\
-\mathrm{Cpm} & = & \frac{\mu_0 H_0^2}{\rho u^2}\label{cpm}
+\mathbf{f} & = & \mathrm{C}_{\mathrm{pm}}\; \mathbf{M}\cdot \nabla \mathbf{H}\label{magneticforce}\\
+\mathrm{C}_{\mathrm{pm}} & = & \frac{\mu_0 H_0^2}{\rho u^2}\label{cpm}
 \end{eqnarray}
 
 
-The boundary conditions are missing for the potential field $\phi$. To understand how they are derived, first consider an applied magnetic field $\mathbf{H}$. A condition that is imposed is continuity of the normal component of $\mathbf{B}$ ($\mathbf{B}$ can be obtained by Equation \ref{firstmagneticequation}). This continuity can be mathematically represented by Equation \ref{normalconditionB}. From this, Equation \ref{normalConditionB2} can be obtained.
+The boundary conditions are missing for the potential field $\phi$. To understand how they are derived, first consider an applied magnetic field $\mathbf{H}$. A condition that is imposed is continuity of the normal component of $\mathbf{B}$, Equation \ref{firstmagneticequation}. This continuity can be mathematically represented by \begin{equation}\left(\mathbf{B}_{\mathrm{out}} - \mathbf{B}_{\mathrm{in}}\right)\cdot \mathbf{n} = 0 \label{normalconditionB}.\end{equation} 
+
+From this, Equation \ref{normalConditionB2} can be obtained:
 
 \begin{eqnarray}
-\left(\mathbf{B}_{\mathrm{out}} - \mathbf{B}_{\mathrm{in}}\right)\cdot \mathbf{n} &=& 0 \label{normalconditionB}\\
-\mu_0 (H_{\mathrm{out}}^{\mathrm{n}} + M_{\mathrm{out}}^{\mathrm{n}}) &=&  \mu_0(H_{\mathrm{in}}^{\mathrm{n}}+M_{\mathrm{in}}^{\mathrm{n}})\label{normalConditionB2}
+\mu_0 (H_{\mathrm{out}}^{\mathrm{n}} + M_{\mathrm{out}}^{\mathrm{n}}) &=&  \mu_0(H_{\mathrm{in}}^{\mathrm{n}}+M_{\mathrm{in}}^{\mathrm{n}}).\label{normalConditionB2}
 \end{eqnarray}
 
 The medium outside is air and therefore its magnetization, $M_{\mathrm{out}}^{\mathrm{n}}$ is zero. It is possible to use $\mathbf{H} = -\nabla \phi$ in the remaining outer term to obtain Equation \ref{nablaphid}.
@@ -218,7 +248,7 @@ The medium outside is air and therefore its magnetization, $M_{\mathrm{out}}^{\m
 \nabla\phi_{\mathrm{d}}^{\mathrm{n}} & = & -H_{\mathrm{f}}^{\mathrm{n}} + M_{\mathrm{d}}^{\mathrm{n}} \label{nablaphid}
 \end{eqnarray}
 
-From that, Neumann boundary conditions can be obtained. For the sake of clarity, they are presented in Equations \ref{condition1phi} to \ref{condition4phi}. The subscripts are indicating matrix indices.
+From that, Neumann boundary conditions can be obtained for Equation \ref{eqcampomag}. For the sake of clarity, they are presented in Equations \ref{condition1phi} to \ref{condition4phi}. The subscripts are indicating matrix indices.
 
 \begin{eqnarray}
 \left.\frac{\partial \phi}{\partial x}\right|_{\mathrm{left}}\;\;&\approx&- H^{x}_{2,j} + M^{x}_{2,j}\label{condition1phi}\\
@@ -228,7 +258,8 @@ From that, Neumann boundary conditions can be obtained. For the sake of clarity,
 \end{eqnarray}
 
 \section{Solution Method}
-In order to solve the flow with a computer, the Navier Stokes equation must be expanded in equations for directions $x$ and $y$ and then discretized. Nevertheless, a naive application of the discretized formulas will not yield a proper solution, as the fluid flow equation is highly non-linear due to its convective term $\mathbf{v}\cdot \nabla \mathbf{v}$. Another problem is that the pressure needed at each time step is also an unknown that must be solved: the pressure is needed to know the velocity and the velocity is needed to obtain the pressure. To solve this dilemma, the Chorin method \cite{Chorin1997118} was used. This method is referred to as time-splitting. In order to come to grips with this method, one can start by using finite differences for the velocity derivative with respect to time and then doing a smart manipulation with two new terms. This is presented in Equation \ref{vdottimesplitting}.
+\subsection{Time-splitting}
+In order to solve the flow with a computer, the Navier Stokes equation must be expanded in equations for directions $x$ and $y$ and then discretized. Nevertheless, a naive application of the discretized formulas will not yield a proper solution, as the fluid flow equation is highly non-linear due to its convective term $\mathbf{v}\cdot \nabla \mathbf{v}$. Another problem is that the pressure needed at each time step is also an unknown that must be found: the pressure is needed to know the velocity and the velocity is needed to obtain the pressure. To solve this dilemma, the Chorin method \cite{Chorin1997118} was used. This method is referred to as time-splitting. In order to come to grips with this method, one can start by using finite differences for the velocity derivative with respect to time and then doing a smart manipulation with two new terms. This is presented in Equation \ref{vdottimesplitting}.
 
 \begin{equation}
 \frac{\partial \textbf{v}}{\partial t}\approx \frac{\textbf{v}^{n+1}-\textbf{v}^n}{\Delta t}=\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t} \label{vdottimesplitting}
@@ -241,7 +272,7 @@ The idea of time-splitting is to impose each parcel of Equation \ref{vdottimespl
 \frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}&=&-\frac{1}{\rho}\nabla p\label{equacaoprepressao}
 \end{eqnarray}
 
-Even though there is a straightforward formula to obtain $\mathbf{v}^{*}$, how to use it to obtain $p$? It is easy to notice that one can apply the divergence operator to both sides of Equation \ref{equacaoprepressao}. As $\mathbf{v}^{n+1}$ obeys the incompressibility condition, it is zero, with the remaining equation being feasible of solution by a Poisson routine.
+Even though there is a straightforward formula to obtain $\mathbf{v}^{*}$, how to use it to obtain $p$? It is easy to notice that one can apply the divergence operator to both sides of Equation \ref{equacaoprepressao}. As $\mathbf{v}^{n+1}$ has to obbey the incompressibility condition, its divergence is zero, with the remaining equation being transformed into a Poisson equation.
 
 \begin{eqnarray}
 	-\frac{1}{\rho}\nabla\cdot\nabla p\nonumber & = &\nabla\cdot \left(\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}\right)\\
@@ -270,7 +301,7 @@ u}{\partial x^2}\Bigg|_{\textrm{wall}}+\rho f_x\label{paredesVerticais}\\
 v}{\partial y^2}\Bigg|_{\textrm{wall}}+\rho f_y\label{paredesHorizontais}
 \end{eqnarray}
 
-As the four walls have flux conditions, there are many solutions that differ only by a constant. A point in the mesh can be specified arbitrarily so that the program converges to a specific solution. This is allowed in our problem, as pressure itself is not directly needed, but only its gradient.
+As the four walls have flux conditions, there are infinitely many solutions that differ only by a constant. A point in the mesh can be specified arbitrarily so that the program converges to a specific solution. This is allowed in our problem, as pressure itself is not directly needed, but only its gradient.
 
 There is one last step to obtain $\mathbf{v}^{n+1}$, but this is quite straightforward: Equation \ref{nextStepV} must be computed. It is an explicit equation with known terms at this stage.
 
@@ -288,19 +319,20 @@ The three time-splitting steps were presented, but not all their discretizations
 \begin{eqnarray}
 u_{ij}^{*}&=&u_{ij}^n+\frac{\Delta t}{\rho}\left[\mu\left(\frac{u_{ij}^s-4u_{ij}^n}{\Delta
 x^2}\right)+Fx_{ij}^n\right] + \nonumber \\
-&-&\left[u_{ij}^n(u_{i+1j}^n-u_{i-1j}^n)+\ldots \right.\nonumber \\
+&-&\left[u_{ij}^n(u_{i+1j}^n-u_{i-1j}^n)+ \right.\nonumber \\
 &+& \left. v_{ij}^t(u_{ij+1}^n-u_{ij-1}^n)\right]\frac{\Delta t}{2\Delta x}\label{step1-3}
 \end{eqnarray}
 %------------------- v* ------------------
 \begin{eqnarray}
 v_{ij}^{*}&=&v_{ij}+\frac{\Delta t}{\rho}\left[\mu\left(\frac{v_{ij}^s-4v_{ij}^n}{\Delta
 x^2}\right)+Fy_{ij}^n\right] \nonumber \\
-&-&\left[u_{ij}^t (v_{i+1j}^n-v_{i-1j}^n)+\ldots \right.\nonumber \\
+&-&\left[u_{ij}^t (v_{i+1j}^n-v_{i-1j}^n)+ \right.\nonumber \\
 &+& \left. v_{ij}^n(v_{ij+1}^n-v_{ij-1}^n)\right]\frac{\Delta t}{2\Delta x}\label{step1-4}
 \end{eqnarray}
 
+\subsection{Poisson equations}
 
-The second step, solving for the pressure, can have an explicit or implicit solution method. Both methods were used, and the implicit one is much faster, so it is presented here. The hardest part of this method is that one can not apply the discretized equations directly, but it is necessary to form a linear system from it. For the implicit method, matrix $A$ and vector $b$ are needed to solve system $Ax = b$. The pressure elements are in the unknown $x$. This system gets very large, but most of the elements in matrix $A$ are 0. This allows use of sparse matrices. Firstly, let's present the steps to obtain $A$ and $b$.
+The second step, solving for the pressure, can have an explicit or implicit solution method. Both methods were used, and the implicit one is much faster, so it is presented here. The hardest part of this method is that one can not apply the discretized equations directly, but it is necessary to form a linear system from it. For the implicit method, matrix $A$ and vector $b$ are needed to solve system $Ax = b$. The pressure elements are in the unknown $x$. This system gets very large, but most of the elements in matrix $A$ are 0, so $A$ is a sparse matrix. Firstly, let's present the steps to obtain $A$ and $b$:
 
 \begin{figure}[!ht]
 \centering
@@ -346,7 +378,7 @@ Consider a $5\times 5$ grid as in Figure \ref{examplePressureGrid}. The equation
 \nabla^2 p = \frac{\partial^2 p}{\partial x^2} + \frac{\partial^2 p}{\partial y^2} = g(x,y)\label{poissonEquation}
 \end{equation}
 
-Using second order central differences, Equation \ref{poissonSecond} is obtained. This equation is valid for internal points (black points in Figura \ref{examplePressureGrid}).
+Using second order central differences, Equation \ref{poissonSecond} is obtained. This equation is valid for internal points (black points in Figure \ref{examplePressureGrid}).
 
 \begin{eqnarray}
 \frac{p_{i-1j} - 2p_{ij} + p_{i+1j}}{\Delta x^2}	+ \frac{p_{ij-1} - 2p_{ij} + p_{ij+1}}{\Delta x^2} = g_{ij}\label{poissonSecond}
@@ -369,7 +401,7 @@ The pressure points written in bold letters are boundary points. This means ther
 \frac{\partial p}{\partial y}\left(x, 0\right) &=& u_y\left(x, 0\right)  \approx  (p_{i5} - p_{i4})/\Delta x\label{pressureBoundary4}
 \end{eqnarray}
 
-From the 21 equations obtained, a rearrangement can be done to obtain matrix $A$. Equation \ref{matrixAnulleigen} has this matrix. The $b$ vector is in Equation \ref{bPartnulleigen}. Nevertheless, one of the Eigenvalues of this system is zero, so the matrix is not invertible. This problem has to do with the fact that there are only Neumann boundary conditions and many differing-by-constant solutions are possible. To solve this problem, one value of the mesh must be imposed and the cell to be chosen can be any but one of the corner points, as they don't take any part on the equations. 
+From the 21 equations obtained, a rearrangement can be done to obtain matrix $A$, which is presented in Equation \ref{matrixAnulleigen}. The $b$ vector is in Equation \ref{bPartnulleigen}. Nevertheless, one of the Eigenvalues of this system is zero, so the matrix is not invertible. This problem has to do with the fact that there are only Neumann boundary conditions and many differing-by-constant solutions are possible. To solve this problem, one value of the mesh must be imposed and the cell to be chosen can be any but one of the corner points, as they don't take any part on the equations. 
 
 \begin{eqnarray}
 \left[\begin{array}{ccccccccc}
@@ -415,20 +447,35 @@ The equations just presented can be coded to define matrix $A$ and vector $b$, b
 
 For the magnetism parts, it was only necessary to use finite differences on the governing equations. The Poisson implicit elements obtained in this section are also used for the magnetic part. The rest are explicit applications of the finite differences equations obtained.
 
-It is important to validate the code. As part of the solution method, tests of the Poisson routine and of the discretization of the Navier Stokes equation are made. The Poisson test is to check the error when comparing a computed result with the actual analytical function that solves the PDE. The second test applies to the Navier Stokes equation and also for the Poisson one: verifying how the error decays according to an increase in mesh size. As all the discrete formulas used are of second order, this error should decay quadratically. The ``Results'' section will present both of these tests. Also, Navier Stokes with magnetism will be tested to check the order of the discretization.
+
 
 \section{Results}
-\subsection{Validation}
 
-A few tests were made to evaluate the Poisson routine. Only one of them is presented here, and it is shown on Equation \ref{poissonTest1} and its analytical solution is on Equation \ref{solutionPoissonTest1}. The Poisson validation routine returns the middle point difference on the grid that was found, this value is then divided by the real value on that point and multiplied by 100 to get a percentage. The maximum grid size used was $320\times 320$. This one had an error smaller than $0.05\%$. The results for different grid sizes are presented in Figure \ref{errorPoissonTest}. It is easy to see that the error decays quadratically, what was expected due to the second order finite differences that were used.
+It is important to validate the code. As part of the solution method, tests of the Poisson routine and of the discretization of the Navier Stokes equation are made. The Poisson test is to check the error when comparing a computed result with the actual analytical function that solves the PDE. The second test applies to the Navier Stokes equation and also for the Poisson one: verifying how the error decays according to an increase in mesh size. As all the discrete formulas used are of second order, this error should decay quadratically. The ``Results'' section will present both of these tests. Also, Navier Stokes with magnetism will be tested to check the order of the discretization.
+
+
+\subsection{Validation of the Poisson Solver}
+
+The implementation of the solver was evaluated by testing a few different problems, but only a succinct presentation is done here with one problem: Equation \ref{poissonTest1}. 
 
 \begin{eqnarray}
 \left\{\begin{array}{ccl}
-\nabla^2u(x,y) & = & 0\\
-u_x(1,y) & = & \cos 2\pi y\\
-u_n(x,y) & = & 0, \textrm{otherwise, on the boundary}
-\end{array}\right.\label{poissonTest1}
+\nabla^2u(x,y) & = & 0,\\
+u_x(1,y) & = & \cos 2\pi y,\\
+u_n(x,y) & = & 0, \textrm{otherwise, on the boundary}.
+\end{array}\right. \label{poissonTest1}
 \end{eqnarray}
+
+Its analytical solution is:
+
+\begin{eqnarray}
+u(x,y) & = & \frac{\cosh 2\pi x}{2\pi \sinh 2\pi}\cos 2 \pi y .\label{solutionPoissonTest1}
+\end{eqnarray}
+
+
+The Poisson validation routine returns the middle point difference on the grid that was found, this value is then divided by the real value on that point and multiplied by 100 to get a percentage. The maximum grid size used was $320\times 320$. This one had an error smaller than $0.05\%$. The results for different grid sizes are presented in Figure \ref{errorPoissonTest}. It is easy to see that the error decays quadratically, what was expected due to the second order finite differences that were used.
+
+
 
 \begin{eqnarray}
 u(x,y) & = & \frac{\cosh 2\pi x}{2\pi \sinh 2\pi}\cos 2 \pi y \label{solutionPoissonTest1}
@@ -440,9 +487,18 @@ u(x,y) & = & \frac{\cosh 2\pi x}{2\pi \sinh 2\pi}\cos 2 \pi y \label{solutionPoi
 \caption{Error evolving according to grid size. Higher grid sizes are closer to left-bottom corner. Error decays quadratically. Comparison with analytical solution. Grid sizes from $40\times 40$ to $320\times 320$. \label{errorPoissonTest}}
 \end{figure}
 
-Validation for the hydrodynamics is presented on Figure \ref{hydrodynamicsTest}. Reynolds is chosen to be 40. The error will be compared against the solution of grid size $200\times 200$, as access to the analytical solution is not possible. The important point to evaluate is that the error decays quadratically, what can be assessed from the image. Vorticity was used instead of velocity because it is a scalar that accounts for both velocity terms. 
+\subsection{Validation of the Navier-Stokes routine}
+
+Validation for the hydrodynamics is presented on Figure \ref{hydrodynamicsTest}. Reynolds is chosen to be 40. The error will be compared against the solution of grid size $200\times 200$, as access to the analytical solution is not possible. The important point to evaluate is that the error decays quadratically, what can be assessed from the image for simplicity. Vorticity was used instead of velocity because it is a scalar that accounts for both velocity terms. Note that the error corresponds to the base case of $200\times 200$.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/validateHydrodynamicsRe40}
+\caption{Error evolving according to grid size. Higher grid sizes are closer to left-bottom corner. Error decays quadratically. Comparison with solution of $200\times 200$ grid. Grid sizes from $70\times 70$ to $170\times 170$. \label{hydrodynamicsTest}}
+\end{figure}
 
 A similar test was used when magnetism is present. This case has a force $\mathbf{f}$ that differs from zero. Magnetic parameters chosen are $\chi=0.5$, $\mathrm{Cpm}=0.8$, $\gamma=3$ and a center for the magnetic field located close the left-bottom corner. The applied magnetic field is that of Figure \ref{magneticField}. The error evolution for this case is presented on Figure \ref{magneticTest}. The values were compared in steady-state.
+
 
 \begin{figure}[!t]
 \centering
@@ -453,99 +509,102 @@ A similar test was used when magnetism is present. This case has a force $\mathb
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\linewidth]{figures/validateHydrodynamicsRe40}
-\caption{Error evolving according to grid size. Higher grid sizes are closer to left-bottom corner. Error decays quadratically. Comparison with solution of $200\times 200$ grid. Grid sizes from $70\times 70$ to $170\times 170$. \label{hydrodynamicsTest}}
-\end{figure}
-
-\begin{figure}[!t]
-\centering
 \includegraphics[width=\linewidth]{figures/validateMagnetismRe40}
 \caption{Error evolving according to grid size. Higher grid sizes are closer to left-bottom corner. Error decays quadratically. Comparison with solution of $200\times 200$ grid. Grid sizes from $70\times 70$ to $170\times 170$. \label{magneticTest}}
 \end{figure}
 
 
 
-\subsection{Tests}
-Some Reynolds numbers were chosen and then several tests were executed for some fixed magnetic parameters. The magnetic parameters are $\chi=0.5$, $\mathrm{Cpm}=0.8$ and $\gamma=3.5$. Reynolds numbers presented here are 1, 50 and 100. Figures \ref{Re001nVectorField} to \ref{Re100wPressure} present streamlines for the velocity and contour lines for the pressure. Images with magnetic parameters set to 0 are the ones without magnetization. All results are in steady state. The angle between $\mathbf{M}$ and $\mathbf{H}$ was also computed for every point in those simulations, but it was zero, as $\mathbf{M}=\chi\mathbf{H}$ is one consideration for the magnetization in the current work.
+\subsection{Preliminary studies of flow patterns}
+We have performed some tests to assess the influence of the dimensionless parameters $\mathit{Re}$ and $\mathrm{C}_\mathrm{pm}$ on the steady-state regimes that were obtained.  Some Reynolds numbers were chosen and then several tests were executed for some fixed magnetic parameters. The magnetic parameters are $\chi=0.5$, $\mathrm{Cpm}=0.8$ and $\gamma=3.5$. Reynolds numbers presented here are 1, 50 and 100. Figures \ref{Re001nVectorField} to \ref{Re100wPressure} present streamlines for the velocity and contour lines for the pressure. Images with magnetic parameters set to 0 are the ones without magnetization. All results are in steady state. We have also coded a routine to calculate the angle between $\mathbf{M}$ and $\mathbf{H}$ for every point in those simulations but, for the case presented here, this is not relevant, as $\mathbf{M}=\chi\mathbf{H}$ is one consideration for the magnetization in the current work (superparamagnetic regime).
 
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\linewidth]{figures/Re001/n/vectorField}
-\caption{Steady state solution without magnetic field. No extra vortices appear.\label{Re001nVectorField}}
-\end{figure}
-
-\begin{figure}[!t]
-\centering
-\includegraphics[width=\linewidth]{figures/Re001/n/pressure}
-\caption{Contour plot for pressure of the last figure. \label{Re001nPressure}}
-\end{figure}
-
-\begin{figure}[!t]
-\centering
-\includegraphics[width=\linewidth]{figures/Re050/n/vectorField}
-\caption{Steady state solution without magnetic field. No extra vortices appear. \label{Re050nVectorField}}
-\end{figure}
-
-\begin{figure}[!t]
-\centering
-\includegraphics[width=\linewidth]{figures/Re050/n/pressure}
-\caption{Contour plot for pressure of the last figure. \label{Re050nPressure}}
-\end{figure}
-
-\begin{figure}[!t]
-\centering
-\includegraphics[width=\linewidth]{figures/Re100/n/vectorField}
-\caption{Steady state solution without magnetic field. No extra vortices appear. \label{Re100nVectorField}}
-\end{figure}
-
-\begin{figure}[!t]
-\centering
-\includegraphics[width=\linewidth]{figures/Re100/n/pressure}
-\caption{Contour plot for pressure of the last figure. \label{Re100nPressure}}
+\caption{Steady state solution without magnetic field, $\mathit{Re}=1$. No extra vortices appear.\label{Re001nVectorField}}
 \end{figure}
 
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\linewidth]{figures/Re001/w/vectorField}
-\caption{Steady state solution without magnetic field. A new vortex starts to appear. \label{Re001wVectorField}}
+\caption{Steady state solution without magnetic field, $\mathit{Re}=1$. A new vortex starts to appear. \label{Re001wVectorField}}
 \end{figure}
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\linewidth]{figures/Re001/w/pressure}
-\caption{Contour plot for pressure of the last figure. \label{Re001wPressure}}
+\includegraphics[width=\linewidth]{figures/Re050/n/vectorField}
+\caption{Steady state solution without magnetic field, $\mathit{Re}=50$. No extra vortices appear. \label{Re050nVectorField}}
 \end{figure}
 
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\linewidth]{figures/Re050/w/vectorField}
-\caption{Steady state solution without magnetic field. The new vortex is already bigger than the initial one. \label{Re050wVectorField}}
+\caption{Steady state solution without magnetic field, $\mathit{Re}=50$. The new vortex is already bigger than the initial one. \label{Re050wVectorField}}
 \end{figure}
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\linewidth]{figures/Re050/w/pressure}
-\caption{Contour plot for pressure of the last figure. \label{Re050wPressure}}
+\includegraphics[width=\linewidth]{figures/Re100/n/vectorField}
+\caption{Steady state solution without magnetic field, $\mathit{Re}=100$. No extra vortices appear. \label{Re100nVectorField}}
 \end{figure}
 
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\linewidth]{figures/Re100/w/vectorField}
-\caption{Steady state solution without magnetic field. Vortex increased in comparison with $\mathrm{Re} = 50$. \label{Re100wVectorField}}
+\caption{Steady state solution without magnetic field, $\mathit{Re}=100$. Vortex increased in comparison with $\mathit{Re} = 50$. \label{Re100wVectorField}}
+\end{figure}
+
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re001/n/pressure}
+\caption{Contour plot for pressure of the flow in Figure \ref{Re001nVectorField}. \label{Re001nPressure}}
 \end{figure}
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\linewidth]{figures/Re100/w/pressure}
-\caption{Contour plot for pressure of the last figure. \label{Re100wPressure}}
+\includegraphics[width=\linewidth]{figures/Re001/w/pressure}
+\caption{Contour plot for pressure of the flow in Figure \ref{Re001wVectorField}\label{Re001wPressure}}
 \end{figure}
 
-Regarding the results with no magnetic field, Figures \ref{Re001nVectorField} to \ref{Re100nPressure} present very similar results. Although the Reynolds number changes by a factor of 100, no major changes in the steady state flow were able to be observed. This changes dramatically when a magnetic field is in action. A small vortex already appears in Figure \ref{Re001wVectorField} and just grows larger as the Reynolds number increases up to 100 (Figures \ref{Re050wVectorField} and \ref{Re100wVectorField}). Pressure also varies much more and a particular concentration of contour lines is observable close to the origin (the magnetic field is applied just a little off the origin) as presented in Figures \ref{Re001wPressure}, \ref{Re050wPressure} and \ref{Re100wPressure}.
+
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re050/n/pressure}
+\caption{Contour plot for pressure of the flow in Figure \ref{Re050nVectorField}\label{Re050nPressure}}
+\end{figure}
+
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re050/w/pressure}
+\caption{Contour plot for pressure of the flow in Figure \ref{Re050wVectorField} \label{Re050wPressure}}
+\end{figure}
+
+
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re100/n/pressure}
+\caption{Contour plot for pressure of the flow in Figure \ref{Re100nVectorField}\label{Re100nPressure}}
+\end{figure}
+
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\linewidth]{figures/Re100/w/pressure}
+\caption{Contour plot for pressure of the flow in Figure \ref{Re100wVectorField} \label{Re100wPressure}}
+\end{figure}
+
+Regarding the results with no magnetic field, Figures \ref{Re001nVectorField} to \ref{Re100nPressure} present very similar results. Although the Reynolds number changes by a factor of 100, no major changes in the steady state flow were able to be observed. It is noticeable, though, that the flow is more asymmetric and the center of the main vortex shifts to the right as $\mathit{Re}$ increases.
+
+This changes dramatically when a magnetic field is in action. A small vortex already appears in Figure \ref{Re001wVectorField} and just grows larger as the Reynolds number increases up to 100 (Figures \ref{Re050wVectorField} and \ref{Re100wVectorField}). Pressure also varies much more and a particular concentration of contour lines is observable close to the origin (the magnetic field is applied just a little off the origin) as presented in Figures \ref{Re001wPressure}, \ref{Re050wPressure} and \ref{Re100wPressure}.
 
 
 \section{Conclusion}
 
-It is important for the code to be correct, otherwise it is meaningless to analyse the simulation results. The validation step shows that certainly the system is behaving as second order. An incorrect equation would break this and then the bug would appear in those graphics (Figures \ref{errorPoissonTest}, \ref{hydrodynamicsTest} and \ref{magneticTest}). Chances of a program bug are small, given that those validation tests behave well.
+It is important for the code to be correct, otherwise it is meaningless to analyze the simulation results. The validation step shows that certainly the system is behaving as second order. 
 
 Although not presented in the last sections, it is interesting to observe that one problem that appeared was when physics was disregarded. Trying to apply an arbitrary magnetic field has a good chance of generating results that converge but are incorrect when the governing equations are checked. The results presented comply to the laws that we claim to be following. This is also good evidence of correctness.
 
@@ -554,6 +613,8 @@ This work was a challenge in the aspect that an analytical solution was not avai
 
 \section{Future work}
 The results presented do not include Reynolds greater than 100 because the code is not currently abiding by any upwind scheme. This is something that is planned to be implemented. Also, a different magnetic field will be used, particularly the one of a Neodymium magnet, instead of the magnetic field of a wire, as used here.
+
+Most importantly, we want to implement the dynamic evolution equations for the magnetization of the ferrofluid that are coupled with the flow field. This will certainly change significantly dynamics of the flow and will be the subject of our next project.
 
 
 
