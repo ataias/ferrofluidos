@@ -76,9 +76,9 @@ Magnetic fluid, Driven Cavity, Finite~differences, Magnetohydrodynamics
 \section{Introduction}
 This project aims at studying magnetic fluids in a 2D lid-driven cavity. The ideal cavity used here is a square whose side is equal to unity. All the boundaries but the top have null velocities. The lid has a stationary velocity pattern that will be presented. Even though this may seem a simplistic method, papers have been presented not only in the last century but also in this century to study real problems. Garandet \cite{Garandet2012149} uses a similar approach to study solute segregations. On the field of biomagnetic fluids, Tzirtzilakis \cite{Tzirtzilakis2013} has also considered a cavity and analyzed the stationary solutions under different conditions of the Reynolds numbers and magnetic parameters. Differently from this last work, our project has not considered a method to find directly the steady-state flow, but has evolved in discrete time steps from rest until the steady state is reached. The advantage is that more data can be analyzed, so that it is possible to know when vortices start to appear and if there are any that disappear during the evolution to steady-state. Animations were made in order to better examine those results.
 
-A colloidal magnetic fluid, or ferrofluid, consists typically of a suspension of monodomain ferromagnetic particles such as magnetite in a nonmagnetic carrier fluid. Particle-to-particle agglomeration is avoided by surfactants covering the particles, and Brownian motion prevents particle sedimentation in gravitational or magnetic fields.  \cite{RosensweigMagneticFluids}. A magnetic fluid has usually around $10^{23}$ magnetic nano-particles per cubic meter and is opaque at visible light since most of them are oil-based.
+A colloidal magnetic fluid, or ferrofluid, consists typically of a suspension of monodomain ferromagnetic particles such as magnetite in a nonmagnetic carrier fluid. Particle-to-particle agglomeration is avoided by surfactants covering the particles, and Brownian motion prevents particle sedimentation in gravitational or magnetic fields.  \cite{RosensweigMagneticFluids}. Magnetic fluids have usually around $10^{23}$ magnetic nano-particles per cubic meter and are opaque at visible light since most of them are oil-based.
 
-The method chosen to solve the differential equations is finite differences \cite{zbMATH03010997}. This method approximates each derivative by discrete terms involving differences. The domain in which the problem is to be solved must be turned into a mesh. The smaller the cells of the mesh, the better the finite differences solution will be. All the finite differences used here are of second order, which means that the error decays quadratically as the number of points in the mesh increases. The mesh that is being used is not the trivial one, but a staggered grid. In such a grid, not every information is stored in the same point. For instance, on the cell $ij$, the pressure will be in position $i+\frac{1}{2}j+\frac{1}{2}$, while velocity in the $x$ direction will be $u_{ij+\frac{1}{2}}$ and the $y$ direction will be $v_{i+\frac{1}{2}j}$. This avoids spurious pressure modes as described in \cite{hinchLectureNotes}. A cell of this grid is presented in Figure \ref{grid-cell}. An example of the mesh is presented in Figure \ref{staggered-grid}. The simulation will have to use all the round points presented, and almost all the velocities marked, except the extreme left and bottom ones. After the solution is obtained, an interpolation can be made to obtain the values at any specified point. We have chosen to plot all the results in the middle point of each cell. The pressure is already in that position, but the velocities are not. Therefore, averages were computed to obtain those values in the middle point.
+The differential equations will be solved using finite differences \cite{zbMATH03010997}, a method that approximates each derivative by discrete terms involving differences. The domain in which the problem is to be solved must be turned into a mesh. The smaller the cells of the mesh, the better the finite differences solution will be. All the finite differences used here are of second order, which means that the error decays quadratically as the number of points in the mesh increases. The mesh that is being used is a staggered grid. In such a grid, not every information is stored in the same point. For instance, on the cell $ij$, the pressure will be in position $i+\frac{1}{2}j+\frac{1}{2}$, while velocity in the $x$ direction will be $u_{ij+\frac{1}{2}}$ and the $y$ direction will be $v_{i+\frac{1}{2}j}$. This avoids spurious pressure modes as described in \cite{hinchLectureNotes}. A cell of this grid is presented in Figure \ref{grid-cell}, while the mesh is presented in Figure \ref{staggered-grid}. The simulation will have to use all the round points presented, and almost all the velocities marked, except the extreme left and bottom ones. After the solution is obtained, an interpolation can be made to obtain the values at any specified point. We have chosen to plot all the results in the middle point of each cell. The pressure is already in that position, but the velocities are not. Therefore, averages were computed to obtain those values in the middle point.
 
 \begin{figure}[!ht]
 \centering
@@ -151,7 +151,7 @@ The method chosen to solve the differential equations is finite differences \cit
 \caption{Staggered-grid. Dark circles are internal points, while empty ones are part of the extra layer\label{staggered-grid}}
 \end{figure}
 
-The code for the simulator was made with aid of programming language Julia, more information about this language is available at \cite{JuliaProgramming}. Julia offers several linear algebra packages that are easy to use and very efficient. Graphics were made using Python's graphical packages \cite{matplotlib}. Codes and articles are hosted on GitHub\footnote{https://github.com/ataias/ferrofluidos}. %In the Julia language, matrices are indexed from 1 to $n$. This is different from C, because its indexing starts from 0.
+The code for the simulator was made with aid of programming language Julia, more information about this language is available at \cite{JuliaProgramming}. Julia offers several linear algebra packages that are easy to use and very efficient. Graphics were made using Python's graphical packages \cite{matplotlib}. Codes and articles of this project are hosted on GitHub\footnote{https://github.com/ataias/ferrofluidos}. %In the Julia language, matrices are indexed from 1 to $n$. This is different from C, because its indexing starts from 0.
 
 \section{Governing Equations}
 \subsection{Hidrodynamics}
@@ -162,7 +162,7 @@ Equations \ref{navierstokes} and \ref{navierincompressibilidade} govern the flow
 \nabla\cdot\textbf{v}=0.\label{navierincompressibilidade}
 \end{eqnarray}
 
-In the latter equations, some terms are presented: $\mathbf{v}$ is the velocity, $p$ stands for pressure and $\mathbf{f}$ is the force acting on the fluid. In our case, the force created by a magnetic field. The Reynolds number $\mathit{Re}$ is given by 
+In the latter equations, some terms are presented: $\mathbf{v}$ is the velocity, $p$ stands for pressure and $\mathbf{f}$ is the force acting on the fluid, which is, in our case, created by a magnetic field. The Reynolds number $\mathit{Re}$ is given by 
 
 \begin{eqnarray}
 \mathit{Re}=\frac{\rho L U}{\mu},
@@ -185,10 +185,10 @@ stable advection, the CFL condition,
 \Delta x &<& \frac{1}{\mathit{Re}}. \label{boundarylayer}
 \end{eqnarray} 
 
-If those conditions for the time-stepping of the equations are not satisfied, the solution will be wrong as the program may be trying to solve faster than the laws of physics allow. The program may not even converge.
+If the time-stepping conditions are not satisfied, the routine will try to solve the flow faster than the laws of physics allow. The result is an incorrect solution or divergency of the solution.
 
 
-The Navier-Stokes equation is thorough, encompassing several types of flow. A specific solution is found by specifying its boundary conditions. For the current work, the conditions are
+The Navier-Stokes equation is thorough, encompassing several types of flow. A specific solution is found by stating its boundary conditions. For the current work, the conditions are
 
 \begin{eqnarray}
 u(x,1) & = & \sin^2(\pi x),\\
@@ -215,10 +215,10 @@ From the latter equations, it is possible to conclude that
 \nabla\cdot\mathbf{H} = -\nabla\cdot \mathbf{M}\label{mh1}.
 \end{eqnarray}
 
-The magnetostatic regime of the Maxwell's equations implies \begin{equation}\nabla\times \mathbf{H} = \mathbf{0}.
+The magnetostatic regime of the Maxwell's equations implies \begin{equation}\nabla\times \mathbf{H} = \mathbf{0},
 \end{equation} 
 
-which indicates there is a potential field $\phi$ that satisfies $\mathbf{H} = -\nabla \phi$. With these last equations, it is possible to obtain \begin{eqnarray}
+which indicates there is a potential field $\phi$ that satisfies \begin{equation}\mathbf{H} = -\nabla \phi.\label{Hphipotencial}\end{equation} With these last equations, it is possible to obtain \begin{eqnarray}
 \nabla^2\phi &=& \nabla\cdot \mathbf{M}.\label{eqcampomag}
 \end{eqnarray}
 
@@ -226,15 +226,13 @@ This is a Poisson equation that will give $\phi$ according the the local magneti
 \begin{equation}\mathbf{M} = \chi \mathbf{H}.\end{equation}
 
 
-Nevertheless, the potential $\phi$ cannot be introduced directly in the Navier Stokes equation. What is needed is a relation that gives the magnetic force, which could then be incorporated in the fluid equations. Equation \ref{magneticforce} stands for the magnetic force, while Equation \ref{cpm} is the magnetic Reynolds number.
-
+Nevertheless, the potential $\phi$ cannot be introduced directly in the Navier-Stokes equation. What is needed is a relation that gives the magnetic force, which could then be incorporated in the fluid equations. The magnetic force is \begin{equation}
+	\mathbf{f} = \mathrm{C}_{\mathrm{pm}}\; \mathbf{M}\cdot \nabla \mathbf{H},\label{magneticforce}\end{equation} in which $\mathrm{C}_{\mathrm{pm}}$ is the magnetic Reynolds number, given by 
 \begin{eqnarray}
-\mathbf{f} & = & \mathrm{C}_{\mathrm{pm}}\; \mathbf{M}\cdot \nabla \mathbf{H}\label{magneticforce}\\
-\mathrm{C}_{\mathrm{pm}} & = & \frac{\mu_0 H_0^2}{\rho u^2}\label{cpm}
+\mathrm{C}_{\mathrm{pm}} & = & \frac{\mu_0 H_0^2}{\rho u^2}.\label{cpm}
 \end{eqnarray}
 
-
-The boundary conditions are missing for the potential field $\phi$. To understand how they are derived, first consider an applied magnetic field $\mathbf{H}$. A condition that is imposed is continuity of the normal component of $\mathbf{B}$, Equation \ref{firstmagneticequation}. This continuity can be mathematically represented by \begin{equation}\left(\mathbf{B}_{\mathrm{out}} - \mathbf{B}_{\mathrm{in}}\right)\cdot \mathbf{n} = 0 \label{normalconditionB}.\end{equation} 
+The boundary conditions were not yet determined for the potential field $\phi$. To derive those conditions, an applied magnetic field $\mathbf{H}$ was considered and the continuity requirement was imposed for the normal component of $\mathbf{B}$, Equation \ref{firstmagneticequation}. This continuity can be mathematically represented by \begin{equation}\left(\mathbf{B}_{\mathrm{out}} - \mathbf{B}_{\mathrm{in}}\right)\cdot \mathbf{n} = 0 \label{normalconditionB}.\end{equation} 
 
 From this, Equation \ref{normalConditionB2} can be obtained:
 
@@ -242,10 +240,10 @@ From this, Equation \ref{normalConditionB2} can be obtained:
 \mu_0 (H_{\mathrm{out}}^{\mathrm{n}} + M_{\mathrm{out}}^{\mathrm{n}}) &=&  \mu_0(H_{\mathrm{in}}^{\mathrm{n}}+M_{\mathrm{in}}^{\mathrm{n}}).\label{normalConditionB2}
 \end{eqnarray}
 
-The medium outside is air and therefore its magnetization, $M_{\mathrm{out}}^{\mathrm{n}}$ is zero. It is possible to use $\mathbf{H} = -\nabla \phi$ in the remaining outer term to obtain Equation \ref{nablaphid}.
+The medium outside is air and therefore its magnetization $M_{\mathrm{out}}^{\mathrm{n}}$ is zero. The term $H_{\mathrm{out}}^{\mathrm{n}}$ is substituted following  Equation \ref{Hphipotencial}, resulting  in Equation \ref{nablaphid}:
 
 \begin{eqnarray}
-\nabla\phi_{\mathrm{d}}^{\mathrm{n}} & = & -H_{\mathrm{f}}^{\mathrm{n}} + M_{\mathrm{d}}^{\mathrm{n}} \label{nablaphid}
+\nabla\phi_{\mathrm{d}}^{\mathrm{n}} & = & -H_{\mathrm{f}}^{\mathrm{n}} + M_{\mathrm{d}}^{\mathrm{n}}. \label{nablaphid}
 \end{eqnarray}
 
 From that, Neumann boundary conditions can be obtained for Equation \ref{eqcampomag}. For the sake of clarity, they are presented in Equations \ref{condition1phi} to \ref{condition4phi}. The subscripts are indicating matrix indices.
@@ -259,27 +257,37 @@ From that, Neumann boundary conditions can be obtained for Equation \ref{eqcampo
 
 \section{Solution Method}
 \subsection{Time-splitting}
-In order to solve the flow with a computer, the Navier Stokes equation must be expanded in equations for directions $x$ and $y$ and then discretized. Nevertheless, a naive application of the discretized formulas will not yield a proper solution, as the fluid flow equation is highly non-linear due to its convective term $\mathbf{v}\cdot \nabla \mathbf{v}$. Another problem is that the pressure needed at each time step is also an unknown that must be found: the pressure is needed to know the velocity and the velocity is needed to obtain the pressure. To solve this dilemma, the Chorin method \cite{Chorin1997118} was used. This method is referred to as time-splitting. In order to come to grips with this method, one can start by using finite differences for the velocity derivative with respect to time and then doing a smart manipulation with two new terms. This is presented in Equation \ref{vdottimesplitting}.
+In order to discretize the Navier-Stokes equation, an expansion is performed in directions $x$ and $y$ to obtain scalar equations and then finite differences of second order are applied. Nevertheless, a naive application of the discretized formulas will not yield a proper solution, as the fluid flow equation is highly non-linear due to its convective term $\mathbf{v}\cdot \nabla \mathbf{v}$. Also, pressure is not known in advance so, while it is needed at each time step, it is also an unknown that must be found. A method developed by Chorin, named time-splitting, and described in \cite{Chorin1997118} was used to resolve this problem. Firstly, one starts by applying finite differences for the velocity derivative with respect to time and then manipulating by summing and subtracting $\mathbf{v}^*$ in the numerator, as in
 
 \begin{equation}
-\frac{\partial \textbf{v}}{\partial t}\approx \frac{\textbf{v}^{n+1}-\textbf{v}^n}{\Delta t}=\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t} \label{vdottimesplitting}
+\frac{\partial \textbf{v}}{\partial t}\approx \frac{\textbf{v}^{n+1}-\textbf{v}^n}{\Delta t}=\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}, \label{vdottimesplitting}
 \end{equation}
 
-The idea of time-splitting is to impose each parcel of Equation \ref{vdottimesplitting} to a different part of the Navier Stokes equation. The last term in the right hand side is used to solve Equation \ref{equacaovestrela}, in which pressure is not considered, while the term just before it is related to the pressure field. Equation \ref{equacaoprepressao} shows the relation between $\mathbf{v}^{n+1}$ and $\mathbf{v}^{*}$. 
+in which $\mathbf{v}^n$ is the velocity at the current time-step and $\mathbf{v}^{n+1}$ is the velocity one time-step in the future.
 
-\begin{eqnarray}
-\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}&=& \nu\nabla ^2 \textbf{v} + \frac{\textbf{f}}{\rho} - \textbf{v}\cdot \nabla \textbf{v}\label{equacaovestrela}\\
-\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}&=&-\frac{1}{\rho}\nabla p\label{equacaoprepressao}
+The aforementioned technique imposes on the term $\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}$ of Equation \ref{vdottimesplitting} a sufficiency to solve the pressure field: 
+\begin{equation}\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}=-\frac{1}{\rho}\nabla p\label{equacaoprepressao}.\end{equation}
+
+ Notice that Equation \ref{equacaoprepressao} already shows a relation between $\mathbf{v}^{n+1}$ and $\mathbf{v}^{*}$, a correlation that is pertinent because it is used to obtain the velocity in the next time step after pressure is calculated.
+
+
+The other term, $\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}$, is responsible for all the terms of Equation \ref{navierstokes}, except the pressure gradient term that is already considered on Equation \ref{equacaoprepressao}: \begin{eqnarray}
+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}&=& \nu\nabla ^2 \textbf{v} + \frac{\textbf{f}}{\rho} - \textbf{v}\cdot \nabla \textbf{v}\label{equacaovestrela}
 \end{eqnarray}
 
-Even though there is a straightforward formula to obtain $\mathbf{v}^{*}$, how to use it to obtain $p$? It is easy to notice that one can apply the divergence operator to both sides of Equation \ref{equacaoprepressao}. As $\mathbf{v}^{n+1}$ has to obbey the incompressibility condition, its divergence is zero, with the remaining equation being transformed into a Poisson equation.
+The term $\mathbf{v}^*$ can be isolated in Equation \ref{equacaovestrela} and then calculated easily as only known terms from time step $n$ are involved in the aforementioned equation.
 
-\begin{eqnarray}
-	-\frac{1}{\rho}\nabla\cdot\nabla p\nonumber & = &\nabla\cdot \left(\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}\right)\\
-\nabla^2 p & = & \frac{\rho}{\Delta t}\nabla\cdot \textbf{v}^{*}	 \label{pressureVStar}
+As a means to calculate $p$, the divergence operator is applied to both sides of Equation \ref{equacaoprepressao}: \begin{eqnarray}
+	-\frac{1}{\rho}\nabla\cdot\nabla p & = &\nabla\cdot \left(\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}\right).
 \end{eqnarray}
 
-Now that Equation \ref{pressureVStar} is available, it is easier to devise a solution to the problem, as only $\mathbf{v}^*$ is needed and it is already a known value because of Equation \ref{equacaovestrela}. However, nothing was stated about the boundary conditions this problem involves. For that, it is better to expand the Navier Stokes equation, as in Equations \ref{navierX} and \ref{navierY}.
+As $\mathbf{v}^{n+1}$ has to obbey the incompressibility condition, its divergence is zero, with the remaining equation being transformed into a Poisson equation: \begin{eqnarray}
+\nabla^2 p & = & \frac{\rho}{\Delta t}\nabla\cdot \textbf{v}^{*}.	 \label{pressureVStar}
+\end{eqnarray}
+
+
+
+Now that Equation \ref{pressureVStar} is available, it is easier to devise a solution to the problem, as only $\mathbf{v}^*$ is needed and it is already a known value because of Equation \ref{equacaovestrela}. However, nothing was stated about the boundary conditions this problem involves. For that, it is better to expand the Navier-Stokes equation, as in Equations \ref{navierX} and \ref{navierY}.
 
 \begin{eqnarray}
 \frac{\partial u}{\partial t}+u\frac{\partial u}{\partial x}+v\frac{\partial
@@ -403,7 +411,8 @@ The pressure points written in bold letters are boundary points. This means ther
 
 From the 21 equations obtained, a rearrangement can be done to obtain matrix $A$, which is presented in Equation \ref{matrixAnulleigen}. The $b$ vector is in Equation \ref{bPartnulleigen}. Nevertheless, one of the Eigenvalues of this system is zero, so the matrix is not invertible. This problem has to do with the fact that there are only Neumann boundary conditions and many differing-by-constant solutions are possible. To solve this problem, one value of the mesh must be imposed and the cell to be chosen can be any but one of the corner points, as they don't take any part on the equations. 
 
-\begin{eqnarray}
+\begin{equation}
+\resizebox{.95\hsize}{!}{$
 \left[\begin{array}{ccccccccc}
 -2 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0\\
 1 & -3 & 1 & 0 & 1 & 0 & 0 & 0 & 0\\
@@ -416,8 +425,8 @@ From the 21 equations obtained, a rearrangement can be done to obtain matrix $A$
 0 & 0 & 0 & 0 & 0 & 1 & 0 & 1 & -2 
 \end{array}\right] \left[\begin{array}{c}
 p_{22}\\ p_{23}\\ p_{24}	\\ p_{32}\\ p_{33}\\ p_{34}\\ p_{42}\\p_{43} \\u_{44}
-\end{array}\right] = b \label{matrixAnulleigen}
-\end{eqnarray}
+\end{array}\right] = b$} \label{matrixAnulleigen}
+\end{equation}
 
 \begin{eqnarray}
 b & = & \Delta x\left[\begin{array}{c}
@@ -451,7 +460,7 @@ For the magnetism parts, it was only necessary to use finite differences on the 
 
 \section{Results}
 
-It is important to validate the code. As part of the solution method, tests of the Poisson routine and of the discretization of the Navier Stokes equation are made. The Poisson test is to check the error when comparing a computed result with the actual analytical function that solves the PDE. The second test applies to the Navier Stokes equation and also for the Poisson one: verifying how the error decays according to an increase in mesh size. As all the discrete formulas used are of second order, this error should decay quadratically. The ``Results'' section will present both of these tests. Also, Navier Stokes with magnetism will be tested to check the order of the discretization.
+It is important to validate the code. As part of the solution method, tests of the Poisson routine and of the discretization of the Navier-Stokes equation are made. The Poisson test is to check the error when comparing a computed result with the actual analytical function that solves the PDE. The second test applies to the Navier-Stokes equation and also for the Poisson one: verifying how the error decays according to an increase in mesh size. As all the discrete formulas used are of second order, this error should decay quadratically. The ``Results'' section will present both of these tests. Also, Navier-Stokes with magnetism will be tested to check the order of the discretization.
 
 
 \subsection{Validation of the Poisson Solver}
@@ -497,7 +506,7 @@ Validation for the hydrodynamics is presented on Figure \ref{hydrodynamicsTest}.
 \caption{Error evolving according to grid size. Higher grid sizes are closer to left-bottom corner. Error decays quadratically. Comparison with solution of $200\times 200$ grid. Grid sizes from $70\times 70$ to $170\times 170$. \label{hydrodynamicsTest}}
 \end{figure}
 
-A similar test was used when magnetism is present. This case has a force $\mathbf{f}$ that differs from zero. Magnetic parameters chosen are $\chi=0.5$, $\mathrm{Cpm}=0.8$, $\gamma=3$ and a center for the magnetic field located close the left-bottom corner. The applied magnetic field is that of Figure \ref{magneticField}. The error evolution for this case is presented on Figure \ref{magneticTest}. The values were compared in steady-state.
+A similar test was used when magnetism is present. This case has a force $\mathbf{f}$ that differs from zero. Magnetic parameters chosen are $\chi=0.5$, $\mathrm{C}_\mathrm{pm}=0.8$, $\gamma=3$ and a center for the magnetic field located close the left-bottom corner. The applied magnetic field is that of Figure \ref{magneticField}. The error evolution for this case is presented on Figure \ref{magneticTest}. The values were compared in steady-state.
 
 
 \begin{figure}[!t]
@@ -516,7 +525,7 @@ A similar test was used when magnetism is present. This case has a force $\mathb
 
 
 \subsection{Preliminary studies of flow patterns}
-We have performed some tests to assess the influence of the dimensionless parameters $\mathit{Re}$ and $\mathrm{C}_\mathrm{pm}$ on the steady-state regimes that were obtained.  Some Reynolds numbers were chosen and then several tests were executed for some fixed magnetic parameters. The magnetic parameters are $\chi=0.5$, $\mathrm{Cpm}=0.8$ and $\gamma=3.5$. Reynolds numbers presented here are 1, 50 and 100. Figures \ref{Re001nVectorField} to \ref{Re100wPressure} present streamlines for the velocity and contour lines for the pressure. Images with magnetic parameters set to 0 are the ones without magnetization. All results are in steady state. We have also coded a routine to calculate the angle between $\mathbf{M}$ and $\mathbf{H}$ for every point in those simulations but, for the case presented here, this is not relevant, as $\mathbf{M}=\chi\mathbf{H}$ is one consideration for the magnetization in the current work (superparamagnetic regime).
+We have performed some tests to assess the influence of the dimensionless parameters $\mathit{Re}$ and $\mathrm{C}_\mathrm{pm}$ on the steady-state regimes that were obtained.  Some Reynolds numbers were chosen and then several tests were executed for some fixed magnetic parameters. The magnetic parameters are $\chi=0.5$, $\mathrm{C}_\mathrm{pm}=0.8$ and $\gamma=3.5$. Reynolds numbers presented here are 1, 50 and 100. Figures \ref{Re001nVectorField} to \ref{Re100wPressure} present streamlines for the velocity and contour lines for the pressure. Images with magnetic parameters set to 0 are the ones without magnetization. All results are in steady state. We have also coded a routine to calculate the angle between $\mathbf{M}$ and $\mathbf{H}$ for every point in those simulations but, for the case presented here, this is not relevant, as $\mathbf{M}=\chi\mathbf{H}$ is one consideration for the magnetization in the current work (superparamagnetic regime).
 
 \begin{figure}[!t]
 \centering
@@ -614,7 +623,7 @@ This work was a challenge in the aspect that an analytical solution was not avai
 \section{Future work}
 The results presented do not include Reynolds greater than 100 because the code is not currently abiding by any upwind scheme. This is something that is planned to be implemented. Also, a different magnetic field will be used, particularly the one of a Neodymium magnet, instead of the magnetic field of a wire, as used here.
 
-Most importantly, we want to implement the dynamic evolution equations for the magnetization of the ferrofluid that are coupled with the flow field. This will certainly change significantly dynamics of the flow and will be the subject of our next project.
+Most importantly, we want to implement the dynamic evolution equations for the magnetization of the ferrofluid that are coupled with the flow field. This will certainly change significantly the dynamics of the flow and will be the subject of our next project.
 
 
 
