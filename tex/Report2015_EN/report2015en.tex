@@ -191,9 +191,9 @@ If the time-stepping conditions are not satisfied, the routine will try to solve
 The Navier-Stokes equation is thorough, encompassing several types of flow. A specific solution is found by stating its boundary conditions. For the current work, the conditions are
 
 \begin{eqnarray}
-u(x,1) & = & \sin^2(\pi x),\\
-u(x,0) & = & u(0,y) = u(1,y) = 0,\\
-v(x,0) & = & v(x,1) = v(0, y) = v(1, y) = 0.
+u(x,1) & = & \sin^2(\pi x),\label{condition1ns}\\
+u(x,0) & = & u(0,y) = u(1,y) = 0,\label{condition2ns}\\
+v(x,0) & = & v(x,1) = v(0, y) = v(1, y) = 0.\label{condition3ns}
 \end{eqnarray}
 
 \subsection{Magnetism}
@@ -265,78 +265,83 @@ In order to discretize the Navier-Stokes equation, an expansion is performed in 
 
 in which $\mathbf{v}^n$ is the velocity at the current time-step and $\mathbf{v}^{n+1}$ is the velocity one time-step in the future.
 
-The aforementioned technique imposes on the term $\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}$ of Equation \ref{vdottimesplitting} a sufficiency to solve the pressure field: 
-\begin{equation}\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}=-\frac{1}{\rho}\nabla p\label{equacaoprepressao}.\end{equation}
+The aforementioned technique imposes on the term $\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}$ of Equation \ref{vdottimesplitting} a relation with the pressure field: 
+\begin{equation}\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}=-\nabla p\label{equacaoprepressao}.\end{equation}
 
  Notice that Equation \ref{equacaoprepressao} already shows a relation between $\mathbf{v}^{n+1}$ and $\mathbf{v}^{*}$, a correlation that is pertinent because it is used to obtain the velocity in the next time step after pressure is calculated.
 
 
 The other term, $\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}$, is responsible for all the terms of Equation \ref{navierstokes}, except the pressure gradient term that is already considered on Equation \ref{equacaoprepressao}: \begin{eqnarray}
-\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}&=& \nu\nabla ^2 \textbf{v} + \frac{\textbf{f}}{\rho} - \textbf{v}\cdot \nabla \textbf{v}\label{equacaovestrela}
+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}&=& \frac{1}{\mathit{Re}}\nabla ^2 \textbf{v} + \textbf{f} - \textbf{v}\cdot \nabla \textbf{v}\label{equacaovestrela}
 \end{eqnarray}
 
-The term $\mathbf{v}^*$ can be isolated in Equation \ref{equacaovestrela} and then calculated easily as only known terms from time step $n$ are involved in the aforementioned equation.
-
-As a means to calculate $p$, the divergence operator is applied to both sides of Equation \ref{equacaoprepressao}: \begin{eqnarray}
-	-\frac{1}{\rho}\nabla\cdot\nabla p & = &\nabla\cdot \left(\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}\right).
-\end{eqnarray}
-
-As $\mathbf{v}^{n+1}$ has to obbey the incompressibility condition, its divergence is zero, with the remaining equation being transformed into a Poisson equation: \begin{eqnarray}
-\nabla^2 p & = & \frac{\rho}{\Delta t}\nabla\cdot \textbf{v}^{*}.	 \label{pressureVStar}
-\end{eqnarray}
-
-
-
-Now that Equation \ref{pressureVStar} is available, it is easier to devise a solution to the problem, as only $\mathbf{v}^*$ is needed and it is already a known value because of Equation \ref{equacaovestrela}. However, nothing was stated about the boundary conditions this problem involves. For that, it is better to expand the Navier-Stokes equation, as in Equations \ref{navierX} and \ref{navierY}.
-
+The term $\mathbf{v}^*$ can be isolated in Equation \ref{equacaovestrela} and then calculated easily as only known terms from time step $n$ are involved in the aforementioned equation. Nevertheless, only time was discretized so far. Before any computation, we need to apply finite differences to Equation \ref{equacaovestrela}, which results in %------------------- u* -------------------
 \begin{eqnarray}
-\frac{\partial u}{\partial t}+u\frac{\partial u}{\partial x}+v\frac{\partial
-u}{\partial y}=-\frac{1}{\rho}\frac{\partial p}{\partial
-x}+\nu\left(\frac{\partial^2 u}{\partial^2 x}+\frac{\partial^2 u}{\partial^2
-y}\right)+f_x \label{navierX}\\
-\frac{\partial v}{\partial t}+u\frac{\partial v}{\partial x}+v\frac{\partial
-v}{\partial y}=-\frac{1}{\rho}\frac{\partial p}{\partial
-y}+\nu\left(\frac{\partial^2 v}{\partial^2 x}+\frac{\partial^2 v}{\partial^2
-y}\right)+f_y \label{navierY}
-\end{eqnarray}
-
-Given the two latter equations, boundary conditions on the walls can be applied. Many terms are zero on the wall, and the result is presented in Equations \ref{paredesVerticais} and \ref{paredesHorizontais}. Notice that those are Neumann boundary conditions.
-
-\begin{eqnarray}
-\frac{\partial p}{\partial x}\Bigg|_{\textrm{wall}}&=&\rho\nu\frac{\partial^2
-u}{\partial x^2}\Bigg|_{\textrm{wall}}+\rho f_x\label{paredesVerticais}\\
-\frac{\partial p}{\partial y}\Bigg|_{\textrm{wall}}&=&\rho\nu\frac{\partial^2
-v}{\partial y^2}\Bigg|_{\textrm{wall}}+\rho f_y\label{paredesHorizontais}
-\end{eqnarray}
-
-As the four walls have flux conditions, there are infinitely many solutions that differ only by a constant. A point in the mesh can be specified arbitrarily so that the program converges to a specific solution. This is allowed in our problem, as pressure itself is not directly needed, but only its gradient.
-
-There is one last step to obtain $\mathbf{v}^{n+1}$, but this is quite straightforward: Equation \ref{nextStepV} must be computed. It is an explicit equation with known terms at this stage.
-
-\begin{eqnarray}
-	\mathbf{v}^{n+1} & = & \mathbf{v}^*  - \frac{\Delta t}{\rho} \nabla p \label{nextStepV}
-\end{eqnarray}
-
-The three time-splitting steps were presented, but not all their discretizations. The discretization for step 1 is on Equations \ref{step1-3} and \ref{step1-4}. Equations \ref{step1-1} and \ref{step1-2} are variables made do ease the understanding of the main equations for this step. Equation \ref{step1-1} is the sum of cell points around $ij$, while \ref{step1-2} is a linear interpolation to obtain $u$ and $v$ at desired points that are not available directly in the staggered grid.  For each inner point of the mesh, the equations presented are applied in an explicit form.
-
-\begin{eqnarray}
-\textbf{v}_{ij}^s&=&(\SumFour{u})\textbf{i} \nonumber \\&+& (\SumFour{v})\textbf{j} \label{step1-1}\\
-\textbf{v}_{ij}^t&=&0.25(u_{ij}^n+u_{i+1j}^n+u_{i+1j-1}^n+u_{ij-1}^n)\textbf{i} \nonumber \\ &+& 0.25(v_{ij}^n+v_{i-1j}^n+v_{i-1j+1}^n+v_{ij+1}^n)\textbf{j} \label{step1-2}
-\end{eqnarray}
-%------------------- u* -------------------
-\begin{eqnarray}
-u_{ij}^{*}&=&u_{ij}^n+\frac{\Delta t}{\rho}\left[\mu\left(\frac{u_{ij}^s-4u_{ij}^n}{\Delta
+u_{ij}^{*}&=&u_{ij}^n+\Delta t\left[\frac{1}{\mathit{Re}}\left(\frac{u_{ij}^s-4u_{ij}^n}{\Delta
 x^2}\right)+Fx_{ij}^n\right] + \nonumber \\
 &-&\left[u_{ij}^n(u_{i+1j}^n-u_{i-1j}^n)+ \right.\nonumber \\
-&+& \left. v_{ij}^t(u_{ij+1}^n-u_{ij-1}^n)\right]\frac{\Delta t}{2\Delta x}\label{step1-3}
+&+& \left. v_{ij}^t(u_{ij+1}^n-u_{ij-1}^n)\right]\frac{\Delta t}{2\Delta x}\; \textrm{and }\label{step1-3}
 \end{eqnarray}
 %------------------- v* ------------------
 \begin{eqnarray}
-v_{ij}^{*}&=&v_{ij}+\frac{\Delta t}{\rho}\left[\mu\left(\frac{v_{ij}^s-4v_{ij}^n}{\Delta
+v_{ij}^{*}&=&v_{ij}+\Delta t\left[\frac{1}{\mathit{Re}}\left(\frac{v_{ij}^s-4v_{ij}^n}{\Delta
 x^2}\right)+Fy_{ij}^n\right] \nonumber \\
 &-&\left[u_{ij}^t (v_{i+1j}^n-v_{i-1j}^n)+ \right.\nonumber \\
-&+& \left. v_{ij}^n(v_{ij+1}^n-v_{ij-1}^n)\right]\frac{\Delta t}{2\Delta x}\label{step1-4}
+&+& \left. v_{ij}^n(v_{ij+1}^n-v_{ij-1}^n)\right]\frac{\Delta t}{2\Delta x}.\label{step1-4}
 \end{eqnarray}
+
+In the latter equations, $u^*_{ij}$ is the velocity in the $x$-direction at row $i$ and column $j$ in the mesh, while $v^*_{ij}$ is the velocity in the $y$-direction with similar indexing. It is important to notice that those equations have truncated the $1/2$ that would appear when the value is stored in the middle of the cell, or at the middle of a wall. In order to the computations to be valid, the values involved must be related to the same physical point. The terms $u_{ij}^t$ and $v_{ij}^t$ are interpolated velocities that need to be defined in order for the computations to be correct in the staggered-grid and are defined as:
+
+\begin{eqnarray}
+u_{ij}^t&=&\frac{1}{4}(u_{ij}^n+u_{i+1j}^n+u_{i+1j-1}^n+u_{ij-1}^n) \label{ut},\\ 
+v_{ij}^t &=& \frac{1}{4}(v_{ij}^n+v_{i-1j}^n+v_{i-1j+1}^n+v_{ij+1}^n). \label{vt}
+\end{eqnarray}
+
+
+The terms $u^s_{ij}$ and $v^s_{ij}$ refer to a sum of cell points around the corresponding velocity located in $ij$:
+
+\begin{eqnarray}
+u_{ij}^s &=& \SumFour{u} \label{us}, \\
+v_{ij}^s &=& \SumFour{v} \label{vs}.
+\end{eqnarray}
+
+
+
+As a means to calculate $p$, the divergence operator is applied to both sides of Equation \ref{equacaoprepressao}: \begin{eqnarray}
+	-\nabla\cdot\nabla p & = &\nabla\cdot \left(\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}\right).
+\end{eqnarray}
+
+As $\mathbf{v}^{n+1}$ has to obbey the incompressibility condition, its divergence is zero, with the remaining equation being transformed into a Poisson equation: \begin{eqnarray}
+\nabla^2 p & = & \frac{1}{\Delta t}\nabla\cdot \textbf{v}^{*}.	 \label{pressureVStar}
+\end{eqnarray}
+
+
+
+In order to solve Equation \ref{pressureVStar}, its boundary conditions need to be determined. For that, the Navier-Stokes equation is expanded: \begin{eqnarray}
+\frac{\partial u}{\partial t}+u\frac{\partial u}{\partial x}+v\frac{\partial
+u}{\partial y}=-\frac{\partial p}{\partial
+x}+\frac{1}{\mathit{Re}}\left(\frac{\partial^2 u}{\partial^2 x}+\frac{\partial^2 u}{\partial^2
+y}\right)+f_x, \label{navierX}\\
+\frac{\partial v}{\partial t}+u\frac{\partial v}{\partial x}+v\frac{\partial
+v}{\partial y}=-\frac{\partial p}{\partial
+y}+\frac{1}{\mathit{Re}}\left(\frac{\partial^2 v}{\partial^2 x}+\frac{\partial^2 v}{\partial^2
+y}\right)+f_y. \label{navierY}
+\end{eqnarray}
+
+Equations \ref{navierX} and \ref{navierY} are valid in the whole domain, but to obtain the boundary conditions for $p$, these equations are evaluated only in the walls of the cavity. The conditions are those from Equations \ref{condition1ns} to \ref{condition3ns} and their application results in:\begin{eqnarray}
+\frac{\partial p}{\partial x}\Bigg|_{\textrm{wall}}&=&\frac{1}{\mathit{Re}}\frac{\partial^2
+u}{\partial x^2}\Bigg|_{\textrm{wall}}+f_x,\label{paredesVerticais}\\
+\frac{\partial p}{\partial y}\Bigg|_{\textrm{wall}}&=&\frac{1}{\mathit{Re}}\frac{\partial^2
+v}{\partial y^2}\Bigg|_{\textrm{wall}}+f_y.\label{paredesHorizontais}
+\end{eqnarray}
+
+Equation \ref{paredesVerticais} gives conditions for the left and right boundaries, while Equation \ref{paredesHorizontais} is for top and bottom. As the four walls have flux conditions, Neumann conditions, there are infinitely many solutions that differ only by a constant. Therefore, a point in the mesh is specified arbitrarily so that the program converges to a specific solution. This is allowed in our problem, as pressure itself is not directly needed, but only its gradient.
+
+At this stage, $\mathbf{v}^*$ and $p$ are known, so that $\mathbf{v}^{n+1}$ can be calculated by \begin{eqnarray}
+	\mathbf{v}^{n+1} & = & \mathbf{v}^*  - \Delta t\cdot  \nabla p. \label{nextStepV}
+\end{eqnarray}
+
+Equation \ref{nextStepV} is then used to evolve the system from time $n \Delta t$ to $(n+1)\Delta t$. 
 
 \subsection{Poisson equations}
 
@@ -567,13 +572,13 @@ We have performed some tests to assess the influence of the dimensionless parame
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\linewidth]{figures/Re001/n/pressure}
-\caption{Contour plot for pressure of the flow in Figure \ref{Re001nVectorField}. \label{Re001nPressure}}
+\caption{Contour plot for pressure of the flow in Figure \ref{Re001nVectorField}, $\mathit{Re}=1$, no magnetism. \label{Re001nPressure}}
 \end{figure}
 
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\linewidth]{figures/Re001/w/pressure}
-\caption{Contour plot for pressure of the flow in Figure \ref{Re001wVectorField}\label{Re001wPressure}}
+\caption{Contour plot for pressure of the flow in Figure \ref{Re001wVectorField}, $\mathit{Re}=1$, with magnetism\label{Re001wPressure}}
 \end{figure}
 
 
@@ -581,14 +586,14 @@ We have performed some tests to assess the influence of the dimensionless parame
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\linewidth]{figures/Re050/n/pressure}
-\caption{Contour plot for pressure of the flow in Figure \ref{Re050nVectorField}\label{Re050nPressure}}
+\caption{Contour plot for pressure of the flow in Figure \ref{Re050nVectorField}, $\mathit{Re}=50$, no magnetism\label{Re050nPressure}}
 \end{figure}
 
 
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\linewidth]{figures/Re050/w/pressure}
-\caption{Contour plot for pressure of the flow in Figure \ref{Re050wVectorField} \label{Re050wPressure}}
+\caption{Contour plot for pressure of the flow in Figure \ref{Re050wVectorField}, $\mathit{Re}=50$, with magnetism \label{Re050wPressure}}
 \end{figure}
 
 
@@ -596,14 +601,14 @@ We have performed some tests to assess the influence of the dimensionless parame
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\linewidth]{figures/Re100/n/pressure}
-\caption{Contour plot for pressure of the flow in Figure \ref{Re100nVectorField}\label{Re100nPressure}}
+\caption{Contour plot for pressure of the flow in Figure \ref{Re100nVectorField}, $\mathit{Re}=100$, no magnetism\label{Re100nPressure}}
 \end{figure}
 
 
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\linewidth]{figures/Re100/w/pressure}
-\caption{Contour plot for pressure of the flow in Figure \ref{Re100wVectorField} \label{Re100wPressure}}
+\caption{Contour plot for pressure of the flow in Figure \ref{Re100wVectorField}, $\mathit{Re}=100$, with magnetism \label{Re100wPressure}}
 \end{figure}
 
 Regarding the results with no magnetic field, Figures \ref{Re001nVectorField} to \ref{Re100nPressure} present very similar results. Although the Reynolds number changes by a factor of 100, no major changes in the steady state flow were able to be observed. It is noticeable, though, that the flow is more asymmetric and the center of the main vortex shifts to the right as $\mathit{Re}$ increases.
