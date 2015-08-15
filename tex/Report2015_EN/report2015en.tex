@@ -90,20 +90,6 @@ In the latter equations, some terms are presented: $\mathbf{v}$ is the velocity,
 \mathit{Re}=\frac{\rho L U}{\mu},
 \end{eqnarray} in which $\rho$ is the density of the fluid, $L$ is a characteristic linear dimension, in our case, the size of the cavity, $U$ is maximum speed of the lid and $\mu$ is the dynamic viscosity of the fluid.
 
-Computer solutions require certain conditions on the time step,$\Delta t$, and spacing of grid points. As well described on \cite{hinchLectureNotes}, the requirements are: stable diffusion, 
-\begin{equation}
-\Delta t < \frac{1}{4}\mathit{Re}\Delta x^2, \label{stablediffusion}
-\end{equation} stable advection, the CFL condition,
-\begin{equation}
-\Delta t < \frac{\Delta x}{U}, \label{stableadvection}
-\end{equation}
-
- and to resolve well the hydrodynamic boundary layer,  
- \begin{eqnarray}
-\Delta x &<& \frac{1}{\mathit{Re}}. \label{boundarylayer}
-\end{eqnarray} 
-
-If the time-stepping conditions are not satisfied, the routine will try to solve the flow faster than the laws of physics allow. The result is an incorrect solution or divergency of the solution.
 
 
 A specific solution of the Navier-Stokes equation is found by stating its boundary and initial conditions. For the current work, the boundary conditions are \begin{eqnarray}
@@ -153,7 +139,7 @@ From that, four Neumann boundary conditions can be obtained for Equation \ref{eq
 
 \section{Numerical Solution of the Governing Equations}
 
-\subsection{Staggered-grid}
+\subsection{Grid configuration}
 
 As stated before, an staggered-grid is used to eliminate spurious pressure modes. In such a grid, not every information is stored in the same point. For instance, on the cell $ij$, the pressure will be in position $i+\frac{1}{2}j+\frac{1}{2}$, while velocity in the $x$ direction will be $u_{ij+\frac{1}{2}}$ and the $y$ direction will be $v_{i+\frac{1}{2}j}$. This avoids spurious pressure modes as described in \cite{hinchLectureNotes}. A cell of this grid is presented in Figure \ref{grid-cell}, while the mesh is presented in Figure \ref{staggered-grid}. After the solution is obtained, an interpolation can be made to obtain the values at any specified point. We have chosen to plot all the results in the middle point of each cell. The pressure is already in that position, but the velocities are not. Therefore, averages were computed to obtain those values in the middle point. The discretizations of the following sections all consider a staggered-grid.
 
@@ -232,7 +218,7 @@ The code for the simulator was made with aid of programming language Julia, more
 
 
 \subsection{Time-splitting}
-In order to discretize the Navier-Stokes equation, an expansion is performed in directions $x$ and $y$ to obtain scalar equations and then finite differences of second order are applied: \begin{eqnarray}
+In order to discretize the Navier-Stokes equation, an expansion is performed in directions $x$ and $y$ to obtain scalar equations: \begin{eqnarray}
 \frac{\partial u}{\partial t}+u\frac{\partial u}{\partial x}+v\frac{\partial
 u}{\partial y}=-\frac{\partial p}{\partial
 x}+\frac{1}{\mathit{Re}}\left(\frac{\partial^2 u}{\partial^2 x}+\frac{\partial^2 u}{\partial^2
@@ -241,9 +227,9 @@ y}\right)+f_x, \label{navierX}\\
 v}{\partial y}=-\frac{\partial p}{\partial
 y}+\frac{1}{\mathit{Re}}\left(\frac{\partial^2 v}{\partial^2 x}+\frac{\partial^2 v}{\partial^2
 y}\right)+f_y. \label{navierY}
-\end{eqnarray}
+\end{eqnarray} 
 
-Nevertheless, a naive application of the discretized formulas will not yield a proper solution, as the fluid flow equation is highly non-linear due to its convective term $\mathbf{v}\cdot \nabla \mathbf{v}$. Also, pressure is not known in advance so, while it is needed at each time step, it is also an unknown that must be found. A method developed by Chorin, named time-splitting, and described in \cite{Chorin1997118} was used to resolve this problem. Firstly, one starts by applying finite differences for the velocity derivative with respect to time and then manipulating by summing and subtracting an arbitrary quantity $\mathbf{v}^*$ in the numerator, as in \begin{equation}
+Finite differences of second order need to be applied to discretize Equations \ref{navierX} and \ref{navierY}. Nevertheless, a naive application of the discretized formulas will not yield a proper solution, as the fluid flow equation is highly non-linear due to its convective term $\mathbf{v}\cdot \nabla \mathbf{v}$. Also, pressure is not known in advance so, while it is needed at each time step, it is also an unknown that must be found. A method developed by Chorin, named time-splitting, and described in \cite{Chorin1997118} was used to resolve this problem. Firstly, one starts by applying finite differences for the velocity derivative with respect to time and then manipulating by summing and subtracting an arbitrary quantity $\mathbf{v}^*$ in the numerator, as in \begin{equation}
 \frac{\partial \textbf{v}}{\partial t}\approx \frac{\textbf{v}^{n+1}-\textbf{v}^n}{\Delta t}=\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}, \label{vdottimesplitting}
 \end{equation} in which $\mathbf{v}^n$ is the velocity at the current time-step and $\mathbf{v}^{n+1}$ is the velocity one time-step in the future.
 
@@ -306,6 +292,22 @@ At this stage, $\mathbf{v}^*$ and $p$ are known, so that $\mathbf{v}^{n+1}$ can 
 
 Equation \ref{nextStepV} is then used to evolve the system from time $n \Delta t$ to $(n+1)\Delta t$. 
 
+Computer solutions require certain conditions on the time step,$\Delta t$, and spacing of grid points. As well described on \cite{hinchLectureNotes}, the requirements are: stable diffusion, 
+\begin{equation}
+\Delta t < \frac{1}{4}\mathit{Re}\Delta x^2, \label{stablediffusion}
+\end{equation} stable advection, the CFL condition,
+\begin{equation}
+\Delta t < \frac{\Delta x}{U}, \label{stableadvection}
+\end{equation}
+
+ and to resolve well the hydrodynamic boundary layer,  
+ \begin{eqnarray}
+\Delta x &<& \frac{1}{\mathit{Re}}. \label{boundarylayer}
+\end{eqnarray} 
+
+If the time-stepping conditions are not satisfied, the routine will try to solve the flow faster than the laws of physics allow. The result is an incorrect solution or divergency of the solution.
+
+
 \subsection{Poisson equations}
 
 A pressure must be found that satisfies Equation \ref{pressureVStar}, which is a Poisson equation. The approach to that will be, again, finite differences, but following an implicit approach. Codes that implement explicit difference equations were tested against the implicit ones with the result being that the implicit is much faster. For the implicit case, a linear system must be formed from the difference equations and then the system must be solved to find the pressure. This means that matrix $A$ and vector $b$ must be determined and then system $Ax = b$ must be solved to find $x$ which, in our case, contains pressure values. This system gets very large, but most of the elements in matrix $A$ are 0, so $A$ is a sparse matrix. 
@@ -360,9 +362,9 @@ Obtaining $A$ and $b$ can be done by first analyzing a small grid and then gener
 \end{eqnarray}
 
 The latter equations are three of nine equations that are needed for the internal points of the grid. The rest of the equations can be obtained similarly. Boundary points are marked in bold and equations for them come exactly from boundary conditions. There are twelve external points, what requires the same number of equations, summing up to a total of 21 equations in a $5\times 5$ grid. The four corner points are not taken into account, as they are not used in the grid style adopted, what justifies that only 21 points are used of 25. Equations \ref{pressureBoundary1} to \ref{pressureBoundary4} can have its indices substituted in order to get the 12 equations for the boundary points: \begin{eqnarray}
-\frac{\partial p}{\partial x}\left(0, y\right) &=& p_x\left(0, y\right)  \approx  \frac{(p_{2j} - p_{1j})}{\Delta x} \label{pressureBoundary1},\end{eqnarray} \begin{eqnarray}
-\frac{\partial p}{\partial x}\left(1, y\right) &=& p_x\left(1, y\right)  \approx  \frac{(u_{5j} - u_{4j})}{\Delta x},\end{eqnarray} \begin{eqnarray}
-\frac{\partial p}{\partial y}\left(x, 0\right) &=& p_y\left(x, 0\right)  \approx \frac{(p_{i2} - p_{i1})}{\Delta x},\end{eqnarray}\begin{eqnarray}
+\frac{\partial p}{\partial x}\left(0, y\right) &=& p_x\left(0, y\right)  \approx  \frac{(p_{2j} - p_{1j})}{\Delta x} \label{pressureBoundary1},\\
+\frac{\partial p}{\partial x}\left(1, y\right) &=& p_x\left(1, y\right)  \approx  \frac{(u_{5j} - u_{4j})}{\Delta x},\\
+\frac{\partial p}{\partial y}\left(x, 0\right) &=& p_y\left(x, 0\right)  \approx \frac{(p_{i2} - p_{i1})}{\Delta x},\\
 \frac{\partial p}{\partial y}\left(x, 0\right) &=& u_y\left(x, 0\right)  \approx  \frac{(p_{i5} - p_{i4})}{\Delta x}.\label{pressureBoundary4}
 \end{eqnarray}
 
@@ -450,7 +452,10 @@ Validation for the hydrodynamics is presented on Figure \ref{hydrodynamicsTest}.
 \caption{Error evolving according to grid size. Higher grid sizes are closer to left-bottom corner. Error decays quadratically. Comparison with solution of $200\times 200$ grid. Grid sizes from $70\times 70$ to $170\times 170$. \label{hydrodynamicsTest}}
 \end{figure}
 
-A similar test was used when magnetism is present. This case has a force $\mathbf{f}$ that differs from zero. Magnetic parameters chosen are $\chi=0.5$, $\mathrm{C}_\mathrm{pm}=0.8$, $\gamma=3$ and a center for the magnetic field located close the left-bottom corner. The applied magnetic field is that of Figure \ref{magneticField}. The error evolution for this case is presented on Figure \ref{magneticTest}. The values were compared in steady-state.
+A similar test was used when magnetism is present. This case has a force $\mathbf{f}$ that differs from zero. Magnetic parameters chosen are $\chi=0.5$, $\mathrm{C}_\mathrm{pm}=0.8$, $\gamma=3$ and a center for the magnetic field located close the left-bottom corner. The applied magnetic field is that depicted in Figure \ref{magneticField}. The magnetic field is $\mathbf{H}=(H_x,H_y)$, whose components are given by: \begin{eqnarray}
+H_x(x,y) & = & \frac{\gamma}{2\pi} \frac{y - b}{(x-a)^2+(y-b)^2},\\
+H_y(x,y) & = & -\frac{\gamma}{2\pi} \frac{x - a}{(x-a)^2+(y-b)^2},
+\end{eqnarray} where $(a,b)$ is the point where the magnetic source is placed and $\gamma$ is the magnetic field strength at this point \cite{Tzirtzilakis2013}. The terms just presented are already dimensionless. The error evolution for the case presented is on Figure \ref{magneticTest}, where the values were compared in steady-state.
 
 
 \begin{figure}[!t]
@@ -554,6 +559,8 @@ Regarding the results with no magnetic field, Figures \ref{Re001nVectorField} to
 
 This changes dramatically when a magnetic field is in action. A small vortex already appears in Figure \ref{Re001wVectorField} and just grows larger as the Reynolds number increases up to 100 (Figures \ref{Re050wVectorField} and \ref{Re100wVectorField}). Pressure also changes significantly and a particular concentration of contour lines is observable close to the origin (the magnetic field is applied just a little off the origin) as presented in Figures \ref{Re001wPressure}, \ref{Re050wPressure} and \ref{Re100wPressure}.
 
+Our results are in very good qualitative agreement with the ones presented in \cite{Tzirtzilakis2013}. With this work, we have finalized the step of the construction of the tool that we will use in our next step: a detailed study of different models for the evolution of the magnetization of the ferrofluid in the presence of a flow.
+
 
 \section{Conclusion}
 
@@ -565,7 +572,7 @@ This work was a challenge in the aspect that an analytical solution was not avai
 
 
 \section{Future work}
-The results presented do not include Reynolds greater than 100 because the code is not currently abiding by any upwind scheme. This is something that is planned to be implemented. Also, a different magnetic field will be used, particularly the one of a Neodymium magnet, instead of the magnetic field of a wire, as used here.
+The results presented do not include Reynolds greater than 100 because the code is not currently abiding by any upwind scheme. This is something that is planned to be implemented. Also, a different magnetic field will be used, particularly the one of a Neodymium magnet\cite{McCaigClegg}, instead of the magnetic field of a wire\cite{Tzirtzilakis2013}, as used here.
 
 Most importantly, we want to implement the dynamic evolution equations for the magnetization of the ferrofluid that are coupled with the flow field. This will certainly change significantly the dynamics of the flow and will be the subject of our next project.
 
