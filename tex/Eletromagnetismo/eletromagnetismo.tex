@@ -81,7 +81,7 @@ Masao \cite{masao1989} cita Shliomis (cheguei a achar o artigo, mas era muito es
 &=&-\frac{L}{\tau U}[\mathbf{M} - \mathbf{M}_0]+\frac{L H_0^2}{U\zeta}[(\mathbf{M}\times \mathbf{H})\times\mathbf{M}]+\frac{1}{2}(\nabla\times \mathbf{v})\times \mathbf{M}
 \end{eqnarray}
 
-\subsubsection{Discretização}
+\subsubsection{Expansão}
 \paragraph{} Primeiro, note que \begin{eqnarray}
 	\mathbf{u}\times \mathbf{v} & = & \left| \begin{array}{ccc}
  	\mathbf{i} & \mathbf{j} & \mathbf{k}\\
@@ -138,6 +138,60 @@ c_2 & = & \frac{LH_0^2}{U\zeta}
 \begin{eqnarray}
 \frac{\partial M_x}{\partial t} & = & -c_1[M_x - M_{x_0}]-c_2 M_y(M_x H_y - M_y H_x)-\frac{1}{2}M_y\left(\frac{\partial v}{\partial x} - \frac{\partial u}{\partial y}\right)\\
 \frac{\partial M_y}{\partial t} & = & -c_1[M_y - M_{y_0}]+c_2 M_x(M_x H_y - M_y H_x)+\frac{1}{2}M_x\left(\frac{\partial v}{\partial x} - \frac{\partial u}{\partial y}\right)
+\end{eqnarray}
+
+\subsubsection{Discretização em $x$}
+
+\paragraph{} A discretização temporal é simples:
+\begin{eqnarray}
+	\frac{\partial M_{x,ij}}{\partial t} & = & \frac{M_{x,ij}^{n+1} - M_{x,ij}^n}{\Delta t}
+\end{eqnarray}
+
+\paragraph{} $\mathbf{M}$ e $\mathbf{H}$ estão dispostos na malha escalonada de maneira similar à velocidade. Assim, é importante tomar cuidado para que o resultado esteja no ponto correto. No ponto $ij$ para direção $x$, tem-se \begin{eqnarray}
+M_x H_y - M_y H_x & = & M_{x,ij} \frac{H_{y,ij}+H_{y,ij+1}+H_{y,i-1j}+H_{y,i-1j+1}}{4}\\ &-& \frac{M_{y,ij}+M_{y,ij+1}+M_{y,i-1j}+M_{y,i-1j+1}}{4} H_x\\
+&=& M_{x,ij} H_{y,ij}^t - M_{y,ij}^t H_{x,ij}
+\end{eqnarray}
+
+\paragraph{} O sobrescrito $t$ indica a média realizada para que os cálculos se refiram ao mesmo ponto físico. Por simplificação e concisão, será utilizado isso daqui em diante. Também na direção $x$ e no ponto $ij$, tem-se:
+
+\begin{eqnarray}
+	\frac{\partial v}{\partial x} & = & \frac{\frac{v_{ij} + v_{ij+1}}{2} - \frac{v_{i-1j} + v_{i-1j+1}}{2}}{\Delta x}\\
+	&=& \frac{v_{ij} + v_{ij+1}}{2\Delta x} - \frac{v_{i-1j} + v_{i-1j+1}}{2\Delta x}\\
+	\frac{\partial u}{\partial y} & = & \frac{u_{ij+1} - u_{ij-1}}{2\Delta x}
+\end{eqnarray}
+
+\paragraph{} Assim
+
+\begin{eqnarray}
+M_{x,ij}^{n+1} & = & M_{x,ij}^n -c_1\Delta t[M_{x,ij} - M_{x_0,ij}]-c_2 \Delta t M_{y,ij}^t(M_{x,ij} H_{y,ij}^t - M_{y,ij}^t H_{x,ij})\nonumber \\
+&-&\frac{1}{2}\Delta t M_{y,ij}^t\left(\frac{v_{ij} + v_{ij+1}}{2\Delta x} - \frac{v_{i-1j} + v_{i-1j+1}}{2\Delta x} - \frac{u_{ij+1} - u_{ij-1}}{2\Delta x}\right)
+\end{eqnarray}
+
+\subsubsection{Discretização em $y$}
+
+\paragraph{} A discretização temporal é simples:
+\begin{eqnarray}
+	\frac{\partial M_{y,ij}}{\partial t} & = & \frac{M_{y,ij}^{n+1} - M_{y,ij}^n}{\Delta t}
+\end{eqnarray}
+
+\paragraph{} $\mathbf{M}$ e $\mathbf{H}$ estão dispostos na malha escalonada de maneira similar à velocidade. Assim, é importante tomar cuidado para que o resultado esteja no ponto correto. No ponto $ij$ para direção $y$, tem-se \begin{eqnarray}
+M_x H_y - M_y H_x & = & M_{x,ij}^t H_{y,ij} - M_{y,ij} H_{x,ij}^t
+\end{eqnarray}
+
+\paragraph{} Também na direção $y$ e no ponto $ij$, tem-se:
+
+\begin{eqnarray}
+	\frac{\partial v}{\partial x} & = & \frac{v_{i+1j} - u_{i-1j}}{2\Delta x}\\
+	\frac{\partial u}{\partial y} & = & \frac{\frac{v_{ij} + v_{i+1j}}{2} - \frac{v_{ij-1} + v_{i+1j-1}}{2}}{\Delta x}\\
+	&=& \frac{v_{ij} + v_{i+1j}}{2\Delta x} - \frac{v_{ij-1} + v_{i+1j-1}}{2\Delta x}
+\end{eqnarray}
+
+\paragraph{} Assim
+
+\begin{eqnarray}
+M_{y,ij}^{n+1}
+ & = & M_{y,ij}^n -c_1\Delta t[M_{y,ij} - M_{y_0,ij}]+c_2\Delta t M_{x,ij}^t(M_{x,ij}^t H_{y,ij} - M_{y,ij} H_{x,ij}^t)\nonumber \\
+ &+&\frac{1}{2}\Delta tM_{x,ij}^t\left(\frac{v_{i+1j} - u_{i-1j}}{2\Delta x} - \frac{v_{ij} + v_{i+1j}}{2\Delta x} + \frac{v_{ij-1} + v_{i+1j-1}}{2\Delta x}\right)
 \end{eqnarray}
 
 \subsection{Relação entre Magnetismo e Força}
