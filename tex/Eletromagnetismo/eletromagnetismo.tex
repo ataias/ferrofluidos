@@ -16,7 +16,7 @@
 \paragraph{} A consequência das equações acima é que 
 
 \begin{eqnarray}
-\nabla\cdot \mathbf{M} = -\nabla\cdot\mathbf{H}	\label{mh1}
+\nabla\cdot\mathbf{H} = -\nabla\cdot \mathbf{M}	\label{mh1}
 \end{eqnarray}
 
 
@@ -38,26 +38,21 @@ No caso de nosso estudo, temos um caso magnetostático, o que implica que:
 \nabla^2\phi &= \nabla\cdot \mathbf{M}\label{eqcampomag}\\ \eqname{Equação do Campo Magnético}
 \end{align}
 
-\subsection{Relação entre Magnetismo e Força}
+\subsection{Escolha do Campo Aplicado}
 
-\paragraph{} A relação entre força e o campo magnético é dada pelas equações abaixo:
-
-\begin{align}
-\mathbf{f} & = \mu_0\mathbf{M}\cdot \nabla \mathbf{H}\\ \eqname{Caso dimensional}\\
-\mathbf{f} & = \mathrm{Cpm}\,\mathbf{M}\cdot \nabla \mathbf{H}\\ \eqname{Caso adimensional}\\
-\mathrm{Cpm} & = \frac{\mu_0 H_0^2}{\rho u^2} \\ \eqname{Coeficiente de permeabilidade magnética}
-\end{align}
-
-\paragraph{} Desta forma, cada componente da força toma a seguinte forma:
-
-\begin{eqnarray}
-f_x & = & \mathrm{Cpm}\left[M_x\cdot \frac{\partial H_x}{\partial x}+M_y\cdot \frac{\partial H_x}{\partial y}\right]\\
-f_y & = & \mathrm{Cpm}\left[M_x\cdot \frac{\partial H_y}{\partial x}+M_y\cdot \frac{\partial H_y}{\partial y}\right]
+\subsubsection{Atualmente}
+\paragraph{} Campo aplicado de um fio infinito conforme \cite{Tzirtzilakis2013}: \begin{eqnarray}
+\overline{H}_x & = & \frac{\gamma}{2\pi}\frac{\overline{y}-\overline{b}}{(\overline{x}-\overline{a})^2+(\overline{y}-\overline{b})^2},\\
+\overline{H}_y & = & -\frac{\gamma}{2\pi}\frac{\overline{x}-\overline{b}}{(\overline{x}-\overline{a})^2+(\overline{y}-\overline{b})^2}.
 \end{eqnarray}
 
-\paragraph{} A pesquisa se centra no $\mathrm{M}$, que depende do campo magnético, da velocidade do escoamento e do material. Na malha escalonada, $\mathbf{H}$ e $\mathbf{M}$ serão localizados da mesma forma que a velocidade $\mathbf{v}$.
+\paragraph{} As equações que acabaram de ser apresentadas são dimensionais. Elas são tornadas adimensionais utilizando os termos: comprimento característico, $L$; e escala de campo magnético $H_0$. Para $\overline{H}_x$, tem-se \begin{eqnarray}
+H_x\cdot H_0 & = & \frac{\gamma}{2\pi}\frac{y\cdot L-b\cdot L}{(x\cdot L-a\cdot L)^2+(y\cdot L-b\cdot L)^2}
+\end{eqnarray} que resulta em \begin{eqnarray}
+H_x & = & \frac{1}{2\pi}\frac{\gamma}{L H_0}\frac{y - b}{(x-a)^2+(y-b)^2}
+\end{eqnarray}
 
-\subsection{Campo Aplicado}
+\subsubsection{Posteriormente}
 \paragraph{} Para definir o campo aplicado $\mathbf{H}$, nos basearemos no trabalho de McCaig e Clegg \cite{mccaig}. O livro citado apresenta uma fórmula que condiz com a realidade muito bem. O campo magnético na horizontal, $H_x$, é apresentado na Equação 
 
 \begin{eqnarray}
@@ -71,6 +66,98 @@ d &=& (x-x_0)\cos\theta + (y-y_0)\sin\theta\\
 \mathbf{H}\cdot \mathbf{i} & = & H_d \cos \theta\\
 \mathbf{H}\cdot \mathbf{j} & = & H_d \sin \theta\\
 \end{eqnarray}
+
+
+\subsection{Evolução do campo magnético}
+
+Masao \cite{masao1989} cita Shliomis (cheguei a achar o artigo, mas era muito esquisito...) e mostra uma equação constitutiva para a evolução do campo magnético \begin{eqnarray}
+\frac{\partial \mathbf{M}^*}{\partial t^*} = -\frac{1}{\tau}[\mathbf{M}^* - \mathbf{M}_0^*]+\frac{1}{\zeta}[(\mathbf{M}^*\times \mathbf{H}^*)\times\mathbf{M}^*]+\mathbf{\Omega^*}\times \mathbf{M}^*,
+\end{eqnarray} na qual $\mathbf{\Omega}^*=\frac{1}{2}\nabla\times \mathbf{v}^*$ (qual a referência para isso? acho que Yuri não me mostrou). Nesta equação: $\Omega^*$ é a velocidade angular macroscópica do fluido; $\tau$ é o tempo de relaxação rotacional de movimento Browniano;  Todos os termos tem astericos indicando que são unidades dimensionais.
+
+\subsubsection{Adimensionalizar}
+\begin{eqnarray}
+\frac{\partial \mathbf{M} H_0}{\partial t(L/U)} &=& -\frac{H_0}{\tau}[\mathbf{M} - \mathbf{M}_0]+\frac{H_0^3}{\zeta}[(\mathbf{M}\times \mathbf{H})\times\mathbf{M}]+\frac{H_0 U}{2L}(\nabla\times \mathbf{v})\times \mathbf{M}\\
+\frac{\partial \mathbf{M}}{\partial t} &=& \frac{L}{U H_0}\left(-\frac{H_0}{\tau}[\mathbf{M} - \mathbf{M}_0]+\frac{H_0^3}{\zeta}[(\mathbf{M}\times \mathbf{H})\times\mathbf{M}]+\frac{H_0 U}{2L}(\nabla\times \mathbf{v})\times \mathbf{M}\right)\\
+&=&-\frac{L}{\tau U}[\mathbf{M} - \mathbf{M}_0]+\frac{L H_0^2}{U\zeta}[(\mathbf{M}\times \mathbf{H})\times\mathbf{M}]+\frac{1}{2}(\nabla\times \mathbf{v})\times \mathbf{M}
+\end{eqnarray}
+
+\subsubsection{Discretização}
+\paragraph{} Primeiro, note que \begin{eqnarray}
+	\mathbf{u}\times \mathbf{v} & = & \left| \begin{array}{ccc}
+ 	\mathbf{i} & \mathbf{j} & \mathbf{k}\\
+ 	u_1 & u_2 & u_3\\
+ 	v_1 & v_2 & v_3\\
+ \end{array}
+ \right|.
+\end{eqnarray}
+\paragraph{} No caso $\mathbf{M}=(M_x, M_y, 0)$ e $\mathbf{H}=(H_x, H_y, 0)$, daí:
+
+\begin{eqnarray}
+	\mathbf{M}\times \mathbf{H} & = & \left| \begin{array}{ccc}
+ 	\mathbf{i} & \mathbf{j} & \mathbf{k}\\
+ 	M_x & M_y & 0\\
+ 	H_x & H_y & 0\\
+ \end{array}
+ \right| = (M_x H_y - M_y H_x)\mathbf{k}
+\end{eqnarray}
+assim
+\begin{eqnarray}
+(\mathbf{M}\times \mathbf{H})\times \mathbf{M} & = & \left| \begin{array}{ccc}
+ 	\mathbf{i} & \mathbf{j} & \mathbf{k}\\
+ 	0 & 0 & (M_x H_y - M_y H_x)\\
+ 	M_x & M_y & 0\\
+ \end{array}
+ \right|\\ 
+ &=& -M_y(M_x H_y - M_y H_x)\mathbf{i}+M_x(M_x H_y - M_y H_x)\mathbf{j}
+\end{eqnarray}
+
+\paragraph{} O rotacional de $\mathbf{v} = (u, v, 0)$ é dado por \begin{eqnarray}
+	\nabla\times \mathbf{v} & = & \left|\begin{array}{ccc}
+\mathbf{i} & \mathbf{j} & \mathbf{k}\\
+\frac{\partial}{\partial x} & \frac{\partial}{\partial y} & \frac{\partial}{\partial z}\\
+u & v & 0\\
+\end{array}
+\right| = \left(\frac{\partial v}{\partial x} - \frac{\partial u}{\partial y}\right)\mathbf{k}
+\end{eqnarray} e daí \begin{eqnarray}
+(\nabla\times \mathbf{v})\times \mathbf{M} & = & \left|\begin{array}{ccc}
+\mathbf{i} & \mathbf{j} & \mathbf{k} \\
+0 & 0 & 	\left(\frac{\partial v}{\partial x} - \frac{\partial u}{\partial y}\right)\\
+M_x & M_y & 0\\
+\end{array}
+\right| \\
+& =& -M_y\left(\frac{\partial v}{\partial x} - \frac{\partial u}{\partial y}\right)\mathbf{i} + M_x\left(\frac{\partial v}{\partial x} - \frac{\partial u}{\partial y}\right)\mathbf{j}
+\end{eqnarray}
+
+
+\paragraph{} Pode-se definir as constantes \begin{eqnarray}
+c_1 & = & \frac{L}{\tau U}\\
+c_2 & = & \frac{LH_0^2}{U\zeta}
+\end{eqnarray}
+
+\paragraph{} Desta maneira:
+\begin{eqnarray}
+\frac{\partial M_x}{\partial t} & = & -c_1[M_x - M_{x_0}]-c_2 M_y(M_x H_y - M_y H_x)-\frac{1}{2}M_y\left(\frac{\partial v}{\partial x} - \frac{\partial u}{\partial y}\right)\\
+\frac{\partial M_y}{\partial t} & = & -c_1[M_y - M_{y_0}]+c_2 M_x(M_x H_y - M_y H_x)+\frac{1}{2}M_x\left(\frac{\partial v}{\partial x} - \frac{\partial u}{\partial y}\right)
+\end{eqnarray}
+
+\subsection{Relação entre Magnetismo e Força}
+
+\paragraph{} A relação entre força e o campo magnético é dada pelas equações abaixo:
+
+\begin{align}
+\mathbf{f} & = \mu_0\mathbf{M}\cdot \nabla \mathbf{H}\\ \eqname{Caso dimensional}\\
+\mathbf{f} & = \mathrm{C}_{\mathrm{pm}}\,\mathbf{M}\cdot \nabla \mathbf{H}\\ \eqname{Caso adimensional}\\
+\mathrm{C}_{\mathrm{pm}} & = \frac{\mu_0 H_0^2}{\rho u^2} \\ \eqname{Coeficiente de permeabilidade magnética}
+\end{align}
+
+\paragraph{} Desta forma, cada componente da força toma a seguinte forma:
+
+\begin{eqnarray}
+f_x & = & \mathrm{C}_{\mathrm{pm}}\left[M_x\cdot \frac{\partial H_x}{\partial x}+M_y\cdot \frac{\partial H_x}{\partial y}\right]\\
+f_y & = & \mathrm{C}_{\mathrm{pm}}\left[M_x\cdot \frac{\partial H_y}{\partial x}+M_y\cdot \frac{\partial H_y}{\partial y}\right]
+\end{eqnarray}
+
+\paragraph{} A pesquisa se centra no $\mathrm{M}$, que depende do campo magnético, da velocidade do escoamento e do material. Na malha escalonada, $\mathbf{H}$ e $\mathbf{M}$ serão localizados da mesma forma que a velocidade $\mathbf{v}$.
 
 \subsection{Condições de Contorno}
 \paragraph{} A componente normal de $\mathbf{B}$ deve ser contínua através da interface entre o meio de fora (ar) e o de dentro (fluido magnético). Isto é
@@ -99,17 +186,6 @@ d &=& (x-x_0)\cos\theta + (y-y_0)\sin\theta\\
 \left.\frac{\partial \phi}{\partial y}\right|_{\mathrm{lower}}&\approx&- H^{y}_{i,2} + M^{y}_{i,2}\\
 \left.\frac{\partial \phi}{\partial y}\right|_{\mathrm{upper}}&\approx&- H^{y}_{i,n} + M^{y}_{i,n}
 \end{eqnarray}
-
-\subsection{Procedimento}
-\paragraph{} O procedimento para se resolver a Equação de Navier Stokes com o campo magnético, nas condições simples apresentadas, é:
-
-\begin{enumerate}
-	\item Resolver equação do campo magnético, se for passo inicial: $\mathbf{M} = \mathbf{0}$
-	\item Calcular $\mathbf{M} = \chi \mathbf{H}$ (lei simples)
-	\item Calcular força $\mathbf{f} = \mathrm{Cpm}\,\mathbf{M}\cdot \nabla \mathbf{H}$
-	\item Resolver hidrodinâmica
-	\item Avançar no tempo e voltar ao passo 1
-\end{enumerate}
 
 
 \end{document}

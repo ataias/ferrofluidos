@@ -1,34 +1,18 @@
 \documentclass[introducao.tex]{subfiles}
 \begin{document}
 \section{Introdução}
-\paragraph{} Este trabalho tem por objetivo o estudo dos fluidos magnéticos. Um algoritmo foi feito para resolver a equação de Navier Stokes em um quadrado unitário. Essa é a equação que governa a dinâmica dos fluidos.
+\paragraph{} Quando se simula a dinâmica de um fluido magnético numa cavidade, é importante definir a sequência de passos nos quais valores intermediários devem ser calculados para então se resolver a hidrodinâmica. Note que para $t_0$, há condições iniciais que determinam o estado do sistema. Para $t_n > t_0$, tem-se:
 
-\begin{eqnarray}
-\rho\left( \frac{\partial {\textbf{v}}}{\partial t}+\textbf{v}\cdot\nabla \textbf{v} \right)=-\nabla p+\mu\nabla^2 \textbf{v} + \textbf{f}\label{navierstokes}\\
-\nabla\cdot\textbf{v}=0
-\end{eqnarray}
+\begin{enumerate}
+	\item Obter $\phi_n$ a partir de $\mathbf{M}_{n-1}$ com condições de contorno apropriadas
+	\item Calcular campo dentro da cavidade por meio de $\mathbf{H} = -\nabla \phi$
+	\item Obter $\mathbf{M}_{n}$ a partir de uma relação adequada
+	\item Calcular força $\mathbf{f} = \mathrm{Cpm}\,\mathbf{M}\cdot \nabla \mathbf{H}$
+	\item Resolver hidrodinâmica
+	\item Avançar para $t_{n+1}$ e repetir passos anteriores
+\end{enumerate}
 
-
-\subsection{Malha escalonada}
-\paragraph{} O algoritmo para resolver a hidrodinâmica foi feito considerando-se uma malha escalonada. Como o magnetismo será acoplado com esse algoritmo, é necessário também utilizar a malha escalonada. $\phi$ será localizada no centro da célula enquanto a força $f$ e os campos $H$ e $B$ estarão normais à celula, como mostrado abaixo. A posição de $H$ e $B$ é a mesma que de $f$.
-
-\begin{center}
-\begin{tikzpicture}
-\draw (0,0) rectangle (2,2);
-\draw (1.4,0.95) node {$\phi_{ij}$};
-\draw[->] (1,-0.2) -- (1,0.2);
-\draw (1,-0.4) node {$f_{y,i+\frac{1}{2}j}$};
-\draw[->] (-0.2,1) -- (0.2,1);
-\draw (-0.7,1.3) node {$f_{x,ij+\frac{1}{2}}$};
-\draw (1,1) circle (2pt);
-\end{tikzpicture}
-\end{center}
-
-\paragraph{} Uma representação de um domínio mais completo está na figura abaixo. Note que cada ponto preto no meio de um bloco é a pressão em ponto interno. Enquanto a pressão em pontos da fronteira imaginária são círculos com interior branco. Pontos na fronteira imaginária são utilizados nos cálculos, mas não precisam ser salvos no resultado final.
-
-\paragraph{} Se é definida, no computador, uma matriz $n\times n$, tem-se $\Delta x = \frac{1}{n-2}$. Os cálculos devem ser todos feitos com base neste $\Delta x$. Além disso, note que as velocidades da extrema esquerda e do extremo inferior não são utilizadas. Você pode declarar tais valores como Not a Number. Se seu programa utilizá-los, há algo errado.
-
-\domainOne
+\paragraph{} Estas etapas serão analisadas neste documento.
 
 \subsection{Matriz de rotação}
 \paragraph{} É útil ter um método de se rotacionar o campo magnético para se testar diferentes configurações do mesmo e analisar simetrias e assimetrias no nosso domínio. Como nosso problema é 2D, tem-se:
