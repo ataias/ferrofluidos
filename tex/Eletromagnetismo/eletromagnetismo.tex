@@ -196,19 +196,38 @@ M_{y,ij}^{n+1}
 
 \subsection{Relação entre Magnetismo e Força}
 
-\paragraph{} A relação entre força e o campo magnético é dada pelas equações abaixo:
-
-\begin{align}
-\mathbf{f} & = \mu_0\mathbf{M}\cdot \nabla \mathbf{H}\\ \eqname{Caso dimensional}\\
-\mathbf{f} & = \mathrm{C}_{\mathrm{pm}}\,\mathbf{M}\cdot \nabla \mathbf{H}\\ \eqname{Caso adimensional}\\
-\mathrm{C}_{\mathrm{pm}} & = \frac{\mu_0 H_0^2}{\rho u^2} \\ \eqname{Coeficiente de permeabilidade magnética}
+\paragraph{} A relação entre força e o campo magnético é dada pelas equações abaixo: (força de Kelvin) \begin{align}
+\mathbf{f} & = \mu_0\left(\mathbf{M}\cdot \nabla \mathbf{H}+\frac{1}{2}\nabla\times (\mathbf{M}\times\mathbf{H})\right)\\ \eqname{Caso dimensional}\\
+\mathbf{f} & = \mathrm{C}_{\mathrm{pm}}\left(\mathbf{M}\cdot \nabla \mathbf{H}+\frac{1}{2}\nabla\times (\mathbf{M}\times\mathbf{H})\right)\label{forcaFadimensional} \\ \eqname{Caso adimensional}\\
+\mathrm{C}_{\mathrm{pm}} & = \frac{\mu_0 H_0^2}{\rho U^2} \\ \eqname{Coeficiente de pressão magnética}
 \end{align}
+
+\paragraph{} Na Equação \ref{forcaFadimensional}, $\mathbf{M}=(M_x, M_y, 0)$, $\mathbf{H}=(H_x, H_y, 0)$ e \begin{eqnarray}
+\mathbf{M}\times \mathbf{H}&=&\left|\begin{array}{ccc}
+\mathbf{i} & \mathbf{j} & \mathbf{k}\\
+M_x & M_y & 0\\
+H_x & H_y & 0\\	
+\end{array}
+\right| = (M_x H_y - M_y H_x)\mathbf{k}.
+\end{eqnarray}
+
+\paragraph{} Observe que $\mathbf{M}$ e $\mathbf{H}$ considerados aqui são vetores que estão em um plano e não dependem da componente $z$, logo, a derivada parcial nessa dimensão é nula. Assim, tem-se que \begin{eqnarray}
+	\nabla\times(\mathbf{M}\times \mathbf{H}) & = & \left|\begin{array}{ccc}
+\mathbf{i} & \mathbf{j} & \mathbf{k}\\
+\frac{\partial}{\partial x} & \frac{\partial}{\partial y} & \frac{\partial}{\partial z}\\
+0 & 0 & (M_x H_y - M_y H_x)\\	
+\end{array}
+\right| \nonumber \\
+&=& \frac{\partial}{\partial y}(M_x H_y - M_y H_x)\mathbf{i} - \frac{\partial}{\partial x}(M_x H_y - M_y H_x)\mathbf{j}
+%&=&\left(\frac{\partial M_x}{\partial y}H_y+M_x\frac{\partial H_y}{\partial y} - \frac{\partial M_y}{\partial y}H_x-M_y\frac{\partial H_x}{\partial y}\right)\mathbf{i}\nonumber\\
+%&-&\left(\frac{\partial M_x}{\partial x}H_y+M_x\frac{\partial H_y}{\partial x} - \frac{\partial M_y}{\partial x}H_x-M_y\frac{\partial H_x}{\partial x}\right)\mathbf{j} 
+\end{eqnarray}
 
 \paragraph{} Desta forma, cada componente da força toma a seguinte forma:
 
 \begin{eqnarray}
-f_x & = & \mathrm{C}_{\mathrm{pm}}\left[M_x\cdot \frac{\partial H_x}{\partial x}+M_y\cdot \frac{\partial H_x}{\partial y}\right]\\
-f_y & = & \mathrm{C}_{\mathrm{pm}}\left[M_x\cdot \frac{\partial H_y}{\partial x}+M_y\cdot \frac{\partial H_y}{\partial y}\right]
+f_x & = & \mathrm{C}_{\mathrm{pm}}\left[M_x \frac{\partial H_x}{\partial x}+M_y \frac{\partial H_x}{\partial y}+\frac{1}{2}\frac{\partial}{\partial y}(M_x H_y - M_y H_x)\right]\\
+f_y & = & \mathrm{C}_{\mathrm{pm}}\left[M_x \frac{\partial H_y}{\partial x}+M_y \frac{\partial H_y}{\partial y}-\frac{1}{2}\frac{\partial}{\partial x}(M_x H_y - M_y H_x)\right]
 \end{eqnarray}
 
 \paragraph{} A pesquisa se centra no $\mathrm{M}$, que depende do campo magnético, da velocidade do escoamento e do material. Na malha escalonada, $\mathbf{H}$ e $\mathbf{M}$ serão localizados da mesma forma que a velocidade $\mathbf{v}$.
