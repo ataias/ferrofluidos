@@ -117,7 +117,7 @@ This is a Poisson equation that will give $\phi$ according the the local magneti
 
 Nevertheless, the potential $\phi$ cannot be introduced directly in the Navier-Stokes equation. What is needed is a relation that gives the magnetic force, which could then be incorporated in the fluid equations. The magnetic force is \begin{equation}
 	\mathbf{f} = \mathrm{C}_{\mathrm{pm}}\; \mathbf{M}\cdot \nabla \mathbf{H},\label{magneticforce}\end{equation} in which $\mathrm{C}_{\mathrm{pm}}$, the magnetic pressure coefficient for the superparamagnetic case, is \begin{eqnarray}
-\mathrm{C}_{\mathrm{pm}} & = & \frac{\mu_0 H_0^2}{\rho u^2},\label{cpm}
+\mathrm{C}_{\mathrm{pm}} & = & \frac{\mu_0 H_0^2}{\rho U ^2},\label{cpm}
 \end{eqnarray} in which $H_0$ is the characteristic magnetic field scale and equals $\gamma$ in Equations \ref{Hx} and \ref{Hy}.
 
 The boundary conditions were not yet determined for the potential field $\phi$. To derive those conditions, an applied magnetic field $\mathbf{H}$ was considered and the requirement of continuity of normal components of the magnetic induction $\mathbf{B}$ accross the boundaries, Equation \ref{firstmagneticequation}. This continuity can be mathematically represented by \begin{equation}\left(\mathbf{B}_{\mathrm{out}} - \mathbf{B}_{\mathrm{in}}\right)\cdot \mathbf{n} = 0 \label{normalconditionB}.\end{equation} 
