@@ -1,4 +1,4 @@
-module Transient 
+module Transient
 
 using NavierStokes
 using NavierTypes
@@ -7,13 +7,16 @@ using Poisson
 
 export transient
 
-function factor(i) 
+##TODO
+#Save Mx and My and process it correctly in .py
+
+function factor(i)
     if i <= 100
         return i/100.0
     else
         return 1.0
     end
-end 
+end
 
 #transient
 #simula t tempos adimensionais
@@ -22,7 +25,7 @@ end
 #t is time, in dimensioless units, of physical simulation
 function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
     dx = 1/(n-2)
-    
+
     println("Dados sobre simulação: ")
     println(" n\t= ", n)
     println(" dx\t= ", dx)
@@ -33,8 +36,8 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
     println(" Cpm\t= ", Cpm)
     println(" gamma\t= ", gamma)
     println(strftime(time()), "\n")
-    
-	
+
+
 	steps = integer(t/dt)
 	c = integer(n/2); #center, non-staggered grid
 
@@ -61,7 +64,7 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
 
 	numberFrames = integer(180*t)
 	timeToSave = integer(steps/numberFrames)
-    
+
     #Variáveis para a parte magnética
     phi = zeros(n,n);
     Mx = zeros(n,n);
@@ -79,7 +82,7 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
     end
     Hx = zeros(n,n)
     Hy = zeros(n,n)
-    
+
     #non-staggered forms
     Hxn = zeros(n-2, n-2)+1e-15
     Hyn = zeros(n-2, n-2)+1e-15
@@ -90,9 +93,10 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
 
     fHx = (x,y) ->  gamma/(2*pi)*(y-b)/((x-a)^2+(y-b)^2)
     fHy = (x,y) -> -gamma/(2*pi)*(x-a)/((x-a)^2+(y-b)^2)
-    
+
     fact = 0
     angles = zeros(n-2, n-2)+1e-15;
+    #Salva valores das matrizes em t = 0
     if(save)
         write(file, un); write(file, vn);
         write(file, pn);
@@ -100,16 +104,16 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
         write(file, phin);
         write(file, angles);
     end
-    
+
 	for i in 1:steps
         fact = factor(i)
         for j in -1:n-2
-		  NS.uB[j+2] = fact*(sinpi(j*dx))^2
-	    end
+		        NS.uB[j+2] = fact*(sinpi(j*dx))^2
+	      end
         getPhi!(n, phi, Mx, My, fHx, fHy, A)
         getMH!(n, chi*fact, phi, Mx, My, Hx, Hy)
         getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
-        
+
 		solve_navier_stokes!(NS)
 #        println("i = ", i, " and timeToSave = ", timeToSave, ", therefore i % timeToSave = ", i % timeToSave == 0)
 		if (i % timeToSave == 0) || (i == steps)
@@ -141,12 +145,12 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
         #Preparing for next time step
 		NS.v.x, NS.v_old.x = NS.v_old.x, NS.v.x
 		NS.v.y, NS.v_old.y = NS.v_old.y, NS.v.y
-        
+
 	end
-    
+
     if(save)
         close(file)
-    end 
+    end
 	return 0
 end
 
