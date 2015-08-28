@@ -1,6 +1,7 @@
 module NavierTypes
 
 export NSEquation, getDt, createNSObject
+export VF
 
 using Poisson
 
@@ -13,7 +14,7 @@ end
 type NSParams
     n::Int64
     dt::Float64
-    mu::Float64 
+    mu::Float64
     rho::Float64
     dx::Float64
     dx2::Float64
@@ -52,14 +53,14 @@ function createNSObject(n::Int64, Re::Float64, divFactor::Float64 = 1.25)
     dtx = dt/(2*dx)
     rhodtdx = rho/dt/dx
     params = NSParams(n, dt, mu, rho, dx, dx2, dtx, rhodtdx)
-    
+
     #-------NSSystem ---------------
     spn = (n-2)*(n-2)
     A = getANeumannSparse(n)
     chol = cholfact(A)
     b = zeros(spn)
     msystem = NSSystem(A, chol, b)
-    
+
     #------- NSEquation
     p = zeros(n,n)
     v = VF(zeros(n,n), zeros(n,n))
@@ -71,18 +72,18 @@ function createNSObject(n::Int64, Re::Float64, divFactor::Float64 = 1.25)
     NSObject.v.y[:,1] = NaN
     NSObject.v_old.x[1,:] = NaN
     NSObject.v_old.y[:,1] = NaN
-    
+
     return NSObject
 end
 
 #isdXok
-#Esta função analisa se o número de pontos escolhido 
+#Esta função analisa se o número de pontos escolhido
 #satisfaz a condição de camada limite hidrodinâmica
 function isdXok(Re, n)
-	dx = 1/(n-2); 
-	if dx < (1/Re) 
+	dx = 1/(n-2);
+	if dx < (1/Re)
 		return true
-	else 
+	else
 		return false
 	end
 end

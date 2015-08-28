@@ -35,7 +35,7 @@ end
 #takes values of x vectors in the staggered grid to obtain an average
 # in the same point of a Y vector
 function getAverageXtoY(i,j, A)
-  return (A[i,j] + A[i+1,j] + A[i+1,j-1] + A[i,j-1]])/4
+  return (A[i,j] + A[i+1,j] + A[i+1,j-1] + A[i,j-1])/4
 end
 
 function getNextM!(M_next::VF, M::VF, M0::VF, H::VF, u, v, c1, c2, dt, dx)
