@@ -167,6 +167,13 @@ M_{x,ij}^{n+1} & = & M_{x,ij}^n -c_1\Delta t[M_{x,ij} - M_{x_0,ij}]-c_2 \Delta t
 &-&\frac{1}{2}\Delta t M_{y,ij}^t\left(\frac{v_{ij} + v_{ij+1}}{2\Delta x} - \frac{v_{i-1j} + v_{i-1j+1}}{2\Delta x} - \frac{u_{ij+1} - u_{ij-1}}{2\Delta x}\right)
 \end{eqnarray}
 
+ou
+
+\begin{align}
+M_{x,ij}^{n+1} & = M_{x,ij}^n -c_1\Delta t[M_{x,ij} - M_{x_0,ij}]-c_2 \Delta t M_{y,ij}^t(M_{x,ij} H_{y,ij}^t - M_{y,ij}^t H_{x,ij})\nonumber \\
+&- \frac{\Delta t M_{y,ij}^t}{4\Delta x}\left(\frac{v_{ij} + v_{ij+1}}{1} - \frac{v_{i-1j} + v_{i-1j+1}}{1} - \frac{u_{ij+1} - u_{ij-1}}{1}\right)
+\end{align}
+
 \subsubsection{Discretização em $y$}
 
 \paragraph{} A discretização temporal é simples:
@@ -181,9 +188,9 @@ M_x H_y - M_y H_x & = & M_{x,ij}^t H_{y,ij} - M_{y,ij} H_{x,ij}^t
 \paragraph{} Também na direção $y$ e no ponto $ij$, tem-se:
 
 \begin{eqnarray}
-	\frac{\partial v}{\partial x} & = & \frac{v_{i+1j} - u_{i-1j}}{2\Delta x}\\
-	\frac{\partial u}{\partial y} & = & \frac{\frac{v_{ij} + v_{i+1j}}{2} - \frac{v_{ij-1} + v_{i+1j-1}}{2}}{\Delta x}\\
-	&=& \frac{v_{ij} + v_{i+1j}}{2\Delta x} - \frac{v_{ij-1} + v_{i+1j-1}}{2\Delta x}
+	\frac{\partial v}{\partial x} & = & \frac{v_{i+1j} - v_{i-1j}}{2\Delta x}\\
+	\frac{\partial u}{\partial y} & = & \frac{\frac{u_{ij} + u_{i+1j}}{2} - \frac{u_{ij-1} + u_{i+1j-1}}{2}}{\Delta x}\\
+	&=& \frac{u_{ij} + u_{i+1j}}{2\Delta x} - \frac{u_{ij-1} + u_{i+1j-1}}{2\Delta x}
 \end{eqnarray}
 
 \paragraph{} Assim
@@ -191,7 +198,7 @@ M_x H_y - M_y H_x & = & M_{x,ij}^t H_{y,ij} - M_{y,ij} H_{x,ij}^t
 \begin{eqnarray}
 M_{y,ij}^{n+1}
  & = & M_{y,ij}^n -c_1\Delta t[M_{y,ij} - M_{y_0,ij}]+c_2\Delta t M_{x,ij}^t(M_{x,ij}^t H_{y,ij} - M_{y,ij} H_{x,ij}^t)\nonumber \\
- &+&\frac{1}{2}\Delta tM_{x,ij}^t\left(\frac{v_{i+1j} - u_{i-1j}}{2\Delta x} - \frac{v_{ij} + v_{i+1j}}{2\Delta x} + \frac{v_{ij-1} + v_{i+1j-1}}{2\Delta x}\right)
+ &+&\frac{1}{2}\Delta tM_{x,ij}^t\left(\frac{v_{i+1j} - v_{i-1j}}{2\Delta x} - \frac{u_{ij} + u_{i+1j}}{2\Delta x} + \frac{u_{ij-1} + u_{i+1j-1}}{2\Delta x}\right)
 \end{eqnarray}
 
 \subsection{Relação entre Magnetismo e Força}
