@@ -230,7 +230,29 @@ f_x & = & \mathrm{C}_{\mathrm{pm}}\left[M_x \frac{\partial H_x}{\partial x}+M_y 
 f_y & = & \mathrm{C}_{\mathrm{pm}}\left[M_x \frac{\partial H_y}{\partial x}+M_y \frac{\partial H_y}{\partial y}-\frac{1}{2}\frac{\partial}{\partial x}(M_x H_y - M_y H_x)\right]
 \end{eqnarray}
 
-\paragraph{} A pesquisa se centra no $\mathrm{M}$, que depende do campo magnético, da velocidade do escoamento e do material. Na malha escalonada, $\mathbf{H}$ e $\mathbf{M}$ serão localizados da mesma forma que a velocidade $\mathbf{v}$.
+\paragraph{} A pesquisa se centra no $\mathrm{M}$, que depende do campo magnético, da velocidade do escoamento e do material. Na malha escalonada, $\mathbf{H}$, $\mathbf{M}$ e $\mathbf{f}$ serão localizados da mesma forma que a velocidade $\mathbf{v}$. Desta forma, a discretização para $f_x$ se torna: \begin{align}
+f_{x,ij} & = \mathrm{C}_{\mathrm{pm}}\left[M_{x,ij} \frac{H_{x,i+1j} - H_{x,i-1j}}{2\Delta x}+M_{y,ij}^t \frac{H_{x,ij+1} - H_{x,ij-1}}{2\Delta x} \right. \nonumber \\
+&+\left. \frac{1}{2}\frac{M_{x,ij+1} H_{y,ij+1}^t - M_{y,ij+1}^t H_{x,ij+1} - M_{x,ij-1} H_{y,ij-1}^t + M_{y,ij-1}^t H_{x,ij-1}}{2\Delta x}\right]
+\end{align}
+
+ou seja,
+ \begin{align}
+f_{x,ij} & = \frac{\mathrm{C}_{\mathrm{pm}}}{2\Delta x}\left[M_{x,ij} (H_{x,i+1j} - H_{x,i-1j})+M_{y,ij}^t (H_{x,ij+1} - H_{x,ij-1})\right. \nonumber \\
+&+\left. \tfrac{1}{2}(M_{x,ij+1} H_{y,ij+1}^t - M_{y,ij+1}^t H_{x,ij+1} - M_{x,ij-1} H_{y,ij-1}^t + M_{y,ij-1}^t H_{x,ij-1})\right]
+\end{align}
+
+enquanto para $f_y$ tem-se \begin{align}
+f_{y,ij} & = \mathrm{C}_{\mathrm{pm}}\left[M_{x,ij}^t \frac{H_{y,i+1j} - H_{y,i-1j}}{2\Delta x}+M_{y,ij} \frac{H_{y,ij+1} - H_{y,ij-1}}{2\Delta x} \right. \nonumber \\
+&-\left. \frac{1}{2}\frac{M_{x,ij+1}^t H_{y,ij+1} - M_{y,ij+1} H_{x,ij+1}^t - M_{x,ij-1}^t H_{y,ij-1} + M_{y,ij-1} H_{x,ij-1}^t}{2\Delta x}\right]
+\end{align}
+
+ou seja,
+\begin{align}
+f_{y,ij} & = \frac{\mathrm{C}_{\mathrm{pm}}}{2\Delta x}\left[M_{x,ij}^t (H_{y,i+1j} - H_{y,i-1j})+M_{y,ij} (H_{y,ij+1} - H_{y,ij-1}) \right. \nonumber \\
+&-\left. \tfrac{1}{2}(M_{x,ij+1}^t H_{y,ij+1} - M_{y,ij+1} H_{x,ij+1}^t - M_{x,ij-1}^t H_{y,ij-1} + M_{y,ij-1} H_{x,ij-1}^t) \right]
+\end{align}
+
+
 
 \subsection{Condições de Contorno}
 \paragraph{} A componente normal de $\mathbf{B}$ deve ser contínua através da interface entre o meio de fora (ar) e o de dentro (fluido magnético). Isto é
