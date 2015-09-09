@@ -77,8 +77,8 @@ Masao \cite{masao1989} cita Shliomis (cheguei a achar o artigo, mas era muito es
 \subsubsection{Adimensionalizar}
 \begin{eqnarray}
 \frac{\partial \mathbf{M} H_0}{\partial t(L/U)} &=& -\frac{H_0}{\tau}[\mathbf{M} - \mathbf{M}_0]+\frac{H_0^3}{\zeta}[(\mathbf{M}\times \mathbf{H})\times\mathbf{M}]+\frac{H_0 U}{2L}(\nabla\times \mathbf{v})\times \mathbf{M}\\
-\frac{\partial \mathbf{M}}{\partial t} &=& \frac{L}{U H_0}\left(-\frac{H_0}{\tau}[\mathbf{M} - \mathbf{M}_0]+\frac{H_0^3}{\zeta}[(\mathbf{M}\times \mathbf{H})\times\mathbf{M}]+\frac{H_0 U}{2L}(\nabla\times \mathbf{v})\times \mathbf{M}\right)\\
-&=&-\frac{L}{\tau U}[\mathbf{M} - \mathbf{M}_0]+\frac{L H_0^2}{U\zeta}[(\mathbf{M}\times \mathbf{H})\times\mathbf{M}]+\frac{1}{2}(\nabla\times \mathbf{v})\times \mathbf{M}
+\frac{\partial \mathbf{M}}{\partial t} &=& \frac{L}{U H_0}\left(-\frac{H_0}{\tau}[\mathbf{M} - \mathbf{M}_0]+\frac{H_0^3}{\zeta}[(\mathbf{M}\times \mathbf{H})\times\mathbf{M}]+\frac{H_0 U}{2L}(\nabla\times \mathbf{v})\times \mathbf{M}\right) \nonumber\\
+&=&-\frac{L}{\tau U}[\mathbf{M} - \mathbf{M}_0]+\frac{L H_0^2}{U\zeta}[(\mathbf{M}\times \mathbf{H})\times\mathbf{M}]+\frac{1}{2}(\nabla\times \mathbf{v})\times \mathbf{M}\label{dMdtadimensional}
 \end{eqnarray}
 
 \subsubsection{Expansão}
@@ -171,7 +171,7 @@ ou
 
 \begin{align}
 M_{x,ij}^{n+1} & = M_{x,ij}^n -c_1\Delta t[M_{x,ij} - M_{x_0,ij}]-c_2 \Delta t M_{y,ij}^t(M_{x,ij} H_{y,ij}^t - M_{y,ij}^t H_{x,ij})\nonumber \\
-&- \frac{\Delta t M_{y,ij}^t}{4\Delta x}\left(\frac{v_{ij} + v_{ij+1}}{1} - \frac{v_{i-1j} + v_{i-1j+1}}{1} - \frac{u_{ij+1} - u_{ij-1}}{1}\right)
+&- \frac{\Delta t M_{y,ij}^t}{4\Delta x}\left(\frac{v_{ij} + v_{ij+1}}{1} - \frac{v_{i-1j} + v_{i-1j+1}}{1} - \frac{u_{ij+1} - u_{ij-1}}{1}\right) \label{Mxnext}
 \end{align}
 
 \subsubsection{Discretização em $y$}
@@ -198,7 +198,7 @@ M_x H_y - M_y H_x & = & M_{x,ij}^t H_{y,ij} - M_{y,ij} H_{x,ij}^t
 \begin{eqnarray}
 M_{y,ij}^{n+1}
  & = & M_{y,ij}^n -c_1\Delta t[M_{y,ij} - M_{y_0,ij}]+c_2\Delta t M_{x,ij}^t(M_{x,ij}^t H_{y,ij} - M_{y,ij} H_{x,ij}^t)\nonumber \\
- &+&\frac{1}{2}\Delta tM_{x,ij}^t\left(\frac{v_{i+1j} - v_{i-1j}}{2\Delta x} - \frac{u_{ij} + u_{i+1j}}{2\Delta x} + \frac{u_{ij-1} + u_{i+1j-1}}{2\Delta x}\right)
+ &+&\frac{1}{2}\Delta tM_{x,ij}^t\left(\frac{v_{i+1j} - v_{i-1j}}{2\Delta x} - \frac{u_{ij} + u_{i+1j}}{2\Delta x} + \frac{u_{ij-1} + u_{i+1j-1}}{2\Delta x}\right)\label{Mynext}
 \end{eqnarray}
 
 \subsection{Relação entre Magnetismo e Força}
@@ -289,5 +289,51 @@ f_{y,ij} & = \frac{\mathrm{C}_{\mathrm{pm}}}{2\Delta x}\left[M_{x,ij}^t (H_{y,i+
 \left.\frac{\partial \phi}{\partial y}\right|_{\mathrm{upper}}&\approx&- H^{y}_{i,n} + M^{y}_{i,n}
 \end{eqnarray}
 
+\section{Shliomis}
+\subsection{Primeiro passo}
+\paragraph{} Inicia-se somente com o termo que $\mathbf{M}-\mathbf{M}_0$ nas Equações \ref{Mxnext} e \ref{Mynext}, resultando em \begin{align}
+M_{x,ij}^{n+1} & = M_{x,ij}^n -c_1\Delta t[M_{x,ij} - M_{x_0,ij}]\\
+M_{y,ij}^{n+1} & = M_{y,ij}^n -c_1\Delta t[M_{y,ij} - M_{y_0,ij}], 
+\end{align} nas quais $\mathbf{M}_0$ é dado por \begin{align}
+	\mathbf{M}_0 & = M_S L(\alpha|\mathbf{H}|)\hat{\mathrm{e}}_H
+\end{align} sendo $M_S$ uma constante, $L(x) = \coth(x) - \frac{1}{x}$ a função de Langevin, $\alpha$ um parâmetro e $\hat{\mathrm{e}}_H$ um vetor unitário na direção campo $\mathbf{H}_{\mathrm{calc}}$. Para o vetor unitário, tem-se: \begin{align}
+	\hat{\mathrm{e}}_H & = \frac{\mathbf{H}}{|\mathbf{H}|} =  \frac{1}{|\mathbf{H}|}\left(H_x\mathbf{i} + H_y\mathbf{j}\right).
+\end{align}
+
+\paragraph{} Assim, para a direção horizontal, tem-se \begin{align}
+x & = \sqrt{(H_{x,ij})^2 + (H_{y,ij}^t)^2}\\
+M_{x_0,ij} & = M_S \left(\coth{\alpha x} - \frac{1}{\alpha x}\right)\frac{H_{x,ij}}{x},
+\end{align} enquanto para a direção vertical tem-se \begin{align}
+y & = \sqrt{(H_{x,ij}^t)^2 + (H_{y,ij})^2}\\
+M_{y_0,ij} & = M_S \left(\coth{\alpha y} - \frac{1}{\alpha y}\right)\frac{H_{y,ij}}{y}.	
+\end{align}
+
+%\paragraph{} O seguinte procedimento pode ser realizado:
+%
+%\begin{algorithm}
+%\caption{getNextM}\label{getNextM}
+%\begin{algorithmic}[1]
+%\Procedure{getNextM}{\textit{M}, \textit{H}, $n$, $\alpha$, $c_1$}
+%\For{each node $m$ $\in$ $M.x$}
+%\State $m \gets $
+%\EndFor
+%\State $\textit{n} \gets \text{length of }\textit{Mx}$
+%\State $i \gets \textit{patlen}$
+%\BState \emph{top}:
+%\If {$i > \textit{stringlen}$} \Return false
+%\EndIf
+%\State $j \gets \textit{patlen}$
+%\BState \emph{loop}:
+%\If {$\textit{string}(i) = \textit{path}(j)$}
+%\State $j \gets j-1$.
+%\State $i \gets i-1$.
+%\State \textbf{goto} \emph{loop}.
+%\State \textbf{close};
+%\EndIf
+%\State $i \gets i+\max(\textit{delta}_1(\textit{string}(i)),\textit{delta}_2(j))$.
+%\State \textbf{goto} \emph{top}.
+%\EndProcedure
+%\end{algorithmic}
+%\end{algorithm}
 
 \end{document}
