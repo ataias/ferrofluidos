@@ -35,6 +35,8 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
     println(" chi\t= ", chi)
     println(" Cpm\t= ", Cpm)
     println(" gamma\t= ", gamma)
+    println(" a\t= ", a)
+    println(" b\t= ", b)
     println(strftime(time()), "\n")
 
 
@@ -111,7 +113,8 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
 		        NS.uB[j+2] = fact*(sinpi(j*dx))^2
 	      end
         getPhi!(n, phi, Mx, My, fHx, fHy, A)
-        getMH!(n, chi*fact, phi, Mx, My, Hx, Hy)
+        getH!(n, phi, Hx, Hy)
+        getM!(n, chi*fact, phi, Mx, My, Hx, Hy)
         getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
 
 		solve_navier_stokes!(NS)
