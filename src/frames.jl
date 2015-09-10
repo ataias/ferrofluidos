@@ -12,8 +12,11 @@ using NavierTypes
 #a - ARGS[8] é o deslocamento em x da posição central do campo magnético
 #b - ARGS[9] é o deslocamento em y da posição central do campo magnético
 #gamma - ARGS[10] é a intensidade do campo magnético
+# c1 - ARGS[11]
+# Ms - ARGS[12]
+# alpha - ARGS[13]
 #Exemplo:
-# 		julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 -0.05 3
+# 		julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 -0.05 3 0.5 0.5 0.5
 # A saída padrão é salva num arquivo txt nomeado de acordo com Re e n
 
 
@@ -66,8 +69,14 @@ end
 
 gamma = float(ARGS[10]);
 
+c1 = float(ARGS[11]);
+
+Ms = float(ARGS[12]);
+
+alpha = float(ARGS[13]);
+
 filename = "Re" * string(int(Re)) * "N" * string(n-2) *".txt"
 file = open(filename, "w")
 redirect_stdout(file)
-@time transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
+@time transient(n, dt, Re, t, Cpm, gamma, a, b, save, c1, Ms, alpha)
 close(file)

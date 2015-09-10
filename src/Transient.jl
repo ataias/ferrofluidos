@@ -23,7 +23,7 @@ end
 #retorna o valor em cada tempo para o 0.5, 0.5
 #resolve equações para um dado n e Re
 #t is time, in dimensioless units, of physical simulation
-function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
+function transient(n, dt, Re, t, Cpm, gamma, a, b, save, c1, Ms, alpha)
     dx = 1/(n-2)
 
     println("Dados sobre simulação: ")
@@ -32,7 +32,7 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
     println(" t\t= ", t)
     println(" Re\t= ", Re)
     println(" dt\t= ", dt)
-    println(" chi\t= ", chi)
+    println(" Ms\t= ", Ms)
     println(" Cpm\t= ", Cpm)
     println(" gamma\t= ", gamma)
     println(" a\t= ", a)
@@ -69,8 +69,8 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
 
     #Variáveis para a parte magnética
     phi = zeros(n,n);
-    Mx = zeros(n,n);
-    My = zeros(n,n);
+    Mx = zeros(n,n); Mx_old = zeros(n,n);
+    My = zeros(n,n); My_old = zeros(n,n);
     left = zeros(n);
     right = zeros(n);
     upper = zeros(n);
@@ -107,17 +107,42 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
         write(file, angles);
     end
 
+    #Magnetização em regime é constante e só depende de H aplicado
+    #pode ser calculada só uma vez
+    Mx0 = zeros(n,n)
+    for i in 2:n #
+      for j in 2:n-1
+        x = (i-2)*dx
+        y = (j-2)*dx + dx/2
+        mH = sqrt(fHx(x,y)^2 + fHy(x,y)^2) #módulo de H
+        Mx0[i,j] = Ms * (coth(alpha*mH) - 1/(alpha*mH)) * fHx(x,y)/mH
+      end
+    end
+
+    My0 = zeros(n,n)
+    for i in 2:n-1
+      for j in 2:n
+        x = (i-2)*dx + dx/2
+        y = (j-2)*dx
+        mH = sqrt(fHx(x,y)^2 + fHy(x,y)^2) #módulo de H
+        My0[i,j] = Ms * (coth(alpha*mH) - 1/(alpha*mH)) * fHy(x,y)/mH
+      end
+    end
+
 	for i in 1:steps
         fact = factor(i)
         for j in -1:n-2
 		        NS.uB[j+2] = fact*(sinpi(j*dx))^2
 	      end
+        #O primeiro passo é obter M em cada passo de tempo
+        #faz sentido não usar o fator fact para getM, pois a evolução inicia
+        #do valor anterior de M, que é 0 no tempo 0
+        getM!(n, c1, dt, Mx, My, Mx_old, My_old, Mx0, My0)
         getPhi!(n, phi, Mx, My, fHx, fHy, A)
         getH!(n, phi, Hx, Hy)
-        getM!(n, chi*fact, phi, Mx, My, Hx, Hy)
         getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
+        solve_navier_stokes!(NS)
 
-		solve_navier_stokes!(NS)
 #        println("i = ", i, " and timeToSave = ", timeToSave, ", therefore i % timeToSave = ", i % timeToSave == 0)
 		if (i % timeToSave == 0) || (i == steps)
 			staggered2not!(NS.v.x, NS.v.y, NS.p, un,  vn,  pn,   n)
@@ -145,9 +170,12 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
 			println("  F\t= ", F)
 		end
 
-        #Preparing for next time step
+    #Preparing for next time step
 		NS.v.x, NS.v_old.x = NS.v_old.x, NS.v.x
 		NS.v.y, NS.v_old.y = NS.v_old.y, NS.v.y
+
+    Mx, Mx_old = Mx_old, Mx
+    My, My_old = My_old, My
 
 	end
 

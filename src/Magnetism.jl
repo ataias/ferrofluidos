@@ -155,7 +155,7 @@ function getH!(n, phi, Hx, Hy)
     end
 
     #H fora da cavidade estava sendo calculado por meio de
-    for j in 2:n-1
+    # for j in 2:n-1
     #     Hy[1,j] = -(phi[1,j] - phi[1,j-1])/dx
     #     Hy[n,j] = -(phi[n,j] - phi[n,j-1])/dx
     # end
@@ -167,17 +167,22 @@ function getH!(n, phi, Hx, Hy)
     # Mas isto não é necessário. Como H é utilizado para obter M e M é nulo fora da cavidade
 end #end getH!
 
-function getM!(n, chi, phi, Mx, My, Hx, Hy)
-  # Mx[:,:] = chi*Hx[:,:]
-  # My[:,:] = chi*Hy[:,:]
+function getM!(n, c1, dt, Mx, My, Mx_old, My_old, Mx0, My0)
   #Shliomis...
-  x = 0 # variável auxiliar para calcular Mx0
-  y = 0 # variável auxiliar para calcular My0
+
+  #pelo que eu estou notando, os loops para a malha escalonada não devem ser
+  #simétricos (de 2 a n-1 em ambos os índices, pois, dependendo se é Mx ou My
+  #pode haver um valor de interesse ou não)
+
+  for i in 2:n
+    for j in 2:n-1
+      Mx[i,j] = Mx_old[i,j] - c1*dt * (Mx_old[i,j] - Mx0[i,j])
+    end
+  end
 
   for i in 2:n-1
-    for j in 2:n-1
-
-      x = sqrt(Hx[i,j])
+    for j in 2:n
+      My[i,j] = My_old[i,j] - c1*dt * (My_old[i,j] - My0[i,j])
     end
   end
 end #end getM!
