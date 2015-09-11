@@ -14,8 +14,7 @@ end
 type NSParams
     n::Int64
     dt::Float64
-    mu::Float64
-    rho::Float64
+    Re::Float64
     dx::Float64
     dx2::Float64
     dtx::Float64
@@ -47,12 +46,10 @@ function createNSObject(n::Int64, Re::Float64, divFactor::Float64 = 1.25)
 		return(1)
 	end
     dt = getDt(n, Re, divFactor)
-    rho = 1.0
-	mu = 1/Re
     dx2 = dx*dx
     dtx = dt/(2*dx)
-    rhodtdx = rho/dt/dx
-    params = NSParams(n, dt, mu, rho, dx, dx2, dtx, rhodtdx)
+    dtdx = 1/dt/dx
+    params = NSParams(n, dt, Re, dx, dx2, dtx, dtdx)
 
     #-------NSSystem ---------------
     spn = (n-2)*(n-2)
