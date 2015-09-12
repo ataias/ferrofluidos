@@ -190,21 +190,21 @@ end #end getM!
 
 function getForce!(n, Cpm, Hx, Hy, Mx, My, fx, fy)
     dx = 1/(n-2)
-    Myt = 0.0
-    Mxt = 0.0
-    Mb = 0.0
-    Mc = 0.0
 
     #For internal points
     for i in 2:n-1
-        for j in 2:n-1
-            Myt = (My[i,j]+My[i,j+1]+My[i-1,j]+My[i-1,j+1])/4
-            fx[i,j]  = Cpm*Mx[i,j]*( Hx[i,j+1]-Hx[i,j-1])/(2*dx)
-            fx[i,j] += Cpm*Myt*(Hx[i+1,j]-Hx[i-1,j])/(2*dx)
+      for j in 2:n-1
+        Myt = (My[i,j]+My[i,j+1]+My[i-1,j]+My[i-1,j+1])/4
+        fx[i,j]  = Cpm * Mx[i,j] * ( Hx[i,j+1]-Hx[i,j-1]) / (2*dx)
+        fx[i,j] += Cpm * Myt * (Hx[i+1,j]-Hx[i-1,j]) / (2*dx)
+      end
+    end
 
+    for i in 2:n-1
+      for j in 2:n-1
             Mxt = (Mx[i,j]+Mx[i+1,j]+Mx[i,j-1]+Mx[i+1,j-1])/4
-            fy[i,j]  = Cpm*Mxt*(Hy[i+1,j]-Hy[i-1,j])/(2*dx)
-            fy[i,j] += Cpm*My[i,j]*( Hy[i,j+1]-Hy[i,j-1])/(2*dx)
+            fy[i,j]  = Cpm * Mxt * (Hy[i+1,j]-Hy[i-1,j]) / (2*dx)
+            fy[i,j] += Cpm * My[i,j] * ( Hy[i,j+1]-Hy[i,j-1]) / (2*dx)
         end
     end
 
@@ -221,9 +221,18 @@ function getForce!(n, Cpm, Hx, Hy, Mx, My, fx, fy)
       Mc = (My[i+1,j]+My[i+1,j+1])/2
       # Myt é uma interpolação linear a partir das últimas células mencionadas
       Myt = Mb + (Mc - Mb) * (-1/2)
-      fx[i,j]  = Cpm*Mx[i,j]*( Hx[i,j+1]-Hx[i,j-1])/(2*dx)
-      fx[i,j] += Cpm*Myt*(Hx[i+1,j]-Hx[i-1,j])/(2*dx)
+
+      if j!= 2 && j!= n-1
+        fx[i,j]  = Cpm * Mx[i,j] * ( Hx[i,j+1]-Hx[i,j-1]) / (2*dx)
+      elseif j==2
+        fx[i,j]  = Cpm * Mx[i,j] * (-3/2*Hx[i,j] + 2*Hx[i,j+1] - 1/2*Hx[i,j+1])/dx
+      else #j=n-1
+        fx[i,j]  = Cpm * Mx[i,j] * (3/2*Hx[i,j]-2*Hx[i,j-1] + 1/2*Hx[i,j-2])/dx
+      end
+
+      fx[i,j] += Cpm * Myt * (-3/2*Hx[i,j] + 2*Hx[i+1,j] - 1/2*Hx[i+2,j]) / dx
     end
+    ##Fronteira esquerda, completa, falta verificação e testes
 
     #Fronteira direita
     i = n
@@ -238,9 +247,16 @@ function getForce!(n, Cpm, Hx, Hy, Mx, My, fx, fy)
       # Myt é uma interpolação linear para obter My no local de Mx
       # usando Mb e Mc
       Myt = Mb + (Mc - Mb) * (-1/2)
-      fx[i,j]  = Cpm*Mx[i,j]*( Hx[i,j+1]-Hx[i,j-1])/(2*dx)
-      fx[i,j] += Cpm*Myt*(Hx[i+1,j]-Hx[i-1,j])/(2*dx)
+      if j!=2 && j!=n
+        fx[i,j]  = Cpm * Mx[i,j] * ( Hx[i,j+1]-Hx[i,j-1]) / (2*dx)
+      elseif j==2
+        fx[i,j]  = Cpm * Mx[i,j] * (-3/2*Hx[i,j] + 2*Hx[i,j+1] - 1/2*Hx[i,j+2])/dx
+      else #j=n-1
+        fx[i,j]  = Cpm * Mx[i,j] * (3/2*Hx[i,j] - 2*Hx[i,j-1] + 1/2*Hx[i,j-2])/dx
+      end
+      fx[i,j] += Cpm * Myt * (-3/2*Hx[i,j] + 2*Hx[i-1,j] -1/2*Hx[i-1,j])/dx
     end
+    #Fronteira direita ok, falta testes
 
     #Fronteira inferior
     j = 2
@@ -253,9 +269,16 @@ function getForce!(n, Cpm, Hx, Hy, Mx, My, fx, fy)
       # Mxt é uma interpolação linear para obter Mx no local de My
       # usando Mb e Mc
       Mxt = Mb + (Mc - Mb) * (-1/2)
-      fy[i,j]  = Cpm*Mxt*(Hy[i+1,j]-Hy[i-1,j])/(2*dx)
-      fy[i,j] += Cpm*My[i,j]*( Hy[i,j+1]-Hy[i,j-1])/(2*dx)
+      if i!=2 && i!=n-1
+        fy[i,j]  = Cpm * Mxt * (Hy[i+1,j]-Hy[i-1,j])/dx/2
+      elseif i==2
+        fy[i,j]  = Cpm * Mxt * (-3/2*Hy[i,j] + 2*Hy[i+1,j] - 1/2*Hy[i+2,j])/dx
+      else #i=n-1
+        fy[i,j]  = Cpm * Mxt * (3/2*Hy[i,j] - 2*Hy[i-1,j] + 1/2*Hy[i-2,j])/dx
+      end
+      fy[i,j] += Cpm * My[i,j] * (-3/2*Hy[i,j] + 2*Hy[i,j+1] - 1/2*Hy[i,j+2])/dx
     end
+    #Fronteira inferior ok
 
     #Fronteira superior
     j = n
@@ -268,8 +291,14 @@ function getForce!(n, Cpm, Hx, Hy, Mx, My, fx, fy)
       # Mxt é uma interpolação linear para obter Mx no local de My
       # usando Mb e Mc
       Mxt = Mb + (Mc - Mb) * (-1/2)
-      fy[i,j]  = Cpm*Mxt*(Hy[i+1,j]-Hy[i-1,j])/(2*dx)
-      fy[i,j] += Cpm*My[i,j]*( Hy[i,j+1]-Hy[i,j-1])/(2*dx)
+      if i!= 2 && i != n-1 # 2 < i < n-1
+        fy[i,j]  = Cpm * Mxt * (Hy[i+1,j]-Hy[i-1,j])/dx/2
+      elseif i == 2
+        fy[i,j]  = Cpm * Mxt * (-3/2*Hy[i,j] + 2*Hy[i+1,j] - 1/2*Hy[i+2,j])/dx
+      else # i == n-1
+        fy[i,j]  = Cpm * Mxt * (3/2*Hy[i,j] - 2*Hy[i-1,j] + 1/2*Hy[i-2,j])/dx
+      end
+      fy[i,j] += Cpm * My[i,j] * (3/2*Hy[i,j] - 2*Hy[i,j-1] + 1/2*Hy[i,j-2])/dx
     end
 
 end #end getForce!
