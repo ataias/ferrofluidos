@@ -147,9 +147,14 @@ end #end getPhi!
 
 function getH!(n, phi, Hx, Hy)
     dx = 1/(n-2)
-    for i in 2:n-1
+    for i in 2:n
         for j in 2:n-1
             Hx[i,j] = -(phi[i,j] - phi[i-1,j])/dx
+        end
+    end
+
+    for i in 2:n-1
+        for j in 2:n
             Hy[i,j] = -(phi[i,j] - phi[i,j-1])/dx
         end
     end
