@@ -197,7 +197,7 @@ function getForce!(n, Cpm, Hx, Hy, Mx, My, fx, fy)
     dx = 1/(n-2)
 
     #For internal points
-    for i in 2:n-1
+    for i in 3:n-1
       for j in 2:n-1
         Myt = (My[i,j]+My[i,j+1]+My[i-1,j]+My[i-1,j+1])/4
         fx[i,j]  = Cpm * Mx[i,j] * ( Hx[i,j+1]-Hx[i,j-1]) / (2*dx)
@@ -206,7 +206,7 @@ function getForce!(n, Cpm, Hx, Hy, Mx, My, fx, fy)
     end
 
     for i in 2:n-1
-      for j in 2:n-1
+      for j in 3:n-1
             Mxt = (Mx[i,j]+Mx[i+1,j]+Mx[i,j-1]+Mx[i+1,j-1])/4
             fy[i,j]  = Cpm * Mxt * (Hy[i+1,j]-Hy[i-1,j]) / (2*dx)
             fy[i,j] += Cpm * My[i,j] * ( Hy[i,j+1]-Hy[i,j-1]) / (2*dx)

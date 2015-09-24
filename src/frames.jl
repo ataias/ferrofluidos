@@ -6,17 +6,15 @@ using NavierTypes
 #t   - ARGS[2] é o tempo de simulação, em segundos
 #Re  - ARGS[3] é o número de Reynolds
 #divFactor  - ARGS[4] dividir o passo de tempo, deve ser maior do que 1
-#chi - ARGS[5]
+#c1 - ARGS[5]
 #Cpm - ARGS[6]
 #save - ARGS[7] se for 1, salva um arquivo com as matrizes evoluindo no tempo
 #a - ARGS[8] é o deslocamento em x da posição central do campo magnético
 #b - ARGS[9] é o deslocamento em y da posição central do campo magnético
-#gamma - ARGS[10] é a intensidade do campo magnético
-# c1 - ARGS[11]
-# Ms - ARGS[12]
-# alpha - ARGS[13]
+# alpha - ARGS[10] é relacionado com a intensidade do campo magnético
 #Exemplo:
-# 		julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 -0.05 3 0.5 0.5 0.5
+# 		julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 -0.05 3
+# (nomag)     julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 -0.05 3
 # A saída padrão é salva num arquivo txt nomeado de acordo com Re e n
 
 
@@ -55,7 +53,7 @@ end
 
 dt = getDt(n, Re, float(ARGS[4]));
 
-chi = float(ARGS[5]);
+c1 = float(ARGS[5]);
 Cpm = float(ARGS[6]);
 
 save = bool(int(ARGS[7]));
@@ -67,16 +65,11 @@ if (0 < b < 1) && (0 < a < 1)
   exit()
 end
 
-gamma = float(ARGS[10]);
+alpha = float(ARGS[10]);
 
-c1 = float(ARGS[11]);
-
-Ms = float(ARGS[12]);
-
-alpha = float(ARGS[13]);
 
 filename = "Re" * string(int(Re)) * "N" * string(n-2) *".txt"
 file = open(filename, "w")
 redirect_stdout(file)
-@time transient(n, dt, Re, t, Cpm, gamma, a, b, save, c1, Ms, alpha)
+@time transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1)
 close(file)

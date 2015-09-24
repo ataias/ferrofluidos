@@ -23,7 +23,7 @@ end
 #retorna o valor em cada tempo para o 0.5, 0.5
 #resolve equações para um dado n e Re
 #t is time, in dimensioless units, of physical simulation
-function transient(n, dt, Re, t, Cpm, gamma, a, b, save, c1, Ms, alpha)
+function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1)
     dx = 1/(n-2)
 
     println("Dados sobre simulação: ")
@@ -33,12 +33,10 @@ function transient(n, dt, Re, t, Cpm, gamma, a, b, save, c1, Ms, alpha)
     println(" Re\t= ", Re)
     println(" dt\t= ", dt)
     println(" Cpm\t= ", Cpm)
-    println(" gamma\t= ", gamma)
+    println(" α\t= ", alpha)
     println(" a\t= ", a)
     println(" b\t= ", b)
     println(" c1\t= ", c1)
-    println(" Ms\t= ", Ms)
-    println(" α\t= ", alpha)
     println(strftime(time()), "\n")
 
 
@@ -95,8 +93,9 @@ function transient(n, dt, Re, t, Cpm, gamma, a, b, save, c1, Ms, alpha)
     phin = zeros(n-2, n-2)+1e-15
     A = getANeumannSparse(n);
 
-    fHx = (x,y) ->  gamma/(2*pi)*(y-b)/((x-a)^2+(y-b)^2)
-    fHy = (x,y) -> -gamma/(2*pi)*(x-a)/((x-a)^2+(y-b)^2)
+    #gamma foi acoplado dentro do alpha que é usado para calcular M0
+    fHx = (x,y) ->  1/(2*pi)*(y-b)/((x-a)^2+(y-b)^2)
+    fHy = (x,y) -> -1/(2*pi)*(x-a)/((x-a)^2+(y-b)^2)
 
     fact = 0
     angles = zeros(n-2, n-2)+1e-15;
@@ -117,7 +116,7 @@ function transient(n, dt, Re, t, Cpm, gamma, a, b, save, c1, Ms, alpha)
         x = (i-2)*dx
         y = (j-2)*dx + dx/2
         mH = sqrt(fHx(x,y)^2 + fHy(x,y)^2) #módulo de H
-        Mx0[i,j] = Ms * (coth(alpha*mH) - 1/(alpha*mH)) * fHx(x,y)/mH
+        Mx0[i,j] = (coth(alpha*mH) - 1/(alpha*mH)) * fHx(x,y)/mH
       end
     end
 
@@ -127,7 +126,7 @@ function transient(n, dt, Re, t, Cpm, gamma, a, b, save, c1, Ms, alpha)
         x = (i-2)*dx + dx/2
         y = (j-2)*dx
         mH = sqrt(fHx(x,y)^2 + fHy(x,y)^2) #módulo de H
-        My0[i,j] = Ms * (coth(alpha*mH) - 1/(alpha*mH)) * fHy(x,y)/mH
+        My0[i,j] = (coth(alpha*mH) - 1/(alpha*mH)) * fHy(x,y)/mH
       end
     end
 
