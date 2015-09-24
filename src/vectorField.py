@@ -6,7 +6,7 @@
 #arg[3] - step (if size is n, then n/step vectors will be plotted, this makes things neat)
 #arg[4] - chi
 #arg[5] - Cpm
-#arg[6] - Re    
+#arg[6] - Re
 #arg[7] - gamma
 #Comando para criar vídeo
 #Este na pasta que contém a pasta "png" e execute isso
@@ -24,12 +24,14 @@ def readFromFile(array, file, n):
             array[i,j] = struct.unpack('d',file.read(8))[0]
 
 #file "f"
-def batchRead(u, v, p, Hx, Hy, phi, angles, n, f):
+def batchRead(u, v, p, Hx, Hy, Mx, My, phi, angles, n, f):
     readFromFile(u, f, n)
     readFromFile(v, f, n)
     readFromFile(p, f, n)
     readFromFile(Hx, f, n)
     readFromFile(Hy, f, n)
+    readFromFile(Mx, f, n)
+    readFromFile(My, f, n)
     readFromFile(phi, f, n)
     readFromFile(angles, f, n)
 
@@ -44,7 +46,7 @@ def plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, gamma, time, filename):
     rc('xtick.major', pad=7)
     rc('xtick.minor', pad=7)
     rc('text', usetex=True)
-    rc('text.latex', 
+    rc('text.latex',
                  preamble=[r'\usepackage[T1]{fontenc}',
                            r'\usepackage{amsmath}',
                            r'\usepackage{txfonts}',
@@ -79,10 +81,10 @@ def plotPressure(x, y, p, filename):
     minl = min(p)
     levels = arange(minl, maxl, (maxl - minl)/10.0)
     CS = contour(x, y, p)
-    clabel(CS, inline=1, fontsize=10)   
+    clabel(CS, inline=1, fontsize=10)
     title('Pressure')
     savefig(filename, dpi=200)
-    
+
 def plotAngle(x, y, angles, n, filename):
   close('all')
   fig = figure()
@@ -94,10 +96,10 @@ def plotAngle(x, y, angles, n, filename):
   colorbar()
   title(r'Angle between $\mathbf{H}_{\mathrm{calc}}$ and $\mathbf{M}$')
   xlabel(r'$x$')
-  ylabel(r'$y$')  
+  ylabel(r'$y$')
   savefig(filename, dpi=200)
-  
-    
+
+
 #Calcula rotacional nos pontos internos e retorna o maior valor de rotacional
 def rotInside(Fx, Fy, n):
     rotMax = 0.0
@@ -109,7 +111,7 @@ def rotInside(Fx, Fy, n):
             if abs(rotF) > abs(rotMax):
                 rotMax = rotF
                 pos = (i, j)
-                
+
     return rotMax, pos
 
 def divInside(Fx, Fy, n):
@@ -131,35 +133,37 @@ def makePNGforVideo(filename, n):
     Re = float64(sys.argv[6])
     gamma = float64(sys.argv[7])
     dx = 1/n
-    
+
     u = zeros((n,n), dtype=float64)
     v = zeros((n,n), dtype=float64)
     p = zeros((n,n), dtype=float64)
     Hx = zeros((n,n), dtype=float64)
     Hy = zeros((n,n), dtype=float64)
+    Mx = zeros((n,n), dtype=float64)
+    My = zeros((n,n), dtype=float64)
     phi = zeros((n,n), dtype=float64)
     angles = zeros((n,n), dtype=float64)
-    
+
     numberFrames = int(round(180*t))
-    
+
     x=linspace(0, 1 - dx, n) + (dx/2)
     y=linspace(0, 1 - dx, n) + (dx/2)
     x, y=meshgrid(x, y)
     time = 0.0
-    
+
     for i in range(0, numberFrames):
         time = (i)/180.0
         try:
-            batchRead(u, v, p, Hx, Hy, phi, angles, n, f)
+            batchRead(u, v, p, Hx, Hy, Mx, My, phi, angles, n, f)
             plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, gamma, time, str(i).zfill(4) + ".png")
         except:
             break
-    
+
     f.close()
-    
-    
+
+
 if __name__ == "__main__":
-    
+
     n = int(sys.argv[1]) #esta é a dimensão da malha escalonada menos 2
     makePNGforVideo('N' + str(n) + '.dat', n)
     f = open('N' + str(n) + '.dat', 'rb')
@@ -169,7 +173,7 @@ if __name__ == "__main__":
     Cpm = float64(sys.argv[5])
     Re = float64(sys.argv[6])
     gamma = float64(sys.argv[7])
-    
+
     dx = 1/n
     numberFrames = round(180*t)
     f.seek(-n*n*8*7, 2)
@@ -181,18 +185,18 @@ if __name__ == "__main__":
     phi = zeros((n,n), dtype=float64)
     angles = zeros((n,n), dtype=float64)
 
-    batchRead(u, v, p, Hx, Hy, phi, angles, n, f)
+    batchRead(u, v, p, Hx, Hy, Mx, My, phi, angles, n, f)
 
     f.close()
     # generate grid
     x=linspace(0, 1 - dx, n) + (dx/2)
     y=linspace(0, 1 - dx, n) + (dx/2)
-    
+
     x, y=meshgrid(x, y)
-    
+
     plotPressure(x, y, p, 'pressure.png')
     plotAngle(x,y,angles,n, 'angle.png')
-    
+
     plotVectorField(u, v, x, y, n, step, chi, Cpm, Re, gamma, t, 'vectorField.png')
     if(gamma>1e-15):
       plotVectorField(Hx, Hy, x, y, n, step, chi, Cpm, Re, gamma, t, 'vectorFieldH.png')

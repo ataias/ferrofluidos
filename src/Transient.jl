@@ -104,6 +104,7 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1)
         write(file, un); write(file, vn);
         write(file, pn);
         write(file, Hxn); write(file, Hyn);
+        write(file, Mxn); write(file, Myn);
         write(file, phin);
         write(file, angles);
     end
@@ -154,6 +155,7 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1)
                 write(file, un); write(file, vn);
                 write(file, pn);
                 write(file, Hxn); write(file, Hyn);
+                write(file, Mxn); write(file, Myn);
                 write(file, phin);
                 write(file, angles);
             end
