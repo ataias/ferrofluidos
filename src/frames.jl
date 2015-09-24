@@ -3,7 +3,7 @@ using NavierTypes
 
 #modo de usar
 #n   - ARGS[1] é o tamanho da matriz escalonada
-#t   - ARGS[2] é o tempo de simulação, em segundos
+#t   - ARGS[2] é o tempo de simulação, em unidades adimensionais
 #Re  - ARGS[3] é o número de Reynolds
 #divFactor  - ARGS[4] dividir o passo de tempo, deve ser maior do que 1
 #c1 - ARGS[5]

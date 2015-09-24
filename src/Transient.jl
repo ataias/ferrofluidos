@@ -23,7 +23,7 @@ end
 #retorna o valor em cada tempo para o 0.5, 0.5
 #resolve equações para um dado n e Re
 #t is time, in dimensioless units, of physical simulation
-function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1)
+function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, filename)
     dx = 1/(n-2)
 
     println("Dados sobre simulação: ")
@@ -57,7 +57,7 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1)
 	#fy = zeros(n,n)
 
     if(save)
-	   file = open("N" * string(n-2) * ".dat", "w")
+	   file = open(filename, "w")
     end
 
 	un = zeros(n-2,n-2)+1e-15 #malha não escalonada
