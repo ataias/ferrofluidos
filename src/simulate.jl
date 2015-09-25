@@ -5,7 +5,7 @@ using NavierTypes
 #julia -p 1 simulate.jl &
 #-p 1 -> indica que julia deve utilizar somente um processo
 
-t = 6.0;
+t = 30.0;
 Re = 50.0
 n = 102
 divFactor = 1.25
@@ -18,6 +18,7 @@ a = +0.00;
 b = -0.05
 step = 1
 
+fps = 2
 
 main = homedir()*"/Documents/simulacao"
 #Create working folder
@@ -31,6 +32,7 @@ function simulation(n, dt, Re, c1, Cpm, alpha, a, b)
   fname *= "α" * string(round(alpha, 4))
   fname *= "Cpm" * string(int(Cpm))
   fname *= "T" * string(t)
+  fname *= "fps" * string(fps)
 
   txtfilename  = fname * ".txt"
   datafilename = fname * ".dat"
@@ -42,7 +44,7 @@ function simulation(n, dt, Re, c1, Cpm, alpha, a, b)
   redirect_stdout(f)
 
   #Simulate
-  @time transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, datafilename)
+  @time transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, datafilename)
   cd("..")
 
   close(f)

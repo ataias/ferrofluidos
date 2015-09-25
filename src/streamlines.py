@@ -46,7 +46,7 @@ def plotStreamFrame(u, v, x, y, n, sideText, time, filename):
     figure(figsize=(12, 8))
 
     #1 é a velocidade máxima na malha, ela varia se a condição de contorno for modificada
-    norm = Normalize(vmin=-1.0, vmax=1.0)
+    norm = Normalize(vmin=0, vmax=1.0) #intensidade deve ser de 0 a 1
     streamplot(x, y, u, v, color=u, linewidth=1.3, cmap=cm.winter, arrowsize=4, norm=norm)
     colorbar(norm=norm, cmap=cm.winter, ticks=[-1, 0, 1])
     xlabel('$x$')

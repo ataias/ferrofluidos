@@ -23,7 +23,8 @@ end
 #retorna o valor em cada tempo para o 0.5, 0.5
 #resolve equações para um dado n e Re
 #t is time, in dimensioless units, of physical simulation
-function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, filename)
+#fps is frames per second
+function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename)
     dx = 1/(n-2)
 
     println("Dados sobre simulação: ")
@@ -64,7 +65,7 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, filename)
 	vn = zeros(n-2,n-2)+1e-15
 	pn = zeros(n-2,n-2)+1e-15
 
-	numberFrames = integer(180*t)
+	numberFrames = integer(fps*t)
 	timeToSave = integer(steps/numberFrames)
 
     #Variáveis para a parte magnética

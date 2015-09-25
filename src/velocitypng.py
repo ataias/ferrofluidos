@@ -15,6 +15,7 @@ if __name__ == "__main__":
         alpha = float(parameters[3])
         Cpm = float(parameters[4])
         t = float(parameters[5])
+        fps = int(parameters[6])
 
         print("Arquivo: ", filename)
         print("Re = ", Re)
@@ -23,6 +24,8 @@ if __name__ == "__main__":
         print("alpha = ", alpha)
         print("Cpm = ", Cpm)
         print("t = ", t)
+        print("fps = ", fps)
+
         print()
 
         #Criar pasta
