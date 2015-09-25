@@ -26,9 +26,11 @@ try rm(wfolder, recursive=true) end
 mkdir(wfolder)
 
 function simulation(n, dt, Re, c1, Cpm, alpha, a, b)
-  fname = "Re" * string(int(Re)) * "Pe" * string(round(1/c1, 4))
+  fname = "Re" * string(int(Re)) * "N" * string(int(n-2))
+  fname *= "Pe" * string(round(1/c1, 4))
   fname *= "α" * string(round(alpha, 4))
   fname *= "Cpm" * string(int(Cpm))
+  fname *= "T" * string(t)
 
   txtfilename  = fname * ".txt"
   datafilename = fname * ".dat"
