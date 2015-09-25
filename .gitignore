@@ -7,3 +7,5 @@
 *.txt
 .DS_Store
 eletromagnetismo.pdf
+
+src/__pycache__/streamlines.cpython-34.pyc
