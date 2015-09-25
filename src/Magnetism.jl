@@ -4,7 +4,7 @@ using Poisson
 using NavierStokes
 using NavierTypes
 
-export getPhi!, getMH!, getForce!, H0, solve!, Angle!
+export getPhi!, getH!, getM!, getForce!, H0, solve!, Angle!
 
 function R(theta)
     return [cos(theta) -sin(theta); sin(theta) cos(theta)]
@@ -131,6 +131,8 @@ function getPhi!(n, phi, Mx, My, fHx, fHy, A)
     upper = zeros(n);
     lower = zeros(n);
 
+    #apesar de ser calculado de 1 a n, somente pontos 2 a n-1 são usados
+    # na rotina de Poisson
     for i in -1:n-2
       x = (i+0.5)*dx;
       left[i+2]  = Mx[2,i+2] - fHx(0,x)
@@ -143,45 +145,165 @@ function getPhi!(n, phi, Mx, My, fHx, fHy, A)
 
 end #end getPhi!
 
-function getMH!(n, chi, phi, Mx, My, Hx, Hy)
+function getH!(n, phi, Hx, Hy)
     dx = 1/(n-2)
-    for i in 2:n-1
+    for i in 2:n
         for j in 2:n-1
             Hx[i,j] = -(phi[i,j] - phi[i-1,j])/dx
+        end
+    end
+
+    for i in 2:n-1
+        for j in 2:n
             Hy[i,j] = -(phi[i,j] - phi[i,j-1])/dx
         end
     end
 
+    #H fora da cavidade estava sendo calculado por meio de
+    # for j in 2:n-1
+    #     Hy[1,j] = -(phi[1,j] - phi[1,j-1])/dx
+    #     Hy[n,j] = -(phi[n,j] - phi[n,j-1])/dx
+    # end
+    #
+    # for i in 2:n-1
+    #     Hx[i,1] = -(phi[i,1] - phi[i-1,1])/dx
+    #     Hx[i,n] = -(phi[i,n] - phi[i-1,n])/dx
+    # end
+    # Mas isto não é necessário. Como H é utilizado para obter M e M é nulo fora da cavidade
+end #end getH!
+
+function getM!(n, c1, dt, Mx, My, Mx_old, My_old, Mx0, My0)
+  #Shliomis...
+
+  #pelo que eu estou notando, os loops para a malha escalonada não devem ser
+  #simétricos (de 2 a n-1 em ambos os índices, pois, dependendo se é Mx ou My
+  #pode haver um valor de interesse ou não)
+
+  for i in 2:n
     for j in 2:n-1
-        Hy[1,j] = -(phi[1,j] - phi[1,j-1])/dx
-        Hy[n,j] = -(phi[n,j] - phi[n,j-1])/dx
+      Mx[i,j] = Mx_old[i,j] - c1*dt * (Mx_old[i,j] - Mx0[i,j])
     end
+  end
 
-    for i in 2:n-1
-        Hx[i,1] = -(phi[i,1] - phi[i-1,1])/dx
-        Hx[i,n] = -(phi[i,n] - phi[i-1,n])/dx
+  for i in 2:n-1
+    for j in 2:n
+      My[i,j] = My_old[i,j] - c1*dt * (My_old[i,j] - My0[i,j])
     end
-
-    Mx[:,:] = chi*Hx[:,:]
-    My[:,:] = chi*Hy[:,:]
-end #end getMH!
+  end
+end #end getM!
 
 
 function getForce!(n, Cpm, Hx, Hy, Mx, My, fx, fy)
     dx = 1/(n-2)
-    Myt = 0.0
-    Mxt = 0.0
+
+    #For internal points
+    for i in 3:n-1
+      for j in 2:n-1
+        Myt = (My[i,j]+My[i,j+1]+My[i-1,j]+My[i-1,j+1])/4
+        fx[i,j]  = Cpm * Mx[i,j] * ( Hx[i,j+1]-Hx[i,j-1]) / (2*dx)
+        fx[i,j] += Cpm * Myt * (Hx[i+1,j]-Hx[i-1,j]) / (2*dx)
+      end
+    end
 
     for i in 2:n-1
-        for j in 2:n-1
-            Myt = (My[i,j]+My[i,j+1]+My[i-1,j]+My[i-1,j+1])/4
-            fx[i,j]  = Cpm*Mx[i,j]*( Hx[i,j+1]-Hx[i,j-1])/(2*dx)
-            fx[i,j] += Cpm*Myt*(Hx[i+1,j]-Hx[i-1,j])/(2*dx)
-
+      for j in 3:n-1
             Mxt = (Mx[i,j]+Mx[i+1,j]+Mx[i,j-1]+Mx[i+1,j-1])/4
-            fy[i,j]  = Cpm*Mxt*(Hy[i+1,j]-Hy[i-1,j])/(2*dx)
-            fy[i,j] += Cpm*My[i,j]*( Hy[i,j+1]-Hy[i,j-1])/(2*dx)
+            fy[i,j]  = Cpm * Mxt * (Hy[i+1,j]-Hy[i-1,j]) / (2*dx)
+            fy[i,j] += Cpm * My[i,j] * ( Hy[i,j+1]-Hy[i,j-1]) / (2*dx)
         end
+    end
+
+    #For border points
+    #Fronteira esquerda
+    i = 2
+    for j in 2:n-1
+      #ao invés dessa média, que usa a malha fantasma
+      # Myt = (My[i,j]+My[i,j+1]+My[i-1,j]+My[i-1,j+1])/4
+      #usa-se uma interpolação com pontos internos
+      # b é My no meio da primeira célula
+      Mb = (My[i,j]+My[i,j+1])/2
+      # c é My no meio célula à direta da primeira
+      Mc = (My[i+1,j]+My[i+1,j+1])/2
+      # Myt é uma interpolação linear a partir das últimas células mencionadas
+      Myt = Mb + (Mc - Mb) * (-1/2)
+
+      if j!= 2 && j!= n-1
+        fx[i,j]  = Cpm * Mx[i,j] * ( Hx[i,j+1]-Hx[i,j-1]) / (2*dx)
+      elseif j==2
+        fx[i,j]  = Cpm * Mx[i,j] * (-3/2*Hx[i,j] + 2*Hx[i,j+1] - 1/2*Hx[i,j+1])/dx
+      else #j=n-1
+        fx[i,j]  = Cpm * Mx[i,j] * (3/2*Hx[i,j]-2*Hx[i,j-1] + 1/2*Hx[i,j-2])/dx
+      end
+
+      fx[i,j] += Cpm * Myt * (-3/2*Hx[i,j] + 2*Hx[i+1,j] - 1/2*Hx[i+2,j]) / dx
+    end
+    ##Fronteira esquerda, completa, falta verificação e testes
+
+    #Fronteira direita
+    i = n
+    for j in 2:n-1
+      #ao invés dessa média, que usa a malha fantasma
+      # Myt = (My[i,j]+My[i,j+1]+My[i-1,j]+My[i-1,j+1])/4
+      #usa-se uma interpolação com pontos internos
+      # Mb é My no meio da célula atual
+      Mb = (My[i-1,j]+My[i-1,j+1])/2
+      # Mc é My no meio célula à direta da atual
+      Mc = (My[i-2,j]+My[i-2,j+1])/2
+      # Myt é uma interpolação linear para obter My no local de Mx
+      # usando Mb e Mc
+      Myt = Mb + (Mc - Mb) * (-1/2)
+      if j!=2 && j!=n
+        fx[i,j]  = Cpm * Mx[i,j] * ( Hx[i,j+1]-Hx[i,j-1]) / (2*dx)
+      elseif j==2
+        fx[i,j]  = Cpm * Mx[i,j] * (-3/2*Hx[i,j] + 2*Hx[i,j+1] - 1/2*Hx[i,j+2])/dx
+      else #j=n-1
+        fx[i,j]  = Cpm * Mx[i,j] * (3/2*Hx[i,j] - 2*Hx[i,j-1] + 1/2*Hx[i,j-2])/dx
+      end
+      fx[i,j] += Cpm * Myt * (-3/2*Hx[i,j] + 2*Hx[i-1,j] -1/2*Hx[i-1,j])/dx
+    end
+    #Fronteira direita ok, falta testes
+
+    #Fronteira inferior
+    j = 2
+    for i in 2:n-1
+      #usa-se uma interpolação com pontos internos
+      # Mb é Mx no meio da célula atual
+      Mb = (Mx[i,j]+My[i+1,j])/2
+      # Mc é Mx no meio célula à direta da atual
+      Mc = (Mx[i,j+1]+My[i,j+1])/2
+      # Mxt é uma interpolação linear para obter Mx no local de My
+      # usando Mb e Mc
+      Mxt = Mb + (Mc - Mb) * (-1/2)
+      if i!=2 && i!=n-1
+        fy[i,j]  = Cpm * Mxt * (Hy[i+1,j]-Hy[i-1,j])/dx/2
+      elseif i==2
+        fy[i,j]  = Cpm * Mxt * (-3/2*Hy[i,j] + 2*Hy[i+1,j] - 1/2*Hy[i+2,j])/dx
+      else #i=n-1
+        fy[i,j]  = Cpm * Mxt * (3/2*Hy[i,j] - 2*Hy[i-1,j] + 1/2*Hy[i-2,j])/dx
+      end
+      fy[i,j] += Cpm * My[i,j] * (-3/2*Hy[i,j] + 2*Hy[i,j+1] - 1/2*Hy[i,j+2])/dx
+    end
+    #Fronteira inferior ok
+
+    #Fronteira superior
+    j = n
+    for i in 2:n-1
+      #usa-se uma interpolação com pontos internos
+      # Mb é Mx no meio da célula atual
+      Mb = (Mx[i,j-1]+My[i+1,j-1])/2
+      # Mc é Mx no meio célula à direta da atual
+      Mc = (Mx[i,j-2]+My[i,j-2])/2
+      # Mxt é uma interpolação linear para obter Mx no local de My
+      # usando Mb e Mc
+      Mxt = Mb + (Mc - Mb) * (-1/2)
+      if i!= 2 && i != n-1 # 2 < i < n-1
+        fy[i,j]  = Cpm * Mxt * (Hy[i+1,j]-Hy[i-1,j])/dx/2
+      elseif i == 2
+        fy[i,j]  = Cpm * Mxt * (-3/2*Hy[i,j] + 2*Hy[i+1,j] - 1/2*Hy[i+2,j])/dx
+      else # i == n-1
+        fy[i,j]  = Cpm * Mxt * (3/2*Hy[i,j] - 2*Hy[i-1,j] + 1/2*Hy[i-2,j])/dx
+      end
+      fy[i,j] += Cpm * My[i,j] * (3/2*Hy[i,j] - 2*Hy[i,j-1] + 1/2*Hy[i,j-2])/dx
     end
 
 end #end getForce!

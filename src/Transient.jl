@@ -23,7 +23,8 @@ end
 #retorna o valor em cada tempo para o 0.5, 0.5
 #resolve equações para um dado n e Re
 #t is time, in dimensioless units, of physical simulation
-function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
+#fps is frames per second
+function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename)
     dx = 1/(n-2)
 
     println("Dados sobre simulação: ")
@@ -32,9 +33,11 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
     println(" t\t= ", t)
     println(" Re\t= ", Re)
     println(" dt\t= ", dt)
-    println(" chi\t= ", chi)
     println(" Cpm\t= ", Cpm)
-    println(" gamma\t= ", gamma)
+    println(" α\t= ", alpha)
+    println(" a\t= ", a)
+    println(" b\t= ", b)
+    println(" c1\t= ", c1)
     println(strftime(time()), "\n")
 
 
@@ -55,20 +58,20 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
 	#fy = zeros(n,n)
 
     if(save)
-	   file = open("N" * string(n-2) * ".dat", "w")
+	   file = open(filename, "w")
     end
 
 	un = zeros(n-2,n-2)+1e-15 #malha não escalonada
 	vn = zeros(n-2,n-2)+1e-15
 	pn = zeros(n-2,n-2)+1e-15
 
-	numberFrames = integer(180*t)
+	numberFrames = integer(fps*t)
 	timeToSave = integer(steps/numberFrames)
 
     #Variáveis para a parte magnética
     phi = zeros(n,n);
-    Mx = zeros(n,n);
-    My = zeros(n,n);
+    Mx = zeros(n,n); Mx_old = zeros(n,n);
+    My = zeros(n,n); My_old = zeros(n,n);
     left = zeros(n);
     right = zeros(n);
     upper = zeros(n);
@@ -91,8 +94,9 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
     phin = zeros(n-2, n-2)+1e-15
     A = getANeumannSparse(n);
 
-    fHx = (x,y) ->  gamma/(2*pi)*(y-b)/((x-a)^2+(y-b)^2)
-    fHy = (x,y) -> -gamma/(2*pi)*(x-a)/((x-a)^2+(y-b)^2)
+    #gamma foi acoplado dentro do alpha que é usado para calcular M0
+    fHx = (x,y) ->  1/(2*pi)*(y-b)/((x-a)^2+(y-b)^2)
+    fHy = (x,y) -> -1/(2*pi)*(x-a)/((x-a)^2+(y-b)^2)
 
     fact = 0
     angles = zeros(n-2, n-2)+1e-15;
@@ -101,8 +105,31 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
         write(file, un); write(file, vn);
         write(file, pn);
         write(file, Hxn); write(file, Hyn);
+        write(file, Mxn); write(file, Myn);
         write(file, phin);
         write(file, angles);
+    end
+
+    #Magnetização em regime é constante e só depende de H aplicado
+    #pode ser calculada só uma vez
+    Mx0 = zeros(n,n)
+    for i in 2:n #
+      for j in 2:n-1
+        x = (i-2)*dx
+        y = (j-2)*dx + dx/2
+        mH = sqrt(fHx(x,y)^2 + fHy(x,y)^2) #módulo de H
+        Mx0[i,j] = (coth(alpha*mH) - 1/(alpha*mH)) * fHx(x,y)/mH
+      end
+    end
+
+    My0 = zeros(n,n)
+    for i in 2:n-1
+      for j in 2:n
+        x = (i-2)*dx + dx/2
+        y = (j-2)*dx
+        mH = sqrt(fHx(x,y)^2 + fHy(x,y)^2) #módulo de H
+        My0[i,j] = (coth(alpha*mH) - 1/(alpha*mH)) * fHy(x,y)/mH
+      end
     end
 
 	for i in 1:steps
@@ -110,11 +137,15 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
         for j in -1:n-2
 		        NS.uB[j+2] = fact*(sinpi(j*dx))^2
 	      end
+        #O primeiro passo é obter M em cada passo de tempo
+        #faz sentido não usar o fator fact para getM, pois a evolução inicia
+        #do valor anterior de M, que é 0 no tempo 0
+        getM!(n, c1, dt, Mx, My, Mx_old, My_old, Mx0, My0)
         getPhi!(n, phi, Mx, My, fHx, fHy, A)
-        getMH!(n, chi*fact, phi, Mx, My, Hx, Hy)
+        getH!(n, phi, Hx, Hy)
         getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
+        solve_navier_stokes!(NS)
 
-		solve_navier_stokes!(NS)
 #        println("i = ", i, " and timeToSave = ", timeToSave, ", therefore i % timeToSave = ", i % timeToSave == 0)
 		if (i % timeToSave == 0) || (i == steps)
 			staggered2not!(NS.v.x, NS.v.y, NS.p, un,  vn,  pn,   n)
@@ -125,6 +156,7 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
                 write(file, un); write(file, vn);
                 write(file, pn);
                 write(file, Hxn); write(file, Hyn);
+                write(file, Mxn); write(file, Myn);
                 write(file, phin);
                 write(file, angles);
             end
@@ -142,9 +174,12 @@ function transient(n, dt, Re, t, chi, Cpm, gamma, a, b, save)
 			println("  F\t= ", F)
 		end
 
-        #Preparing for next time step
+    #Preparing for next time step
 		NS.v.x, NS.v_old.x = NS.v_old.x, NS.v.x
 		NS.v.y, NS.v_old.y = NS.v_old.y, NS.v.y
+
+    Mx, Mx_old = Mx_old, Mx
+    My, My_old = My_old, My
 
 	end
 

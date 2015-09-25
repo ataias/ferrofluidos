@@ -296,16 +296,14 @@ M_{x,ij}^{n+1} & = M_{x,ij}^n -c_1\Delta t[M_{x,ij} - M_{x_0,ij}]\\
 M_{y,ij}^{n+1} & = M_{y,ij}^n -c_1\Delta t[M_{y,ij} - M_{y_0,ij}], 
 \end{align} nas quais $\mathbf{M}_0$ é dado por \begin{align}
 	\mathbf{M}_0 & = M_S L(\alpha|\mathbf{H}|)\hat{\mathrm{e}}_H
-\end{align} sendo $M_S$ uma constante, $L(x) = \coth(x) - \frac{1}{x}$ a função de Langevin, $\alpha$ um parâmetro e $\hat{\mathrm{e}}_H$ um vetor unitário na direção campo $\mathbf{H}_{\mathrm{calc}}$. Para o vetor unitário, tem-se: \begin{align}
+\end{align} sendo $M_S$ uma constante, $L(x) = \coth(x) - \frac{1}{x}$ a função de Langevin, $\alpha$ um parâmetro e $\hat{\mathrm{e}}_H$ um vetor unitário na direção campo $\mathbf{H}_{\mathrm{aplicado}}$. Para o vetor unitário, tem-se: \begin{align}
 	\hat{\mathrm{e}}_H & = \frac{\mathbf{H}}{|\mathbf{H}|} =  \frac{1}{|\mathbf{H}|}\left(H_x\mathbf{i} + H_y\mathbf{j}\right).
 \end{align}
 
 \paragraph{} Assim, para a direção horizontal, tem-se \begin{align}
-x & = \sqrt{(H_{x,ij})^2 + (H_{y,ij}^t)^2}\\
-M_{x_0,ij} & = M_S \left(\coth{\alpha x} - \frac{1}{\alpha x}\right)\frac{H_{x,ij}}{x},
+M_{x_0,ij} & = \left(\coth{\alpha |\mathbf{H}|} - \frac{1}{\alpha |\mathbf{H}|}\right)\frac{H_{x}}{|\mathbf{H}|}\Bigg|_{x=(i-1)\Delta x, y=(j-1)\Delta x+\Delta x/2},
 \end{align} enquanto para a direção vertical tem-se \begin{align}
-y & = \sqrt{(H_{x,ij}^t)^2 + (H_{y,ij})^2}\\
-M_{y_0,ij} & = M_S \left(\coth{\alpha y} - \frac{1}{\alpha y}\right)\frac{H_{y,ij}}{y}.	
+M_{y_0,ij} & = \left(\coth{\alpha |\mathbf{H}|} - \frac{1}{\alpha |\mathbf{H}|}\right)\frac{H_{y}}{|\mathbf{H}|}.	
 \end{align}
 
 %\paragraph{} O seguinte procedimento pode ser realizado:
