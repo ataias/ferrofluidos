@@ -4,6 +4,7 @@ import glob, os, re, shutil
 from vplot import *
 from numpy import *
 import time as tt
+import math
 
 if __name__ == "__main__":
 
@@ -75,6 +76,14 @@ if __name__ == "__main__":
                     r', $n = ' + str(n) + '$' +\
                     r', $\mathrm{Pe} = ' + str(Pe) + '$')
 
+        def titleTextMagnetism():
+            title(r'$|\mathbf{M}|(0.5,0.5)$ for ' + \
+                    'Re = ' + str(Re) + \
+                    r', $\alpha = ' + str(alpha) + '$' +\
+                    r', Cpm = ' + str(Cpm) +\
+                    r', $n = ' + str(n) + '$' +\
+                    r', $\mathrm{Pe} = ' + str(Pe) + '$')
+
 
         u = zeros((n,n), dtype=float64)
         v = zeros((n,n), dtype=float64)
@@ -103,6 +112,10 @@ if __name__ == "__main__":
         tvector = linspace(0, t, int(t*fps+1))
         vortc = zeros(size(tvector))
 
+        modM = zeros(size(tvector))
+        phaseM = zeros(size(tvector))
+        phaseDiffMH = zeros(size(tvector))
+
         for i in range(0, numberFrames):
             time = i/fps
             # batchRead(u, v, p, Hx, Hy, Mx, My, phi, angles, n, f)
@@ -126,18 +139,31 @@ if __name__ == "__main__":
             vortc[i] = ((v[c+1,c]-v[c-1,c]) - (u[c,c+1]-u[c,c-1]) )/(2*dx)
             # -------------------------------
 
-            f.seek(n*n*8*3, 1)
+
+            f.seek(n*n*8*1, 1) #pula pressão p
+
+            readMatrix(Hx, f, n)
+            readMatrix(Hy, f, n)
 
             readMatrix(Mx, f, n)
             readMatrix(My, f, n)
             plotStreamFrame(Mx, My, x, y, n, sideTextM, time, "M" + str(i).zfill(4) + ".png")
             print("Criada imagem para campo M em t = ", time)
 
+            #Evolução do magnetismo no meio
+            modM[i] = sqrt((Mx[c,c])**2 + (My[c,c])**2)
+            phaseM[i] = math.degrees(math.atan2(My[c,c], Mx[c,c]))
+            phaseDiffMH[i] = math.degrees(math.atan2(Hy[c,c], Hx[c,c])) - phaseM[i]
+
             f.seek(n*n*8*2, 1)
 
         #Gráfico da vorticidade no meio, evoluindo no tempo
         plotPointEvolution(tvector, vortc, sideTextVorticty, "vort" + directory + ".png")
         print("Criada imagem para evolução temporal da vorticidade em (0.5, 0.5)")
+
+        plotMEvolution(tvector, modM, phaseM, phaseDiffMH, titleTextMagnetism,\
+                        "Magnetism" + directory + ".png")
+        print("Criada imagem para evolução temporal do magnetismo em (0.5, 0.5)")
 
         os.chdir("..")
         f.close()
