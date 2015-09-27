@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 
 import glob, os, re, shutil
-from streamlines import *
+from vplot import *
 from numpy import *
+import time as tt
 
 if __name__ == "__main__":
 
     for filename in glob.glob("*.dat"):
+        start = tt.time()
         #Nome do arquivo tem parâmetros chave para código
         parameters = re.findall(r"[-+]?\d*\.\d+|\d+", filename)
 
@@ -66,12 +68,12 @@ if __name__ == "__main__":
         def sideTextVorticty():
             xlabel('$t$')
             ylabel('$\omega$')
-            text(1.21, 1.0, r'Re = ' + str(Re))
-            text(1.21, 0.95, r'$\alpha = ' + str(alpha) + '$')
-            text(1.21, 0.9, r'Cpm = ' + str(Cpm))
-            text(1.21, 0.85, r'$n = ' + str(n) + '$')
-            text(1.21, 0.8, r'$\mathrm{Pe} = ' + str(Pe) + '$')
-            title(r'$\omega(0.5,0.5)$')
+            title(r'$\omega(0.5,0.5)$ for ' + \
+                    'Re = ' + str(Re) + \
+                    r', $\alpha = ' + str(alpha) + '$' +\
+                    r', Cpm = ' + str(Cpm) +\
+                    r', $n = ' + str(n) + '$' +\
+                    r', $\mathrm{Pe} = ' + str(Pe) + '$')
 
 
         u = zeros((n,n), dtype=float64)
@@ -142,3 +144,5 @@ if __name__ == "__main__":
 
         #Voltar a pasta anterior
         os.chdir("..")
+        end = tt.time()
+        print("Tempo gasto em " + directory + " foi de ", end - start, " segundos")
