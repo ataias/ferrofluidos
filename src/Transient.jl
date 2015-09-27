@@ -163,7 +163,9 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename)
 			println("t = ", i*dt)
 			println("  u[0.5,0.5]\t= ", un[c,c])
 			println("  v[0.5,0.5]\t= ", vn[c,c])
-			vortc =  ((vn[c+1,c]-vn[c-1,c]) - (un[c,c+1]-un[c,c-1]))/(2*dx)
+      #Observe que vn e un estão salvas nas quinas.
+      #Este cálculo de vorticidade só é válido caso n seja PAR!
+			vortc =  ((vn[c+1,c]-vn[c-1,c]) - (un[c,c+1]-un[c,c-1]) )/(2*dx)
 			println("  ω [0.5,0.5]\t= ", vortc)
             println("  Pressure values in range\t [", minimum(pn), ", ", maximum(pn), "]")
 			tau = zeros(n-2)
@@ -172,7 +174,7 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename)
 			end
 			F = simpson(tau, n-2)
 			println("  F\t= ", F)
-		end
+		end #if (i % timeToSave == 0) || (i == steps)
 
     #Preparing for next time step
 		NS.v.x, NS.v_old.x = NS.v_old.x, NS.v.x

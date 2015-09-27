@@ -171,9 +171,11 @@ end
 function staggered2not!(u, v, p, un, vn, pn, n)
 	for i in 2:n-1
 		for j in 2:n-1
+			#Observe que as velocidades estão salvas nas quinas
 			un[i-1,j-1] = (u[i,j] + u[i,j-1])/2
 			vn[i-1,j-1] = (v[i,j] + v[i-1,j])/2
-			pn[i-1,j-1] = p[i,j] #continua no centro...
+			#A pressão está salva no centro
+			pn[i-1,j-1] = p[i,j]
 		end
 	end
 end
@@ -181,6 +183,7 @@ end
 function staggered2not!(u, v, un, vn, n)
 	for i in 2:n-1
 		for j in 2:n-1
+			#Observe que as velocidades estão salvas nas quinas
 			un[i-1,j-1] = (u[i,j] + u[i,j-1])/2
 			vn[i-1,j-1] = (v[i,j] + v[i-1,j])/2
 		end

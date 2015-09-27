@@ -122,6 +122,33 @@ def makeAllFrames(filename, parameters, text):
 
     f.close()
 
+def plotPointEvolution(t, w, sideText, filename):
+    #use LaTeX, choose nice some looking fonts and tweak some settings
+    rc('font', family='serif')
+    rc('font', size=16)
+    rc('legend', fontsize=16)
+    rc('legend', numpoints=1)
+    rc('legend', handlelength=1)
+    rc('legend', frameon=False)
+    rc('xtick.major', pad=7)
+    rc('xtick.minor', pad=7)
+    rc('text', usetex=True)
+    rc('text.latex',
+                 preamble=[r'\usepackage[T1]{fontenc}',
+                           r'\usepackage{amsmath}',
+                           r'\usepackage{txfonts}',
+                           r'\usepackage{textcomp}'])
+
+    close('all')
+    figure(figsize=(12, 8))
+
+    plot(t, w)
+
+    sideText()
+
+    axis([0, max(t), 0, max(w)+0.05])
+    savefig(filename, dpi=200)
+
 
 if __name__ == "__main__":
 
