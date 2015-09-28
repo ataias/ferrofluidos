@@ -29,7 +29,7 @@ fps = 2
 
 @everywhere main = homedir()*"/Documents/simulacao"
 #Create working folder
-@everywhere wfolder = main * "/data" #working folder
+@everywhere wfolder = main * "/correct" #working folder
 try rm(wfolder, recursive=true) end
 mkdir(wfolder)
 

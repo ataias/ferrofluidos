@@ -5,6 +5,7 @@ using NavierStokes
 using NavierTypes
 
 export getPhi!, getH!, getM!, getForce!, H0, solve!, Angle!
+export v∇M!
 
 function R(theta)
     return [cos(theta) -sin(theta); sin(theta) cos(theta)]
@@ -202,8 +203,8 @@ function v∇M!(n, u, v, Mx, My, v∇Mx, v∇My)
   for i in 3:n-1
     for j in 2:n-1
       vt = (v[i,j]+v[i,j+1]+v[i-1,j]+v[i-1,j+1])/4
-      v∇Mx[i,j]  = u[i,j] * ( Mx[i,j+1]-Mx[i,j-1]) / (2*dx)
-      v∇Mx[i,j] += vt * (Mx[i+1,j]-Mx[i-1,j]) / (2*dx)
+      v∇Mx[i,j]  = u[i,j] * ( Mx[i+1,j]-Mx[i-1,j]) / (2*dx)
+      v∇Mx[i,j] += vt * (Mx[i,j+1]-Mx[i,j-1]) / (2*dx)
     end
   end
 
@@ -222,29 +223,32 @@ function v∇M!(n, u, v, Mx, My, v∇Mx, v∇My)
     #para velocidade, pode-se utilizar a média que usa a malha fantasma
     vt = (v[i,j]+v[i,j+1]+v[i-1,j]+v[i-1,j+1])/4
 
+    v∇Mx[i,j] += u[i,j] * (-3/2*Mx[i,j] + 2*Mx[i+1,j] - 1/2*Mx[i+2,j]) / dx
+
     if j!= 2 && j!= n-1
-      v∇Mx[i,j]  = u[i,j] * ( Mx[i,j+1]-Mx[i,j-1]) / (2*dx)
+      v∇Mx[i,j]  += vt * ( Mx[i,j+1]-Mx[i,j-1]) / (2*dx)
     elseif j==2
-      v∇Mx[i,j]  = u[i,j] * (-3/2*Mx[i,j] + 2*Mx[i,j+1] - 1/2*Mx[i,j+1])/dx
+      v∇Mx[i,j]  += vt * (-3/2*Mx[i,j] + 2*Mx[i,j+1] - 1/2*Mx[i,j+2])/dx
     else #j=n-1
-      v∇Mx[i,j]  = u[i,j] * (3/2*Mx[i,j]-2*Mx[i,j-1] + 1/2*Mx[i,j-2])/dx
+      v∇Mx[i,j]  += vt * (3/2*Mx[i,j]-2*Mx[i,j-1] + 1/2*Mx[i,j-2])/dx
     end
 
-    v∇Mx[i,j] += vt * (-3/2*Mx[i,j] + 2*Mx[i+1,j] - 1/2*Mx[i+2,j]) / dx
   end
 
   #Fronteira direita
   i = n
   for j in 2:n-1
     vt = (v[i,j]+v[i,j+1]+v[i-1,j]+v[i-1,j+1])/4
+
+    v∇Mx[i,j] = u[i,j] * (-3/2*Mx[i,j] + 2*Mx[i-1,j] -1/2*Mx[i-2,j])/dx
+
     if j!=2 && j!=n
-      v∇Mx[i,j]  = u[i,j] * ( Mx[i,j+1]-Mx[i,j-1]) / (2*dx)
+      v∇Mx[i,j]  = vt * ( Mx[i,j+1]-Mx[i,j-1]) / (2*dx)
     elseif j==2
-      v∇Mx[i,j]  = u[i,j] * (-3/2*Mx[i,j] + 2*Mx[i,j+1] - 1/2*Mx[i,j+2])/dx
+      v∇Mx[i,j]  = vt * (-3/2*Mx[i,j] + 2*Mx[i,j+1] - 1/2*Mx[i,j+2])/dx
     else #j=n-1
-      v∇Mx[i,j]  = u[i,j] * (3/2*Mx[i,j] - 2*Mx[i,j-1] + 1/2*Mx[i,j-2])/dx
+      v∇Mx[i,j]  = vt * (3/2*Mx[i,j] - 2*Mx[i,j-1] + 1/2*Mx[i,j-2])/dx
     end
-    v∇Mx[i,j] += vt * (-3/2*Mx[i,j] + 2*Mx[i-1,j] -1/2*Mx[i-2,j])/dx
   end
 
   #Fronteira inferior
@@ -285,8 +289,8 @@ function getForce!(n, Cpm, Hx, Hy, Mx, My, fx, fy)
     for i in 3:n-1
       for j in 2:n-1
         Myt = (My[i,j]+My[i,j+1]+My[i-1,j]+My[i-1,j+1])/4
-        fx[i,j]  = Cpm * Mx[i,j] * ( Hx[i,j+1]-Hx[i,j-1]) / (2*dx)
-        fx[i,j] += Cpm * Myt * (Hx[i+1,j]-Hx[i-1,j]) / (2*dx)
+        fx[i,j]  = Cpm * Mx[i,j] * ( Hx[i+1,j]-Hx[i-1,j]) / (2*dx)
+        fx[i,j] += Cpm * Myt * (Hx[i,j+1]-Hx[i,j-1]) / (2*dx)
       end
     end
 
@@ -312,15 +316,16 @@ function getForce!(n, Cpm, Hx, Hy, Mx, My, fx, fy)
       # Myt é uma interpolação linear a partir das últimas células mencionadas
       Myt = Mb + (Mc - Mb) * (-1/2)
 
+      fx[i,j] = Cpm * Mx[i,j] * (-3/2*Hx[i,j] + 2*Hx[i+1,j] - 1/2*Hx[i+2,j]) / dx
+
       if j!= 2 && j!= n-1
-        fx[i,j]  = Cpm * Mx[i,j] * ( Hx[i,j+1]-Hx[i,j-1]) / (2*dx)
+        fx[i,j]  += Cpm * Myt * ( Hx[i,j+1]-Hx[i,j-1]) / (2*dx)
       elseif j==2
-        fx[i,j]  = Cpm * Mx[i,j] * (-3/2*Hx[i,j] + 2*Hx[i,j+1] - 1/2*Hx[i,j+1])/dx
+        fx[i,j]  += Cpm * Myt * (-3/2*Hx[i,j] + 2*Hx[i,j+1] - 1/2*Hx[i,j+1])/dx
       else #j=n-1
-        fx[i,j]  = Cpm * Mx[i,j] * (3/2*Hx[i,j]-2*Hx[i,j-1] + 1/2*Hx[i,j-2])/dx
+        fx[i,j]  += Cpm * Myt * (3/2*Hx[i,j]-2*Hx[i,j-1] + 1/2*Hx[i,j-2])/dx
       end
 
-      fx[i,j] += Cpm * Myt * (-3/2*Hx[i,j] + 2*Hx[i+1,j] - 1/2*Hx[i+2,j]) / dx
     end
 
     #Fronteira direita
@@ -336,14 +341,16 @@ function getForce!(n, Cpm, Hx, Hy, Mx, My, fx, fy)
       # Myt é uma interpolação linear para obter My no local de Mx
       # usando Mb e Mc
       Myt = Mb + (Mc - Mb) * (-1/2)
+
+      fx[i,j] = Cpm * Mx[i,j] * (-3/2*Hx[i,j] + 2*Hx[i-1,j] -1/2*Hx[i-2,j])/dx
+
       if j!=2 && j!=n
-        fx[i,j]  = Cpm * Mx[i,j] * ( Hx[i,j+1]-Hx[i,j-1]) / (2*dx)
+        fx[i,j]  += Cpm * Myt * ( Hx[i,j+1]-Hx[i,j-1]) / (2*dx)
       elseif j==2
-        fx[i,j]  = Cpm * Mx[i,j] * (-3/2*Hx[i,j] + 2*Hx[i,j+1] - 1/2*Hx[i,j+2])/dx
+        fx[i,j]  += Cpm * Myt * (-3/2*Hx[i,j] + 2*Hx[i,j+1] - 1/2*Hx[i,j+2])/dx
       else #j=n-1
-        fx[i,j]  = Cpm * Mx[i,j] * (3/2*Hx[i,j] - 2*Hx[i,j-1] + 1/2*Hx[i,j-2])/dx
+        fx[i,j]  += Cpm * Myt * (3/2*Hx[i,j] - 2*Hx[i,j-1] + 1/2*Hx[i,j-2])/dx
       end
-      fx[i,j] += Cpm * Myt * (-3/2*Hx[i,j] + 2*Hx[i-1,j] -1/2*Hx[i-2,j])/dx
     end
 
     #Fronteira inferior

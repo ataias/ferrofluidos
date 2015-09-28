@@ -145,7 +145,7 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename)
         #O primeiro passo é obter M em cada passo de tempo
         #faz sentido não usar o fator fact para getM, pois a evolução inicia
         #do valor anterior de M, que é 0 no tempo 0
-        v∇M!(n, NS.v.x, MS.v.y, Mx_old, My_old, v∇Mx, v∇My)
+        v∇M!(n, NS.v.x, NS.v.y, Mx_old, My_old, v∇Mx, v∇My)
         getM!(n, c1, dt, Mx, My, Mx_old, My_old, Mx0, My0, v∇Mx, v∇My)
         getPhi!(n, phi, Mx, My, fHx, fHy, A)
         getH!(n, phi, Hx, Hy)
