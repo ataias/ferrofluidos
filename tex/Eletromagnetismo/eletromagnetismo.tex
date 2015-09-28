@@ -306,6 +306,14 @@ M_{x_0,ij} & = \left(\coth{\alpha |\mathbf{H}|} - \frac{1}{\alpha |\mathbf{H}|}\
 M_{y_0,ij} & = \left(\coth{\alpha |\mathbf{H}|} - \frac{1}{\alpha |\mathbf{H}|}\right)\frac{H_{y}}{|\mathbf{H}|}.	
 \end{align}
 
+\subsection{Segundo passo}
+\paragraph{} Adicionar o termo $\mathbf{v}\cdot \nabla \mathbf{M}$, fazendo a equação ser \begin{eqnarray}
+	\frac{\partial \mathbf{M}}{\partial t} & = & -c_1(\mathbf{M} - \mathbf{M}_0) - \mathbf{v}\cdot\nabla \mathbf{M}
+\end{eqnarray} de onde se obtém \begin{align}
+M_{x,ij}^{n+1} & = M_{x,ij}^n -c_1\Delta t[M_{x,ij} - M_{x_0,ij}] -\Delta t \left[u_{ij}\frac{\partial M_x}{\partial x} + v_{ij}^t\frac{\partial M_x}{\partial y}\right]\\
+M_{y,ij}^{n+1} & = M_{y,ij}^n -c_1\Delta t[M_{y,ij} - M_{y_0,ij}]-\Delta t \left[u_{ij}^t\frac{\partial M_y}{\partial x} + v_{ij}\frac{\partial M_y}{\partial y}\right], 
+\end{align}
+
 %\paragraph{} O seguinte procedimento pode ser realizado:
 %
 %\begin{algorithm}
