@@ -1,11 +1,18 @@
-using Transient
-using NavierTypes
-
 #Executar
-#julia -p 1 simulate.jl &
-#-p 1 -> indica que julia deve utilizar somente um processo
+#julia -p 0 simulate.jl &
 
-t = 30.0;
+# É importante que o número de processos seja definido logo no início
+# Caso contrário, nem todos os módulos serão corretamente carregados nos processos
+if nprocs() - 1 < CPU_CORES
+  addprocs(CPU_CORES - nprocs() + 1)
+end
+
+println("nprocs() = ", nprocs())
+
+@everywhere using Transient
+@everywhere using NavierTypes
+
+t = 30.0
 Re = 50.0
 n = 102
 divFactor = 1.25
@@ -20,13 +27,14 @@ step = 1
 
 fps = 2
 
-main = homedir()*"/Documents/simulacao"
+@everywhere main = homedir()*"/Documents/simulacao"
 #Create working folder
-wfolder = main * "/data" #working folder
+@everywhere wfolder = main * "/data" #working folder
 try rm(wfolder, recursive=true) end
 mkdir(wfolder)
 
-function simulation(n, dt, Re, c1, Cpm, alpha, a, b)
+@everywhere function simulation(n, dt, Re, c1, Cpm, alpha, a, b, t, fps, save)
+  # println("pwd() = ", pwd())
   fname = "Re" * string(int(Re)) * "N" * string(int(n-2))
   fname *= "Pe" * string(round(1/c1, 4))
   fname *= "α" * string(round(alpha, 4))
@@ -50,13 +58,20 @@ function simulation(n, dt, Re, c1, Cpm, alpha, a, b)
   close(f)
 end #end simulate function
 
-Pe = [0.1, 1, 100]
+Pe = [0.1, 1, 5]
 alpha = [0.1, 100]
 Cpm = [1, 10]
-for P in Pe
-  for α in alpha
-    for C in Cpm
-      simulation(n, dt, Re, 1/P, C, α, a, b)
+total = length(Pe) * length(alpha) * length(Cpm)
+i = 0
+@sync begin
+  for P in Pe
+    for α in alpha
+      for C in Cpm
+        @spawnat int(i % CPU_CORES + 2) begin
+          simulation(n, dt, Re, 1/P, C, α, a, b, t, fps, save)
+        end
+        i = i + 1
+      end
     end
   end
 end
