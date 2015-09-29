@@ -66,6 +66,14 @@ if __name__ == "__main__":
             text(1.21, 0.8, r'$\mathrm{Pe} = ' + str(Pe) + '$')
             title(r'$\mathbf{M}$, ' + 't = ' + '{:10.8f}'.format(time))
 
+        def sideTextH(time):
+            text(1.21, 1.0, r'Re = ' + str(Re))
+            text(1.21, 0.95, r'$\alpha = ' + str(alpha) + '$')
+            text(1.21, 0.9, r'Cpm = ' + str(Cpm))
+            text(1.21, 0.85, r'$n = ' + str(n) + '$')
+            text(1.21, 0.8, r'$\mathrm{Pe} = ' + str(Pe) + '$')
+            title(r'$\mathbf{H}$, ' + 't = ' + '{:10.8f}'.format(time))
+
         def sideTextVorticty():
             xlabel('$t$')
             ylabel('$\omega$')
@@ -144,6 +152,8 @@ if __name__ == "__main__":
 
             readMatrix(Hx, f, n)
             readMatrix(Hy, f, n)
+            plotStreamFrame(Hx, Hy, x, y, n, sideTextH, time, "H" + str(i).zfill(4) + ".png")
+            print("Criada imagem para campo H em t = ", time)
 
             readMatrix(Mx, f, n)
             readMatrix(My, f, n)

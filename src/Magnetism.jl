@@ -39,37 +39,6 @@ function getAverageXtoY(i,j, A)
   return (A[i,j] + A[i+1,j] + A[i+1,j-1] + A[i,j-1])/4
 end
 
-function getNextM!(M_next::VF, M::VF, M0::VF, H::VF, u, v, c1, c2, dt, dx)
-  Mxt = 0.0; Myt = 0.0
-  Hxt = 0.0; Hyt = 0.0
-
-  for i in 2:n-1
-    for j in 2:n-1
-      Myt = getAverageYtoX(i,j, M.y)
-      Hyt = getAverageYtoX(i,j, H.y)
-
-      M_next.x[i,j]  = M.x[i,j] - c1*dt*(M.x[i,j]-M0.x[i,j])
-      M_next.x[i,j] += -c2*dt*Myt*(M.x[i,j]*Hyt - Myt*H.x[i,j])
-      M_next.x[i,j] += -0.25*dt*Myt*(v[i,j]+v[i,j+1]-v[i-1,j]-v[i-1,j+1])/dx
-      M_next.x[i,j] += +0.25*dt*Myt*(u[i,j+1]-u[i,j-1])/dx
-    end
-  end #end for para M_next.x
-
-  for i in 2:n-1
-    for j in 2:n-1
-      Mxt = getAverageXtoY(i,j, M.x)
-      Hxt = getAverageXtoY(i,j, H.x)
-
-      M_next.y[i,j] = M.y[i,j]
-      M_next.y[i,j] -= c1*dt*(M.y[i,j]-M0.y[i,j])
-      M_next.y[i,j] += c2*dt*Mxt*(Mxt*H.y[i,j] - M.y[i,j]*Hxt)
-      M_next.y[i,j] += 0.25*dt*Mxt*(v[i+1,j]-v[i-1,j])/dx
-      M_next.y[i,j] += 0.25*dt*Mxt*(-u[i,j]-u[i+1,j]+u[i,j-1]+u[i+1,j-1])/dx
-    end
-  end #end for para M_next.y
-
-end #end getNextM()
-
 #use this for a non-staggered grid
 function rotInside(Fx, Fy, n)
     dx = 1/n
@@ -183,14 +152,14 @@ function getM!(n, c1, dt, Mx, My, Mx_old, My_old, Mx0, My0, v∇Mx, v∇My)
   #c1 = 1/Pe
   for i in 2:n
     for j in 2:n-1
-      Mx[i,j] = Mx_old[i,j] - c1*dt * (Mx_old[i,j] - Mx0[i,j])
+      Mx[i,j] = Mx_old[i,j] - c1 * dt * (Mx_old[i,j] - Mx0[i,j])
     end
   end
   Mx -= dt*v∇Mx
 
   for i in 2:n-1
     for j in 2:n
-      My[i,j] = My_old[i,j] - c1*dt * (My_old[i,j] - My0[i,j])
+      My[i,j] = My_old[i,j] - c1 * dt * (My_old[i,j] - My0[i,j])
     end
   end
   My -= dt*v∇My
