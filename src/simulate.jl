@@ -57,9 +57,9 @@ mkdir(wfolder)
   close(f)
 end #end simulate function
 
-Pe = [0.1, 1, 5]
-alpha = [0.1, 100]
-Cpm = [1, 10]
+Pe = [0.1, 5]
+alpha = [0.1, 50, 100]
+Cpm = [0, 1, 10]
 total = length(Pe) * length(alpha) * length(Cpm)
 i = 0
 @sync begin
