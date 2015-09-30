@@ -64,9 +64,10 @@ Pe = [0.1, 5.0]
 alpha = [0.1, 50.0]
 Cpm = [1.0, 10.0]
 
-#Simulações para casos não magnéticos
 i = 0
+
 @sync begin
+  #Simulações para casos não magnéticos
   for R in Re
     dt = getDt(n, R, divFactor)
     @spawnat int(i % CPU_CORES + 2) begin
@@ -74,10 +75,8 @@ i = 0
     end #end spawnat
     i = i + 1
  end #end for R in Re
-end #end @sync begin
 
-#Simulações para casos magnéticos sem termo convectivo
-@sync begin
+ #Simulações para casos magnéticos sem termo convectivo
   for R in Re
     for P in Pe
       for α in alpha
