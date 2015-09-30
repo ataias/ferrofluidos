@@ -59,10 +59,10 @@ mkdir(wfolder)
   close(f)
 end #end simulate function
 
-Re = [1, 10, 50]
-Pe = [0.1, 5]
-alpha = [0.1, 50]
-Cpm = [1, 10]
+Re = [1.0, 10.0, 50.0]
+Pe = [0.1, 5.0]
+alpha = [0.1, 50.0]
+Cpm = [1.0, 10.0]
 
 #Simulações para casos não magnéticos
 i = 0
