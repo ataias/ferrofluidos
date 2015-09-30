@@ -20,13 +20,46 @@ def divInside(Fx, Fy, n):
                 divMax = abs(divF)
     return divMax
     #end divInside
+#
+# #Calcula rotacional nos pontos internos e retorna o maior valor de rotacional
+# def rotInside(Fx, Fy, n):
+#     rotMax = 0.0
+#     dx = 1/n
+#     dFxdy = 0.0
+#     dFydx = 0.0
+#     for i in range(5,n-4):
+#         for j in range(5,n-4):
+#             dFydx  = 1/280*Fy[i,j-4]-4/105*Fy[i,j-3]+1/5*Fy[i,j-2]-4/5*Fy[i,j-1]
+#             dFydx += 4/5*Fy[i,j+1] - 1/5*Fy[i,j+2] +4/105*Fy[i,j+3]-1/280*Fy[i,j+4]
+#             dFydx = dFydx/dx
+#
+#             dFxdy  = 1/280*Fx[i-4,j]-4/105*Fx[i-3,j]+1/5*Fx[i-2,j]-4/5*Fx[i-1,j]
+#             dFxdy += 4/5*Fx[i+1,j] - 1/5*Fx[i+2,j] +4/105*Fx[i+3,j]-1/280*Fx[i+4,j]
+#             dFxdy = dFxdy/dx
+#
+#             rotF = dFydx - dFxdy
+#             if abs(rotF) > abs(rotMax):
+#                 rotMax = abs(rotF)
+#
+#     return rotMax
+
 
 #Calcula rotacional nos pontos internos e retorna o maior valor de rotacional
 def rotInside(Fx, Fy, n):
     rotMax = 0.0
     dx = 1/n
-    for i in range(2,n-1):
-        for j in range(2,n-1):
+    dFxdy = 0.0
+    dFydx = 0.0
+    for i in range(5,n-4):
+        for j in range(5,n-4):
+            dFydx  = 1/280*Fy[i,j-4]-4/105*Fy[i,j-3]+1/5*Fy[i,j-2]-4/5*Fy[i,j-1]
+            dFydx += 4/5*Fy[i,j+1] - 1/5*Fy[i,j+2] +4/105*Fy[i,j+3]-1/280*Fy[i,j+4]
+            dFydx = dFydx/dx
+
+            dFxdy  = 1/280*Fx[i-4,j]-4/105*Fx[i-3,j]+1/5*Fx[i-2,j]-4/5*Fx[i-1,j]
+            dFxdy += 4/5*Fx[i+1,j] - 1/5*Fx[i+2,j] +4/105*Fx[i+3,j]-1/280*Fx[i+4,j]
+            dFxdy = dFxdy/dx
+
             rotF = (Fy[i,j+1]-Fy[i,j-1])/(2*dx) - (Fx[i+1,j]-Fx[i-1,j])/(2*dx)
             if abs(rotF) > abs(rotMax):
                 rotMax = abs(rotF)

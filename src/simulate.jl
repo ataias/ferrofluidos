@@ -21,9 +21,8 @@ dt = getDt(n,Re, divFactor)
 save = true;
 
 #canto esquerdo
-a = +0.00;
-b = -0.05
-step = 1
+a = -0.2
+b = -0.2
 
 fps = 2
 
