@@ -26,7 +26,7 @@ end
 #fps is frames per second
 #convec é igual a 1.0 ou 0.0 e é multiplicado pelo termo convectivo para suprimí-lo
 # ou permitir que seja considerado
-function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename)
+function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, convec=0.0)
     dx = 1/(n-2)
 
     println("Dados sobre simulação: ")
