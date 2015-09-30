@@ -13,10 +13,8 @@ println("nprocs() = ", nprocs())
 @everywhere using NavierTypes
 
 t = 30.0
-Re = 50.0
 n = 102
 divFactor = 1.25
-dt = getDt(n,Re, divFactor)
 
 save = true;
 
@@ -28,11 +26,11 @@ fps = 2
 
 @everywhere main = homedir()*"/Documents/simulacao"
 #Create working folder
-@everywhere wfolder = main * "/correct" #working folder
+@everywhere wfolder = main * "/shliomis" #working folder
 try rm(wfolder, recursive=true) end
 mkdir(wfolder)
 
-@everywhere function simulation(n, dt, Re, c1, Cpm, alpha, a, b, t, fps, save)
+@everywhere function simulation(n, dt, Re, c1, Cpm, alpha, a, b, t, fps, save, convective=false)
   # println("pwd() = ", pwd())
   fname = "Re" * string(int(Re)) * "N" * string(int(n-2))
   fname *= "Pe" * string(round(1/c1, 4))
@@ -51,26 +49,47 @@ mkdir(wfolder)
   redirect_stdout(f)
 
   #Simulate
-  @time transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, datafilename)
+  convec = 0
+  if convective
+    convec = 1.0
+  end
+  @time transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, datafilename, convec)
   cd("..")
 
   close(f)
 end #end simulate function
 
+Re = [1, 10, 50]
 Pe = [0.1, 5]
-alpha = [0.1, 50, 100]
-Cpm = [0, 1, 10]
-total = length(Pe) * length(alpha) * length(Cpm)
+alpha = [0.1, 50]
+Cpm = [1, 10]
+
+#Simulações para casos não magnéticos
 i = 0
 @sync begin
-  for P in Pe
-    for α in alpha
-      for C in Cpm
-        @spawnat int(i % CPU_CORES + 2) begin
-          simulation(n, dt, Re, 1/P, C, α, a, b, t, fps, save)
-        end
-        i = i + 1
-      end
-    end
-  end
-end
+  for R in Re
+    dt = getDt(n, R, divFactor)
+    @spawnat int(i % CPU_CORES + 2) begin
+      simulation(n, dt, R, 1, 0, 0, a, b, 10.0, fps, save, false)
+    end #end spawnat
+    i = i + 1
+ end #end for R in Re
+end #end @sync begin
+
+#Simulações para casos magnéticos sem termo convectivo
+@sync begin
+  for R in Re
+    for P in Pe
+      for α in alpha
+        for C in Cpm
+          dt = getDt(n, R, divFactor)
+          @spawnat int(i % CPU_CORES + 2) begin
+            simulation(n, dt, R, 1/P, C, α, a, b, t, fps, save, false)
+            simulation(n, dt, R, 1/P, C, α, a, b, t, fps, save, true)
+          end #end spawnat
+          i = i + 1
+        end #end for C in Cpm
+      end #end for α in alpha
+    end #end for P in Pe
+  end #end for R in Re
+end #end @sync begin

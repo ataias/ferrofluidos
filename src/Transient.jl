@@ -24,6 +24,8 @@ end
 #resolve equações para um dado n e Re
 #t is time, in dimensioless units, of physical simulation
 #fps is frames per second
+#convec é igual a 1.0 ou 0.0 e é multiplicado pelo termo convectivo para suprimí-lo
+# ou permitir que seja considerado
 function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename)
     dx = 1/(n-2)
 
@@ -146,7 +148,7 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename)
         #faz sentido não usar o fator fact para getM, pois a evolução inicia
         #do valor anterior de M, que é 0 no tempo 0
         v∇M!(n, NS.v.x, NS.v.y, Mx_old, My_old, v∇Mx, v∇My)
-        getM!(n, c1, dt, Mx, My, Mx_old, My_old, Mx0, My0, v∇Mx, v∇My)
+        getM!(n, c1, dt, Mx, My, Mx_old, My_old, Mx0, My0, convec*v∇Mx, convec*v∇My)
         getPhi!(n, phi, Mx, My, fHx, fHy, A)
         getH!(n, phi, Hx, Hy)
         getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
