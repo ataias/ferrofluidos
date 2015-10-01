@@ -67,6 +67,7 @@ Cpm = [1.0, 10.0]
 i = 0
 
  #Simulações para casos magnéticos sem termo convectivo
+@sync begin
   for R in Re
     for P in Pe
       for α in alpha
