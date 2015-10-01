@@ -24,42 +24,36 @@ end
 #resolve equações para um dado n e Re
 #t is time, in dimensioless units, of physical simulation
 #fps is frames per second
-function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename)
-    dx = 1/(n-2)
+function transient(n, dt, Re, t, Cpm, chi, a, b, save, fps, filename)
+  dx = 1/(n-2)
 
-    println("Dados sobre simulação: ")
-    println(" n\t= ", n)
-    println(" dx\t= ", dx)
-    println(" t\t= ", t)
-    println(" Re\t= ", Re)
-    println(" dt\t= ", dt)
-    println(" Cpm\t= ", Cpm)
-    println(" α\t= ", alpha)
-    println(" a\t= ", a)
-    println(" b\t= ", b)
-    println(" c1\t= ", c1)
-    println(strftime(time()), "\n")
+  println("Dados sobre simulação: ")
+  println(" n\t= ", n)
+  println(" dx\t= ", dx)
+  println(" t\t= ", t)
+  println(" Re\t= ", Re)
+  println(" dt\t= ", dt)
+  println(" Cpm\t= ", Cpm)
+  println(" χ\t= ", alpha)
+  println(" a\t= ", a)
+  println(" b\t= ", b)
+  println(strftime(time()), "\n")
 
 
 	steps = integer(t/dt)
 	c = integer(n/2); #center, non-staggered grid
 
-    NS = createNSObject(n, Re)
-
+  NS = createNSObject(n, Re)
 	for i in -1:n-2
 		NS.uB[i+2] = 0*(sinpi(i*dx))^2 #inicialmente, repouso
 	end
 
-    #Condições de contorno, basta editar em v_old
+  #Condições de contorno, basta editar em v_old
 	NS.v_old.x[:,n] = 2*NS.uB
 
-    #Força
-	#fx = zeros(n,n)
-	#fy = zeros(n,n)
-
-    if(save)
-	   file = open(filename, "w")
-    end
+  if(save)
+   file = open(filename, "w")
+  end
 
 	un = zeros(n-2,n-2)+1e-15 #malha não escalonada
 	vn = zeros(n-2,n-2)+1e-15
@@ -133,20 +127,16 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename)
     end
 
 	for i in 1:steps
-        fact = factor(i)
-        for j in -1:n-2
-		        NS.uB[j+2] = fact*(sinpi(j*dx))^2
-	      end
-        #O primeiro passo é obter M em cada passo de tempo
-        #faz sentido não usar o fator fact para getM, pois a evolução inicia
-        #do valor anterior de M, que é 0 no tempo 0
-        getM!(n, c1, dt, Mx, My, Mx_old, My_old, Mx0, My0)
-        getPhi!(n, phi, Mx, My, fHx, fHy, A)
-        getH!(n, phi, Hx, Hy)
-        getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
-        solve_navier_stokes!(NS)
+    fact = factor(i)
+    for j in -1:n-2
+        NS.uB[j+2] = fact*(sinpi(j*dx))^2
+    end
+    #Caso superparamagnético, é necessário calcular phi primeiro
+    getPhi!(n, phi, Mx, My, fHx, fHy, A)
+    getMH!(n, phi, Mx, My, Hx, Hy)
+    getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
+    solve_navier_stokes!(NS)
 
-#        println("i = ", i, " and timeToSave = ", timeToSave, ", therefore i % timeToSave = ", i % timeToSave == 0)
 		if (i % timeToSave == 0) || (i == steps)
 			staggered2not!(NS.v.x, NS.v.y, NS.p, un,  vn,  pn,   n)
             staggered2not!(Hx,     Hy,     phi,  Hxn, Hyn, phin, n)
@@ -179,10 +169,6 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename)
     #Preparing for next time step
 		NS.v.x, NS.v_old.x = NS.v_old.x, NS.v.x
 		NS.v.y, NS.v_old.y = NS.v_old.y, NS.v.y
-
-    Mx, Mx_old = Mx_old, Mx
-    My, My_old = My_old, My
-
 	end
 
     if(save)

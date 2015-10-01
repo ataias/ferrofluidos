@@ -38,37 +38,6 @@ function getAverageXtoY(i,j, A)
   return (A[i,j] + A[i+1,j] + A[i+1,j-1] + A[i,j-1])/4
 end
 
-function getNextM!(M_next::VF, M::VF, M0::VF, H::VF, u, v, c1, c2, dt, dx)
-  Mxt = 0.0; Myt = 0.0
-  Hxt = 0.0; Hyt = 0.0
-
-  for i in 2:n-1
-    for j in 2:n-1
-      Myt = getAverageYtoX(i,j, M.y)
-      Hyt = getAverageYtoX(i,j, H.y)
-
-      M_next.x[i,j]  = M.x[i,j] - c1*dt*(M.x[i,j]-M0.x[i,j])
-      M_next.x[i,j] += -c2*dt*Myt*(M.x[i,j]*Hyt - Myt*H.x[i,j])
-      M_next.x[i,j] += -0.25*dt*Myt*(v[i,j]+v[i,j+1]-v[i-1,j]-v[i-1,j+1])/dx
-      M_next.x[i,j] += +0.25*dt*Myt*(u[i,j+1]-u[i,j-1])/dx
-    end
-  end #end for para M_next.x
-
-  for i in 2:n-1
-    for j in 2:n-1
-      Mxt = getAverageXtoY(i,j, M.x)
-      Hxt = getAverageXtoY(i,j, H.x)
-
-      M_next.y[i,j] = M.y[i,j]
-      M_next.y[i,j] -= c1*dt*(M.y[i,j]-M0.y[i,j])
-      M_next.y[i,j] += c2*dt*Mxt*(Mxt*H.y[i,j] - M.y[i,j]*Hxt)
-      M_next.y[i,j] += 0.25*dt*Mxt*(v[i+1,j]-v[i-1,j])/dx
-      M_next.y[i,j] += 0.25*dt*Mxt*(-u[i,j]-u[i+1,j]+u[i,j-1]+u[i+1,j-1])/dx
-    end
-  end #end for para M_next.y
-
-end #end getNextM()
-
 #use this for a non-staggered grid
 function rotInside(Fx, Fy, n)
     dx = 1/n
@@ -145,52 +114,28 @@ function getPhi!(n, phi, Mx, My, fHx, fHy, A)
 
 end #end getPhi!
 
-function getH!(n, phi, Hx, Hy)
+function getMH!(n, chi, phi, Mx, My, Hx, Hy)
     dx = 1/(n-2)
-    for i in 2:n
+    for i in 2:n-1
         for j in 2:n-1
             Hx[i,j] = -(phi[i,j] - phi[i-1,j])/dx
-        end
-    end
-
-    for i in 2:n-1
-        for j in 2:n
             Hy[i,j] = -(phi[i,j] - phi[i,j-1])/dx
         end
     end
 
-    #H fora da cavidade estava sendo calculado por meio de
-    # for j in 2:n-1
-    #     Hy[1,j] = -(phi[1,j] - phi[1,j-1])/dx
-    #     Hy[n,j] = -(phi[n,j] - phi[n,j-1])/dx
-    # end
-    #
-    # for i in 2:n-1
-    #     Hx[i,1] = -(phi[i,1] - phi[i-1,1])/dx
-    #     Hx[i,n] = -(phi[i,n] - phi[i-1,n])/dx
-    # end
-    # Mas isto não é necessário. Como H é utilizado para obter M e M é nulo fora da cavidade
-end #end getH!
-
-function getM!(n, c1, dt, Mx, My, Mx_old, My_old, Mx0, My0)
-  #Shliomis...
-
-  #pelo que eu estou notando, os loops para a malha escalonada não devem ser
-  #simétricos (de 2 a n-1 em ambos os índices, pois, dependendo se é Mx ou My
-  #pode haver um valor de interesse ou não)
-
-  for i in 2:n
     for j in 2:n-1
-      Mx[i,j] = Mx_old[i,j] - c1*dt * (Mx_old[i,j] - Mx0[i,j])
+        Hy[1,j] = -(phi[1,j] - phi[1,j-1])/dx
+        Hy[n,j] = -(phi[n,j] - phi[n,j-1])/dx
     end
-  end
 
-  for i in 2:n-1
-    for j in 2:n
-      My[i,j] = My_old[i,j] - c1*dt * (My_old[i,j] - My0[i,j])
+    for i in 2:n-1
+        Hx[i,1] = -(phi[i,1] - phi[i-1,1])/dx
+        Hx[i,n] = -(phi[i,n] - phi[i-1,n])/dx
     end
-  end
-end #end getM!
+
+    Mx[:,:] = chi*Hx[:,:]
+    My[:,:] = chi*Hy[:,:]
+end #end getMH!
 
 
 function getForce!(n, Cpm, Hx, Hy, Mx, My, fx, fy)

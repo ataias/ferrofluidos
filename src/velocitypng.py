@@ -15,17 +15,15 @@ if __name__ == "__main__":
 
         Re = float(parameters[0])
         n = int(parameters[1])
-        Pe = float(parameters[2])
-        alpha = float(parameters[3])
-        Cpm = float(parameters[4])
-        t = float(parameters[5])
-        fps = int(parameters[6])
+        chi = float(parameters[2])
+        Cpm = float(parameters[3])
+        t = float(parameters[4])
+        fps = int(parameters[5])
 
         print("Arquivo: ", filename)
         print("Re = ", Re)
         print("n = ", n)
-        print("Pe = ", Pe)
-        print("alpha = ", alpha)
+        print("chi = ", Pe)
         print("Cpm = ", Cpm)
         print("t = ", t)
         print("fps = ", fps)
@@ -51,19 +49,17 @@ if __name__ == "__main__":
         dx = 1.0/n
         def sideTextV(time):
             text(1.21, 1.0, r'Re = ' + str(Re))
-            text(1.21, 0.95, r'$\alpha = ' + str(alpha) + '$')
+            text(1.21, 0.95, r'$\chi = ' + str(chi) + '$')
             text(1.21, 0.9, r'Cpm = ' + str(Cpm))
             text(1.21, 0.85, r'$n = ' + str(n) + '$')
-            text(1.21, 0.8, r'$\mathrm{Pe} = ' + str(Pe) + '$')
             title(r'$\mathbf{v}$, ' + 't = ' + '{:10.8f}'.format(time))
 
 
         def sideTextM(time):
             text(1.21, 1.0, r'Re = ' + str(Re))
-            text(1.21, 0.95, r'$\alpha = ' + str(alpha) + '$')
+            text(1.21, 0.95, r'$\chi = ' + str(chi) + '$')
             text(1.21, 0.9, r'Cpm = ' + str(Cpm))
             text(1.21, 0.85, r'$n = ' + str(n) + '$')
-            text(1.21, 0.8, r'$\mathrm{Pe} = ' + str(Pe) + '$')
             title(r'$\mathbf{M}$, ' + 't = ' + '{:10.8f}'.format(time))
 
         def sideTextVorticty():
@@ -71,18 +67,16 @@ if __name__ == "__main__":
             ylabel('$\omega$')
             title(r'$\omega(0.5,0.5)$ for ' + \
                     'Re = ' + str(Re) + \
-                    r', $\alpha = ' + str(alpha) + '$' +\
+                    r', $\chi = ' + str(chi) + '$' +\
                     r', Cpm = ' + str(Cpm) +\
-                    r', $n = ' + str(n) + '$' +\
-                    r', $\mathrm{Pe} = ' + str(Pe) + '$')
+                    r', $n = ' + str(n) + '$')
 
         def titleTextMagnetism():
             title(r'$|\mathbf{M}|(0.5,0.5)$ for ' + \
                     'Re = ' + str(Re) + \
-                    r', $\alpha = ' + str(alpha) + '$' +\
+                    r', $\chi = ' + str(chi) + '$' +\
                     r', Cpm = ' + str(Cpm) +\
-                    r', $n = ' + str(n) + '$' +\
-                    r', $\mathrm{Pe} = ' + str(Pe) + '$')
+                    r', $n = ' + str(n) + '$')
 
 
         u = zeros((n,n), dtype=float64)
