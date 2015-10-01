@@ -12,7 +12,7 @@ end
 @everywhere using Transient
 @everywhere using NavierTypes
 
-t = 3.0
+t = 10.0
 Re = 50.0
 n = 102
 divFactor = 1.25
@@ -21,10 +21,10 @@ dt = getDt(n,Re, divFactor)
 save = true;
 
 #canto esquerdo
-a = -1.0
-b = -1.0
+a = -0.05
+b = -0.05
 
-fps = 10
+fps = 20
 
 @everywhere main = homedir()*"/Documents/simulacao"
 #Create working folder
@@ -56,21 +56,21 @@ mkdir(wfolder)
   close(f)
 end #end simulate function
 
-# chi = [0.1, 100]
-# Cpm = [1, 10]
-# i = 0
+chi = [0.5]
+Cpm = [1, 5]
+i = 0
 
-χ = 0.5
-C = 3
-simulation(n, dt, Re, C, χ, a, b, t, fps, save)
+# χ = 0.5
+# C = 3
+# simulation(n, dt, Re, C, χ, a, b, t, fps, save)
 
-# @sync begin
-#   for χ in chi
-#     for C in Cpm
-#       @spawnat int(i % CPU_CORES + 2) begin
-#         simulation(n, dt, Re, C, χ, a, b, t, fps, save)
-#       end
-#       i = i + 1
-#     end
-#   end
-# end
+@sync begin
+  for χ in chi
+    for C in Cpm
+      @spawnat int(i % CPU_CORES + 2) begin
+        simulation(n, dt, Re, C, χ, a, b, t, fps, save)
+      end
+      i = i + 1
+    end
+  end
+end

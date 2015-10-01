@@ -11,8 +11,8 @@ export transient
 #Save Mx and My and process it correctly in .py
 
 function factor(i)
-    if i <= 100
-        return i/100.0
+    if i <= 500
+        return i/500.0
     else
         return 1.0
     end
@@ -110,7 +110,7 @@ function transient(n, dt, Re, t, Cpm, chi, a, b, save, fps, filename)
         NS.uB[j+2] = fact*(sinpi(j*dx))^2
     end
     #Caso superparamagnético, é necessário calcular phi primeiro
-    getPhi!(n, phi, Mx, My, fHx, fHy, A)
+    getPhi!(n, phi, Mx, My, (x,y) -> fact * fHx(x,y), (x,y) -> fact * fHy(x,y), A)
     getMH!(n, chi, phi, Mx, My, Hx, Hy)
     getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
     solve_navier_stokes!(NS)
