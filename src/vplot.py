@@ -48,7 +48,7 @@ def plotStreamFrame(u, v, x, y, n, sideText, time, filename):
     #1 é a velocidade máxima na malha, ela varia se a condição de contorno for modificada
     norm = Normalize(vmin=0, vmax=1.0) #intensidade deve ser de 0 a 1
     streamplot(x, y, u, v, color=u, linewidth=1.3, cmap=cm.brg, arrowsize=4, norm=norm)
-    colorbar(norm=norm, cmap=cm.winter, ticks=[-1, 0, 1])
+    colorbar(norm=norm, cmap=cm.winter, ticks=[0, 0.25, 0.75, 1])
     xlabel('$x$')
     ylabel('$y$')
     sideText(time)
@@ -81,46 +81,6 @@ def plotAngle(x, y, angles, n, filename):
   xlabel(r'$x$')
   ylabel(r'$y$')
   savefig(filename, dpi=200)
-
-def makeAllFrames(filename, parameters, text):
-    f = open(filename, 'rb')
-
-    parameters = re.findall(r"[-+]?\d*\.\d+|\d+", filename)
-    Re = float(parameters[0])
-    n = int(parameters[1])
-    Pe = float(parameters[2])
-    alpha = float(parameters[3])
-    Cpm = float(parameters[4])
-    t = float(parameters[5])
-
-    dx = 1/n
-
-    u = zeros((n,n), dtype=float64)
-    v = zeros((n,n), dtype=float64)
-    p = zeros((n,n), dtype=float64)
-    Hx = zeros((n,n), dtype=float64)
-    Hy = zeros((n,n), dtype=float64)
-    Mx = zeros((n,n), dtype=float64)
-    My = zeros((n,n), dtype=float64)
-    phi = zeros((n,n), dtype=float64)
-    angles = zeros((n,n), dtype=float64)
-
-    numberFrames = int(round(180*t))
-
-    x=linspace(0, 1 - dx, n) + (dx/2)
-    y=linspace(0, 1 - dx, n) + (dx/2)
-    x, y=meshgrid(x, y)
-    time = 0.0
-
-    for i in range(0, numberFrames):
-        time = (i)/180.0
-        try:
-            batchRead(u, v, p, Hx, Hy, Mx, My, phi, angles, n, f)
-            plotVectorField(u, v, x, y, n, text, time, str(i).zfill(4) + ".png")
-        except:
-            break
-
-    f.close()
 
 def plotPointEvolution(t, w, sideText, filename):
     #use LaTeX, choose nice some looking fonts and tweak some settings
