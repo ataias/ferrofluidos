@@ -4,7 +4,7 @@ using Poisson
 using NavierStokes
 using NavierTypes
 
-export getPhi!, getH!, getM!, getForce!, H0, solve!, Angle!
+export getPhi!, getMH!, getForce!, solve!, Angle!
 
 function R(theta)
     return [cos(theta) -sin(theta); sin(theta) cos(theta)]
@@ -71,17 +71,6 @@ function angle(hx, hy, mx, my)
   x, y = R(theta)'*[mx; my]
   return atan2(y,x)*180/pi
 end
-
-
-
-function H0(Br, mu_m, L0, a, b, theta, x0, y0)
-    K = (Br/pi/mu_m)
-    H0x = x -> K*(atan(a*b/(x*sqrt(a^2+b^2+x^2))) - atan(a*b/((x+L0)*sqrt(a^2+b^2+(x+L0)^2))))
-
-    Hx = (x,y) -> H0x(x*cos(theta)+y*sin(theta))*cos(theta)
-    Hy = (x,y) -> H0x(x*cos(theta)+y*sin(theta))*sin(theta)
-    return ((x,y) -> Hx(x-x0,y-y0)), ((x,y) -> Hy(x-x0,y-y0))
-end # end H0()
 
 #fHx and fHy are functions
 function getPhi!(n, phi, Mx, My, fHx, fHy, A)

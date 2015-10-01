@@ -34,7 +34,7 @@ function transient(n, dt, Re, t, Cpm, chi, a, b, save, fps, filename)
   println(" Re\t= ", Re)
   println(" dt\t= ", dt)
   println(" Cpm\t= ", Cpm)
-  println(" χ\t= ", alpha)
+  println(" χ\t= ", chi)
   println(" a\t= ", a)
   println(" b\t= ", b)
   println(strftime(time()), "\n")
@@ -104,28 +104,6 @@ function transient(n, dt, Re, t, Cpm, chi, a, b, save, fps, filename)
         write(file, angles);
     end
 
-    #Magnetização em regime é constante e só depende de H aplicado
-    #pode ser calculada só uma vez
-    Mx0 = zeros(n,n)
-    for i in 2:n #
-      for j in 2:n-1
-        x = (i-2)*dx
-        y = (j-2)*dx + dx/2
-        mH = sqrt(fHx(x,y)^2 + fHy(x,y)^2) #módulo de H
-        Mx0[i,j] = (coth(alpha*mH) - 1/(alpha*mH)) * fHx(x,y)/mH
-      end
-    end
-
-    My0 = zeros(n,n)
-    for i in 2:n-1
-      for j in 2:n
-        x = (i-2)*dx + dx/2
-        y = (j-2)*dx
-        mH = sqrt(fHx(x,y)^2 + fHy(x,y)^2) #módulo de H
-        My0[i,j] = (coth(alpha*mH) - 1/(alpha*mH)) * fHy(x,y)/mH
-      end
-    end
-
 	for i in 1:steps
     fact = factor(i)
     for j in -1:n-2
@@ -133,7 +111,7 @@ function transient(n, dt, Re, t, Cpm, chi, a, b, save, fps, filename)
     end
     #Caso superparamagnético, é necessário calcular phi primeiro
     getPhi!(n, phi, Mx, My, fHx, fHy, A)
-    getMH!(n, phi, Mx, My, Hx, Hy)
+    getMH!(n, chi, phi, Mx, My, Hx, Hy)
     getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
     solve_navier_stokes!(NS)
 

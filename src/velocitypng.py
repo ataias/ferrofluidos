@@ -23,7 +23,7 @@ if __name__ == "__main__":
         print("Arquivo: ", filename)
         print("Re = ", Re)
         print("n = ", n)
-        print("chi = ", Pe)
+        print("chi = ", chi)
         print("Cpm = ", Cpm)
         print("t = ", t)
         print("fps = ", fps)

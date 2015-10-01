@@ -7,12 +7,12 @@ if nprocs() - 1 < CPU_CORES
   addprocs(CPU_CORES - nprocs() + 1)
 end
 
-println("nprocs() = ", nprocs())
+# println("nprocs() = ", nprocs())
 
 @everywhere using Transient
 @everywhere using NavierTypes
 
-t = 30.0
+t = 3.0
 Re = 50.0
 n = 102
 divFactor = 1.25
@@ -24,7 +24,7 @@ save = true;
 a = -1.0
 b = -1.0
 
-fps = 2
+fps = 10
 
 @everywhere main = homedir()*"/Documents/simulacao"
 #Create working folder
@@ -35,7 +35,7 @@ mkdir(wfolder)
 @everywhere function simulation(n, dt, Re, Cpm, chi, a, b, t, fps, save)
   # println("pwd() = ", pwd())
   fname = "Re" * string(int(Re)) * "N" * string(int(n-2))
-  fname *= "χ" * string(round(alpha, 4))
+  fname *= "χ" * string(round(chi, 4))
   fname *= "Cpm" * string(int(Cpm))
   fname *= "T" * string(t)
   fname *= "fps" * string(fps)
@@ -56,17 +56,21 @@ mkdir(wfolder)
   close(f)
 end #end simulate function
 
-chi = [0.1, 100]
-Cpm = [1, 10]
-i = 0
+# chi = [0.1, 100]
+# Cpm = [1, 10]
+# i = 0
 
-@sync begin
-  for χ in chi
-    for C in Cpm
-      @spawnat int(i % CPU_CORES + 2) begin
-        simulation(n, dt, Re, C, χ, a, b, t, fps, save)
-      end
-      i = i + 1
-    end
-  end
-end
+χ = 0.5
+C = 3
+simulation(n, dt, Re, C, χ, a, b, t, fps, save)
+
+# @sync begin
+#   for χ in chi
+#     for C in Cpm
+#       @spawnat int(i % CPU_CORES + 2) begin
+#         simulation(n, dt, Re, C, χ, a, b, t, fps, save)
+#       end
+#       i = i + 1
+#     end
+#   end
+# end
