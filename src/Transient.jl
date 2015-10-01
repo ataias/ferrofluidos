@@ -11,8 +11,8 @@ export transient
 #Save Mx and My and process it correctly in .py
 
 function factor(i)
-    if i <= 100
-        return i/100.0
+    if i <= 500
+        return i/500.0
     else
         return 1.0
     end
@@ -149,7 +149,7 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
         #do valor anterior de M, que é 0 no tempo 0
         v∇M!(n, NS.v.x, NS.v.y, Mx_old, My_old, v∇Mx, v∇My)
         getM!(n, c1, dt, Mx, My, Mx_old, My_old, Mx0, My0, convec*v∇Mx, convec*v∇My)
-        getPhi!(n, phi, Mx, My, fHx, fHy, A)
+        getPhi!(n, phi, Mx, My, (x,y) -> fact * fHx(x,y), (x,y) -> fact * fHy(x,y), A)
         getH!(n, phi, Hx, Hy)
         getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
         solve_navier_stokes!(NS)

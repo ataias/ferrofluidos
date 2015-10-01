@@ -7,7 +7,7 @@ if nprocs() - 1 < CPU_CORES
   addprocs(CPU_CORES - nprocs() + 1)
 end
 
-println("nprocs() = ", nprocs())
+# println("nprocs() = ", nprocs())
 
 @everywhere using Transient
 @everywhere using NavierTypes
@@ -19,10 +19,10 @@ divFactor = 1.25
 save = true;
 
 #canto esquerdo
-a = -0.2
-b = -0.2
+a = -0.05
+b = -0.05
 
-fps = 2
+fps = 10
 
 @everywhere main = homedir()*"/Documents/simulacao"
 #Create working folder
@@ -59,22 +59,12 @@ mkdir(wfolder)
   close(f)
 end #end simulate function
 
-Re = [1.0, 10.0, 50.0]
+Re = [5, 50]
 Pe = [0.1, 5.0]
-alpha = [0.1, 50.0]
+alpha = [1.0, 50.0]
 Cpm = [1.0, 10.0]
 
 i = 0
-
-@sync begin
-  #Simulações para casos não magnéticos
-  for R in Re
-    dt = getDt(n, R, divFactor)
-    @spawnat int(i % CPU_CORES + 2) begin
-      simulation(n, dt, R, 1, 0, 0, a, b, 10.0, fps, save, false)
-    end #end spawnat
-    i = i + 1
- end #end for R in Re
 
  #Simulações para casos magnéticos sem termo convectivo
   for R in Re
@@ -83,8 +73,10 @@ i = 0
         for C in Cpm
           dt = getDt(n, R, divFactor)
           @spawnat int(i % CPU_CORES + 2) begin
-            simulation(n, dt, R, 1/P, C, α, a, b, t, fps, save, false)
-            simulation(n, dt, R, 1/P, C, α, a, b, t, fps, save, true)
+            if R != 5
+              simulation(n, dt, float(R), 1/P, C, α, a, b, t, fps, save, false)
+            end
+            simulation(n, dt, float(R), 1/P, C, α, a, b, t, fps, save, true)
           end #end spawnat
           i = i + 1
         end #end for C in Cpm
