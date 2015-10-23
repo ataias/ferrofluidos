@@ -23,6 +23,7 @@
 \usepackage{graphicx} % Required for including images
 \graphicspath{{figures/}} % Directory in which figures are stored
 
+\usepackage{url}
 \usepackage{tikz}
 \usepackage{amsmath} % For typesetting math
 \usepackage{amssymb} % Adds new symbols to be used in math mode
@@ -36,7 +37,7 @@
 \usepackage[font=small,labelfont=bf]{caption} % Required for specifying captions to tables and figures
 
 \usepackage{multicol} % Required for multiple columns
-\setlength{\columnsep}{1.5em} % Slightly increase the space between columns
+\setlength{\columnsep}{1.0em} % Slightly increase the space between columns
 \setlength{\columnseprule}{0mm} % No horizontal rule between columns
 
 \usepackage{tikz} % Required for flow chart
@@ -117,11 +118,7 @@ Os autores são gratos pelo apoio financeiro a este trabalhado que foi dado pelo
 \end{align}
 
 \textbf{Por quê?}\\
- - O caso superparamagnético já é conhecido e serve como validação do código.\\
- - Deseja-se simular a equação de Shliomis\cite{masao1989} \begin{align}
- 	\frac{\partial \mathbf{M}}{\partial t} &= -c_1[\mathbf{M} - \mathbf{M}_0]+c_2[(\mathbf{M}\times \mathbf{H})\times\mathbf{M}]\nonumber\\
- 	 & + \frac{1}{2}(\nabla\times \mathbf{v})\times \mathbf{M}\label{dMdtadimensional},
- \end{align} uma equação constitutiva para a evolução do campo magnético, e comparar seus resultados com os do caso superparamagnético. \\
+ - O caso superparamagnético já é conhecido e serve como validação do código antes de simular outras equações constitutivas para o magnetismo.\\
 \vspace{0.3em} % When there are two boxes, some whitespace may need to be added if the one on the right has more content
 }
 
@@ -134,11 +131,15 @@ As seguintes ferramentas e técnicas foram muito utilizadas no projeto.
 \begin{itemize}\compresslist
 \item Julia \cite{JuliaProgramming} - uma linguagem de programação
 \item GitHub Ferrofluidos\cite{gitHubFerrofluidos} - repositório online do projeto\item Matplotlib \cite{matplotlib} - biblioteca gráfica
-\item Time-splitting \cite{chorin68} - técnica para se resolver a equação de Navier Stokes
+\item Diferenças finitas - método usado para discretizar equações \begin{align}
+  f''(x) \approx \frac{f(x+h) - 2f(x) + f(x-h)}{h^2}
+\end{align}
+\item Time-splitting \cite{chorin68} - técnica para se resolver a equação de Navier Stokes \begin{align}
+  \frac{\partial \textbf{v}}{\partial t} & \approx \frac{\textbf{v}^{n+1}-\textbf{v}^n}{\Delta t}=\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t} \label{vdottimesplitting}\\
+  \nabla^2 p & = \frac{1}{\Delta t}\nabla\cdot \textbf{v}^{*}\\
+  \mathbf{v}^{n+1} & = \mathbf{v}^*  - \Delta t\cdot  \nabla p \label{nextStepV}
+\end{align}
 \item Staggered-grid \cite{hinchLectureNotes} - tipo de malha que é utilizada para diminuir erros no cálculo da pressão
-\item Diferenças finitas - método usado para discretizar equações
-\end{itemize}
-
 	\begin{center}
 		\tikzstyle{help lines}+=[dashed]
 \begin{tikzpicture}
@@ -191,8 +192,23 @@ As seguintes ferramentas e técnicas foram muito utilizadas no projeto.
 \end{tikzpicture}
 \captionof{figure}{Malha escalonada\label{staggered-grid}}
 	\end{center}
-
+	\item Condições no passo de tempo e tamanho das células da malha
+	\begin{itemize}
+	  \item Difusão estável \begin{align}
+	    \Delta t < \frac{1}{4}\mathit{Re}\Delta x^2
+	  \end{align}
+	  \item Advecção estável \begin{align}
+	    \Delta t < \frac{\Delta x}{U}
+	  \end{align}
+	  \item Camada limite hidrodinâmica \begin{align}
+	    \Delta x < \frac{1}{\mathit{Re}}
+	  \end{align}
+	\end{itemize}
+\end{itemize}
 }
+
+
+
 
 %%----------------------------------------------------------------------------------------
 %%	Integration
@@ -213,33 +229,43 @@ As seguintes ferramentas e técnicas foram muito utilizadas no projeto.
 %----------------------------------------------------------------------------------------
 
 \headerbox{3. Resultados}{name=results,column=1,span=2,row=0}{
-
+\vspace{1em}
 \begin{multicols}{2}
 %\vspace{1em}
 
 \begin{center}
-\includegraphics[width=0.8\linewidth]{simulations/vRe50N100Chi01Cpm0T10fps20.png}
+\includegraphics[width=0.90\linewidth]{simulations/vRe50N100Chi01Cpm0T10fps20.png}
 \captionof{figure}{Linhas de velocidade em regime sem campo aplicado}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.8\linewidth]{simulations/vortRe50N100Chi01Cpm0T10fps20.png}
-\captionof{figure}{Evolução da vorticidade em (0.5,0.5) sem campo aplicado}
+\includegraphics[width=0.90\linewidth]{simulations/Re5NoMagnetism.png}
+\captionof{figure}{Linhas de velocidade em regime sem campo aplicado}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.8\linewidth]{simulations/divBRe50N100Chi05Cpm5T10fps20.png}
+\includegraphics[width=0.90\linewidth]{simulations/vortRe50N100Chi01Cpm0T10fps20.png}
+\captionof{figure}{Evolução da vorticidade sem campo aplicado}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.90\linewidth]{simulations/divBRe50N100Chi05Cpm5T10fps20.png}
 \captionof{figure}{$\nabla\cdot\mathbf{B}$ máximo calculado na malha}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.8\linewidth]{simulations/vRe50N100Chi05Cpm5T10fps20.png}
+\includegraphics[width=0.90\linewidth]{simulations/vRe50N100Chi05Cpm5T10fps20.png}
+\captionof{figure}{Linhas de velocidade em regime com campo aplicado}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.90\linewidth]{simulations/Re50Cpm1.png}
 \captionof{figure}{Linhas de velocidade em regime com campo aplicado}
 \end{center}
 
 \begin{center}
 \includegraphics[width=0.8\linewidth]{simulations/vortRe50N100Chi05Cpm5T10fps20.png}
-\captionof{figure}{Evolução da vorticidade em (0.5,0.5) com campo aplicado}
+\captionof{figure}{Evolução da vorticidade com campo aplicado}
 \end{center}
 
 \begin{center}
@@ -254,14 +280,14 @@ As seguintes ferramentas e técnicas foram muito utilizadas no projeto.
 %	FUTURE RESEARCH
 %----------------------------------------------------------------------------------------
 
-\headerbox{5. Future Research}{name=futureresearch,column=1,span=1,aligned=references,above=bottom}{ % This block is as tall as the references block
-
-
+\headerbox{5. Trabalhos futuros}{name=futureresearch,column=1,span=1,aligned=references,above=bottom}{ % This block is as tall as the references block
+\vspace{0.5em}
 \begin{itemize}
-  \item Integrate NiosII-cache with fingerprinting unit and a uTLB (micro-TLB)
-  \item Assess whether overall system satisfies time-constraints
-  \item Identify possible sources of misbehaving 
-  \item Assess perfomance compared to using a scratchpad instead of a cache
+  \item Deseja-se simular a equação de Shliomis\cite{masao1989} \begin{align}
+ 	\frac{\partial \mathbf{M}}{\partial t} &= -c_1[\mathbf{M} - \mathbf{M}_0]+c_2[(\mathbf{M}\times \mathbf{H})\times\mathbf{M}]\nonumber\\
+ 	 & + \frac{1}{2}(\nabla\times \mathbf{v})\times \mathbf{M}\label{dMdtadimensional},
+ \end{align} uma equação constitutiva para a evolução do campo magnético, e comparar seus resultados com os do caso superparamagnético.
+ \item É desconhecido se a equação de Shliomis é válida ou não e ela nunca foi resolvida numericamente. Um resultado numérico seria útil para comparação com dados experimentais.
 \end{itemize}
 
 \vspace{0.1em}
