@@ -213,26 +213,39 @@ As seguintes ferramentas e técnicas foram muito utilizadas no projeto.
 %----------------------------------------------------------------------------------------
 
 \headerbox{3. Resultados}{name=results,column=1,span=2,row=0}{
-\begin{center}
-\includegraphics[width=0.8\linewidth]{CacheFSMlandscape.pdf}
-\captionof{figure}{Finite state machine of designed cache.}
-\end{center}
-
-
 
 \begin{multicols}{2}
-\vspace{1em}
+%\vspace{1em}
 
 \begin{center}
-\includegraphics[width=0.9\linewidth]{pmc-fpga05.jpg}
-\captionof{figure}{Picture of an FPGA}
+\includegraphics[width=0.8\linewidth]{simulations/vRe50N100Chi01Cpm0T10fps20.png}
+\captionof{figure}{Linhas de velocidade em regime sem campo aplicado}
 \end{center}
 
-\begin{itemize}
-\item \textbf{FSM:} A Finite State Machine is a model of how computer programs or sequential logic circuits work. 
-\item \textbf{Cache vs no-Cache:} a C program executes in 27ms without the cache, while it took 22ms with the cache
-\item \textbf{What goes in the cache?:} Data that is frequently used and neighbouring data
-\end{itemize}
+\begin{center}
+\includegraphics[width=0.8\linewidth]{simulations/vortRe50N100Chi01Cpm0T10fps20.png}
+\captionof{figure}{Evolução da vorticidade em (0.5,0.5) sem campo aplicado}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.8\linewidth]{simulations/divBRe50N100Chi05Cpm5T10fps20.png}
+\captionof{figure}{$\nabla\cdot\mathbf{B}$ máximo calculado na malha}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.8\linewidth]{simulations/vRe50N100Chi05Cpm5T10fps20.png}
+\captionof{figure}{Linhas de velocidade em regime com campo aplicado}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.8\linewidth]{simulations/vortRe50N100Chi05Cpm5T10fps20.png}
+\captionof{figure}{Evolução da vorticidade em (0.5,0.5) com campo aplicado}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.8\linewidth]{simulations/divVRe50N100Chi05Cpm5T10fps20.png}
+\captionof{figure}{$\nabla\cdot\mathbf{v}$ máximo calculado na malha}
+\end{center}
 
 \end{multicols}
 }
@@ -243,11 +256,6 @@ As seguintes ferramentas e técnicas foram muito utilizadas no projeto.
 
 \headerbox{5. Future Research}{name=futureresearch,column=1,span=1,aligned=references,above=bottom}{ % This block is as tall as the references block
 
-\begin{multicols}{2}
-\begin{center}
-\includegraphics[width=0.7\linewidth]{futureWork.pdf}
-\captionof{figure}{System to be designed in future works.}
-\end{center}
 
 \begin{itemize}
   \item Integrate NiosII-cache with fingerprinting unit and a uTLB (micro-TLB)
@@ -256,7 +264,6 @@ As seguintes ferramentas e técnicas foram muito utilizadas no projeto.
   \item Assess perfomance compared to using a scratchpad instead of a cache
 \end{itemize}
 
-\end{multicols}
 \vspace{0.1em}
 }
 
