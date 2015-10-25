@@ -18,7 +18,7 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[portrait,a0paper,fontscale=0.36]{baposter} % Adjust the font scale/size here
+\documentclass[portrait,a0paper,fontscale=0.40]{baposter} % Adjust the font scale/size here
 
 \usepackage{graphicx} % Required for including images
 \graphicspath{{figures/}} % Directory in which figures are stored
@@ -82,20 +82,6 @@ linewidth=2pt % Width of the border lines around content boxes
 %{\includegraphics[height=4em]{logo.png}} % Second university/lab logo on the right
 
 
-%----------------------------------------------------------------------------------------
-%	REFERENCES
-%----------------------------------------------------------------------------------------
-
-\headerbox{Referências}{name=references,column=2,above=bottom}{
-
-\renewcommand{\section}[2]{\vskip 0.05em} % Get rid of the default "References" section title
-\nocite{*} % Insert publications even if they are not cited in the poster
-\small{ % Reduce the font size in this block
-%\bibliographystyle{unsrt}
-\bibliographystyle{plain}
-\bibliography{sample} % Use sample.bib as the bibliography file
-
-}}
 
 %----------------------------------------------------------------------------------------
 %	ACKNOLEDGEMENTS
@@ -110,10 +96,23 @@ Os autores são gratos pelo apoio financeiro a este trabalhado que foi dado pelo
 
 \headerbox{1. Introdução}{name=introduction,column=0,row=0}{
 
-\textbf{Objetivo}\\ - Desenvolver um código de computador que resolva a equação de Navier Stokes \begin{align}
-	\left( \frac{\partial {\textbf{v}}}{\partial t}+\textbf{v}\cdot\nabla \textbf{v} \right)=-\nabla p+\frac{1}{\mathit{Re}}\nabla^2 \textbf{v} + \textbf{f}\label{navierstokes},\\
-\nabla\cdot\textbf{v}=0\label{navierincompressibilidade}
-\end{align} numa cavidade para simular o escoamento de um fluido magnético\cite{RosensweigMagneticFluids} sob ação de um campo magnético aplicado no regime superparamagnético, isto é, \begin{align}
+\textbf{Objetivo}\\ - Desenvolver um código de computador que resolva a equação de Navier Stokes numa cavidade para simular o escoamento de um fluido magnético\cite{RosensweigMagneticFluids} sob ação de um campo magnético aplicado. 
+\begin{center}
+\includegraphics[width=0.45\linewidth]{ferrofluido.png}
+\includegraphics[width=0.45\linewidth]{cavidade.png}
+\captionof{figure}{Ferrofluido e cavidade}
+\end{center}
+
+\begin{align}
+	\left( \frac{\partial {\textbf{v}}}{\partial t}+\textbf{v}\cdot\nabla \textbf{v} \right)=-\nabla p+\frac{1}{\mathit{Re}}\nabla^2 \textbf{v} + \mathrm{C}_{\mathrm{pm}}\; \mathbf{M}\cdot \nabla \mathbf{H}\label{navierstokes}\\
+\nabla\cdot\textbf{v}=0\label{navierincompressibilidade}\\
+\nabla\cdot \mathbf{B} = 0\\
+\nabla\times \mathbf{H} = \mathbf{0}
+\end{align}
+
+
+
+- Hipótese constitutiva (regime superparamagnético): \begin{align}
 	\mathbf{M} &= \chi \mathbf{H}.
 \end{align}
 
@@ -127,17 +126,18 @@ Os autores são gratos pelo apoio financeiro a este trabalhado que foi dado pelo
 %----------------------------------------------------------------------------------------
 
 \headerbox{2. Metodologia}{name=method,column=0,below=introduction,above=acknowledgment}{ % This block's bottom aligns with the bottom of the other2 block
-As seguintes ferramentas e técnicas foram muito utilizadas no projeto.
+- Solução numérica das equações governantes:
 \begin{itemize}\compresslist
-\item Julia \cite{JuliaProgramming} - uma linguagem de programação
-\item GitHub Ferrofluidos\cite{gitHubFerrofluidos} - repositório online do projeto\item Matplotlib \cite{matplotlib} - biblioteca gráfica
-\item Diferenças finitas - método usado para discretizar equações \begin{align}
+\item Diferenças finitas de segunda ordem \begin{align}
   f''(x) \approx \frac{f(x+h) - 2f(x) + f(x-h)}{h^2}
 \end{align}
-\item Time-splitting \cite{chorin68} - técnica para se resolver a equação de Navier Stokes \begin{align}
+\item Time-splitting \cite{chorin68} aplicado às equações de Navier Stokes \begin{align}
   \frac{\partial \textbf{v}}{\partial t} & \approx \frac{\textbf{v}^{n+1}-\textbf{v}^n}{\Delta t}=\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t} \label{vdottimesplitting}\\
-  \nabla^2 p & = \frac{1}{\Delta t}\nabla\cdot \textbf{v}^{*}\\
-  \mathbf{v}^{n+1} & = \mathbf{v}^*  - \Delta t\cdot  \nabla p \label{nextStepV}
+  \frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}&= \frac{1}{\mathit{Re}}\nabla ^2 \textbf{v} + \textbf{f} - \textbf{v}\cdot \nabla \textbf{v}\label{equacaovestrela}\\
+  \nabla^2 p & = \frac{1}{\Delta t}\nabla\cdot \textbf{v}^{*}\label{pressurePoisson}\\  \mathbf{v}^{n+1} &= \mathbf{v}^*  - \Delta t\cdot  \nabla p \label{nextStepV}
+\end{align}
+\item Problemas de Poisson para a pressão, Equação \ref{pressurePoisson}, e para o campo magnético local com condições de contorno de Neumann resolvidos por fatoração Choleski \begin{align}
+	\textrm{Campo magnético:} \nabla^2\phi &= \nabla\cdot \mathbf{M}
 \end{align}
 \item Staggered-grid \cite{hinchLectureNotes} - tipo de malha que é utilizada para diminuir erros no cálculo da pressão
 	\begin{center}
@@ -193,17 +193,11 @@ As seguintes ferramentas e técnicas foram muito utilizadas no projeto.
 \captionof{figure}{Malha escalonada\label{staggered-grid}}
 	\end{center}
 	\item Condições no passo de tempo e tamanho das células da malha
-	\begin{itemize}
-	  \item Difusão estável \begin{align}
-	    \Delta t < \frac{1}{4}\mathit{Re}\Delta x^2
+	\begin{align}
+	    \textrm{Difusão estável: } & \Delta t < \frac{1}{4}\mathit{Re}\Delta x^2\\
+	    \textrm{Advecção estável: }& \Delta t < \frac{\Delta x}{U}\\
+	    \textrm{Camada limite hidrodinâmica: }& \Delta x < \frac{1}{\mathit{Re}}
 	  \end{align}
-	  \item Advecção estável \begin{align}
-	    \Delta t < \frac{\Delta x}{U}
-	  \end{align}
-	  \item Camada limite hidrodinâmica \begin{align}
-	    \Delta x < \frac{1}{\mathit{Re}}
-	  \end{align}
-	\end{itemize}
 \end{itemize}
 }
 
@@ -229,48 +223,59 @@ As seguintes ferramentas e técnicas foram muito utilizadas no projeto.
 %----------------------------------------------------------------------------------------
 
 \headerbox{3. Resultados}{name=results,column=1,span=2,row=0}{
-\vspace{1em}
+%\vspace{1em}
 \begin{multicols}{2}
 %\vspace{1em}
 
 \begin{center}
-\includegraphics[width=0.90\linewidth]{simulations/vRe50N100Chi01Cpm0T10fps20.png}
+\includegraphics[width=0.67\linewidth]{simulations/vRe50N100Chi01Cpm0T10fps20.png}
 \captionof{figure}{Linhas de velocidade em regime sem campo aplicado}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.90\linewidth]{simulations/Re5NoMagnetism.png}
+\includegraphics[width=0.67\linewidth]{simulations/Re5NoMagnetism.png}
 \captionof{figure}{Linhas de velocidade em regime sem campo aplicado}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.90\linewidth]{simulations/vortRe50N100Chi01Cpm0T10fps20.png}
+\includegraphics[width=0.67\linewidth]{simulations/vortRe50N100Chi01Cpm0T10fps20.png}
 \captionof{figure}{Evolução da vorticidade sem campo aplicado}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.90\linewidth]{simulations/divBRe50N100Chi05Cpm5T10fps20.png}
+\includegraphics[width=0.67\linewidth]{simulations/divBRe50N100Chi05Cpm5T10fps20.png}
 \captionof{figure}{$\nabla\cdot\mathbf{B}$ máximo calculado na malha}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.90\linewidth]{simulations/vRe50N100Chi05Cpm5T10fps20.png}
+\includegraphics[width=0.67\linewidth]{validateHydrodynamicsRe40.png}
+\captionof{figure}{Análise do erro conforme $\Delta x$ varia}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=0.67\linewidth]{simulations/vRe50N100Chi05Cpm5T10fps20.png}
 \captionof{figure}{Linhas de velocidade em regime com campo aplicado}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.90\linewidth]{simulations/Re50Cpm1.png}
+\includegraphics[width=0.67\linewidth]{simulations/Re50Cpm1.png}
 \captionof{figure}{Linhas de velocidade em regime com campo aplicado}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.8\linewidth]{simulations/vortRe50N100Chi05Cpm5T10fps20.png}
+\includegraphics[width=0.6\linewidth]{simulations/vortRe50N100Chi05Cpm5T10fps20.png}
 \captionof{figure}{Evolução da vorticidade com campo aplicado}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.8\linewidth]{simulations/divVRe50N100Chi05Cpm5T10fps20.png}
+\includegraphics[width=0.6\linewidth]{simulations/divVRe50N100Chi05Cpm5T10fps20.png}
 \captionof{figure}{$\nabla\cdot\mathbf{v}$ máximo calculado na malha}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.67\linewidth]{validateMagnetismRe40.png}
+\captionof{figure}{Análise do erro conforme $\Delta x$ varia}
 \end{center}
 
 \end{multicols}
@@ -280,14 +285,14 @@ As seguintes ferramentas e técnicas foram muito utilizadas no projeto.
 %	FUTURE RESEARCH
 %----------------------------------------------------------------------------------------
 
-\headerbox{5. Trabalhos futuros}{name=futureresearch,column=1,span=1,aligned=references,above=bottom}{ % This block is as tall as the references block
+\headerbox{5. Trabalhos futuros}{name=futureresearch,column=1,span=1,above=bottom}{ % This block is as tall as the references block
 \vspace{0.5em}
 \begin{itemize}
-  \item Deseja-se simular a equação de Shliomis\cite{masao1989} \begin{align}
+	\item Explorar diversas configurações de campo magnético, $\mathrm{Re}$, $\mathrm{C}_{\mathrm{pm}}$, $\chi$ e calcular propriedades como tempo para regime permanente, força na parede superior, etc.
+    \item Simulação de fluidos magnéticos assimétricos, para os quais $\mathbf{M} \times \mathbf{H} \neq \mathbf{0}$. Nestes casos, é preciso descrever bem a magnetização do ferrofluido. Testar Equação de Shliomis \cite{masao1989} e outras. \begin{align}
  	\frac{\partial \mathbf{M}}{\partial t} &= -c_1[\mathbf{M} - \mathbf{M}_0]+c_2[(\mathbf{M}\times \mathbf{H})\times\mathbf{M}]\nonumber\\
  	 & + \frac{1}{2}(\nabla\times \mathbf{v})\times \mathbf{M}\label{dMdtadimensional},
- \end{align} uma equação constitutiva para a evolução do campo magnético, e comparar seus resultados com os do caso superparamagnético.
- \item É desconhecido se a equação de Shliomis é válida ou não e ela nunca foi resolvida numericamente. Um resultado numérico seria útil para comparação com dados experimentais.
+ \end{align}
 \end{itemize}
 
 \vspace{0.1em}
@@ -299,16 +304,30 @@ As seguintes ferramentas e técnicas foram muito utilizadas no projeto.
 %%	CONCLUSION
 %%----------------------------------------------------------------------------------------
 %
-%\headerbox{6. Conclusion}{name=conclusion,column=2,below=anotherresult,bottomaligned=method}{ % This block's bottom aligns with the bottom of the other2 block
-%
-%\begin{itemize}
-%  \item A cache was successfully designed in SystemVerilog, tested and then integrated with the Nios II processor.
-%  \item The placement of this memory in between CPU and Main Memory indeed speeds up the system.
-%  \item With the cache done, further research with fingerprinting is allowed and analysis of the interactions between cache, fingerprinting unit and uTLB are made possible.
-%
-%\end{itemize}
+\headerbox{4. Conclusão}{name=conclusion,column=1,below=results,above=futureresearch}{ % This block's bottom aligns with the bottom of the other2 block
 
-%}
+\begin{itemize}
+\item Método de solução numérica adequado para o problema proposto. Código foi construído e validado, e é eficiente computacionalmente.
+\item Campo aplicado influencia significativamente o escoamento de um ferrofluido.
+
+\end{itemize}
+
+}
+
+%----------------------------------------------------------------------------------------
+%	REFERENCES
+%----------------------------------------------------------------------------------------
+
+\headerbox{Referências}{name=references,column=2,above=bottom, aligned=conclusion}{
+
+\renewcommand{\section}[2]{\vskip 0.05em} % Get rid of the default "References" section title
+\nocite{*} % Insert publications even if they are not cited in the poster
+\small{ % Reduce the font size in this block
+%\bibliographystyle{unsrt}
+\bibliographystyle{plain}
+\bibliography{sample} % Use sample.bib as the bibliography file
+
+}}
 
 %----------------------------------------------------------------------------------------
 
