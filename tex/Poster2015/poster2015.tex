@@ -18,7 +18,7 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[portrait,a0paper,fontscale=0.40]{baposter} % Adjust the font scale/size here
+\documentclass[portrait,a0paper,fontscale=0.42]{baposter} % Adjust the font scale/size here
 
 \usepackage{graphicx} % Required for including images
 \graphicspath{{figures/}} % Directory in which figures are stored
@@ -110,7 +110,7 @@ Os autores são gratos pelo apoio financeiro a este trabalhado que foi dado pelo
 \nabla\times \mathbf{H} = \mathbf{0}
 \end{align}
 
-\paragraph{} O número de Reynolds é $\mathrm{Re}$ e o coeficiente de pressão magnética é $\mathrm{C}_{\mathbf{pm}}$.
+\paragraph{} O número de Reynolds é $\mathrm{Re}$ e o coeficiente de pressão magnética é $\mathrm{C}_{\mathbf{pm}}$.\\
 
 - Hipótese constitutiva (regime superparamagnético): \begin{align}
 	\mathbf{M} &= \chi \mathbf{H}.
@@ -136,7 +136,7 @@ Os autores são gratos pelo apoio financeiro a este trabalhado que foi dado pelo
   \nabla^2 p & = \frac{1}{\Delta t}\nabla\cdot \textbf{v}^{*}\label{pressurePoisson}\\  \mathbf{v}^{n+1} &= \mathbf{v}^*  - \Delta t\cdot  \nabla p \label{nextStepV}
 \end{align}
 \item Problemas de Poisson para a pressão, Equação \ref{pressurePoisson}, e para o campo magnético local com condições de contorno de Neumann resolvidos por fatoração Choleski \begin{align}
-	\textrm{Campo magnético:} \nabla^2\phi &= \nabla\cdot \mathbf{M}
+	\textrm{Campo magnético: } \nabla^2\phi &= \nabla\cdot \mathbf{M}
 \end{align}
 \item Staggered-grid \cite{hinchLectureNotes} - tipo de malha que é utilizada para diminuir erros no cálculo da pressão
 	\begin{center}
@@ -227,54 +227,53 @@ Os autores são gratos pelo apoio financeiro a este trabalhado que foi dado pelo
 %\vspace{1em}
 
 \begin{center}
-\includegraphics[width=0.67\linewidth]{simulations/vRe50N100Chi01Cpm0T10fps20.png}
-\captionof{figure}{Linhas de velocidade em regime sem campo aplicado}
+\includegraphics[width=0.8\linewidth]{simulations/divBRe50N100Chi05Cpm5T10fps20.png}
+%\captionof{figure}{$\nabla\cdot\mathbf{B}$ máximo calculado na malha}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.67\linewidth]{simulations/Re5NoMagnetism.png}
-\captionof{figure}{Linhas de velocidade em regime sem campo aplicado}
+\includegraphics[width=0.8\linewidth]{validateHydrodynamicsRe40.png}
+%\captionof{figure}{Análise do erro conforme $\Delta x$ varia}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.67\linewidth]{simulations/vortRe50N100Chi01Cpm0T10fps20.png}
-\captionof{figure}{Evolução da vorticidade sem campo aplicado}
+\includegraphics[width=0.8\linewidth]{simulations/vRe50N100Chi01Cpm0T10fps20.png}
+%\captionof{figure}{Linhas de velocidade em regime sem campo aplicado}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.67\linewidth]{simulations/divBRe50N100Chi05Cpm5T10fps20.png}
-\captionof{figure}{$\nabla\cdot\mathbf{B}$ máximo calculado na malha}
+\includegraphics[width=0.8\linewidth]{simulations/Re5NoMagnetism.png}
+%\captionof{figure}{Linhas de velocidade em regime sem campo aplicado}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.67\linewidth]{validateHydrodynamicsRe40.png}
-\captionof{figure}{Análise do erro conforme $\Delta x$ varia}
-\end{center}
-
-
-\begin{center}
-\includegraphics[width=0.67\linewidth]{simulations/vRe50N100Chi05Cpm5T10fps20.png}
-\captionof{figure}{Linhas de velocidade em regime com campo aplicado}
+\includegraphics[width=0.8\linewidth]{simulations/vortRe50N100Chi01Cpm0T10fps20.png}
+%\captionof{figure}{Evolução da vorticidade sem campo aplicado}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.67\linewidth]{simulations/Re50Cpm1.png}
-\captionof{figure}{Linhas de velocidade em regime com campo aplicado}
+\includegraphics[width=0.8\linewidth]{simulations/divVRe50N100Chi05Cpm5T10fps20.png}
+%\captionof{figure}{$\nabla\cdot\mathbf{v}$ máximo calculado na malha}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.6\linewidth]{simulations/vortRe50N100Chi05Cpm5T10fps20.png}
-\captionof{figure}{Evolução da vorticidade com campo aplicado}
+\includegraphics[width=0.8\linewidth]{validateMagnetismRe40.png}
+%\captionof{figure}{Análise do erro conforme $\Delta x$ varia}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.6\linewidth]{simulations/divVRe50N100Chi05Cpm5T10fps20.png}
-\captionof{figure}{$\nabla\cdot\mathbf{v}$ máximo calculado na malha}
+\includegraphics[width=0.8\linewidth]{simulations/vRe50N100Chi05Cpm5T10fps20.png}
+%\captionof{figure}{Linhas de velocidade em regime com campo aplicado}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.67\linewidth]{validateMagnetismRe40.png}
-\captionof{figure}{Análise do erro conforme $\Delta x$ varia}
+\includegraphics[width=0.8\linewidth]{simulations/Re50Cpm1.png}
+%\captionof{figure}{Linhas de velocidade em regime com campo aplicado}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.8\linewidth]{simulations/vortRe50N100Chi05Cpm5T10fps20.png}
+%\captionof{figure}{Evolução da vorticidade com campo aplicado}
 \end{center}
 
 \end{multicols}
