@@ -110,15 +110,14 @@ Os autores são gratos pelo apoio financeiro a este trabalhado que foi dado pelo
 \nabla\times \mathbf{H} = \mathbf{0}
 \end{align}
 
-
+\paragraph{} O número de Reynolds é $\mathrm{Re}$ e o coeficiente de pressão magnética é $\mathrm{C}_{\mathbf{pm}}$.
 
 - Hipótese constitutiva (regime superparamagnético): \begin{align}
 	\mathbf{M} &= \chi \mathbf{H}.
 \end{align}
 
 \textbf{Por quê?}\\
- - O caso superparamagnético já é conhecido e serve como validação do código antes de simular outras equações constitutivas para o magnetismo.\\
-\vspace{0.3em} % When there are two boxes, some whitespace may need to be added if the one on the right has more content
+ - O caso superparamagnético já é conhecido e serve como validação do código antes de simular outras equações constitutivas para o magnetismo.\\ % When there are two boxes, some whitespace may need to be added if the one on the right has more content
 }
 
 %----------------------------------------------------------------------------------------
@@ -133,7 +132,7 @@ Os autores são gratos pelo apoio financeiro a este trabalhado que foi dado pelo
 \end{align}
 \item Time-splitting \cite{chorin68} aplicado às equações de Navier Stokes \begin{align}
   \frac{\partial \textbf{v}}{\partial t} & \approx \frac{\textbf{v}^{n+1}-\textbf{v}^n}{\Delta t}=\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t} \label{vdottimesplitting}\\
-  \frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}&= \frac{1}{\mathit{Re}}\nabla ^2 \textbf{v} + \textbf{f} - \textbf{v}\cdot \nabla \textbf{v}\label{equacaovestrela}\\
+  \frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}&= \frac{1}{\mathit{Re}}\nabla ^2 \textbf{v} + \mathrm{C}_{\mathrm{pm}}\; \mathbf{M}\cdot \nabla \mathbf{H} - \textbf{v}\cdot \nabla \textbf{v}\label{equacaovestrela}\\
   \nabla^2 p & = \frac{1}{\Delta t}\nabla\cdot \textbf{v}^{*}\label{pressurePoisson}\\  \mathbf{v}^{n+1} &= \mathbf{v}^*  - \Delta t\cdot  \nabla p \label{nextStepV}
 \end{align}
 \item Problemas de Poisson para a pressão, Equação \ref{pressurePoisson}, e para o campo magnético local com condições de contorno de Neumann resolvidos por fatoração Choleski \begin{align}
