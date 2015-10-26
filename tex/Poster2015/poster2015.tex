@@ -99,6 +99,7 @@ Os autores são gratos pelo apoio financeiro a este trabalho que foi dado pelo C
 \textbf{Objetivo}\\ - Desenvolver um código de computador que resolva a equação de Navier Stokes numa cavidade para simular o escoamento de um fluido magnético\cite{RosensweigMagneticFluids} sob ação de um campo magnético aplicado. 
 \begin{center}
 \includegraphics[width=0.45\linewidth]{ferrofluido.png}
+\hspace{0.1em}
 \includegraphics[width=0.45\linewidth]{cavidade.png}
 \captionof{figure}{Ferrofluido e cavidade}
 \end{center}
@@ -110,7 +111,7 @@ Os autores são gratos pelo apoio financeiro a este trabalho que foi dado pelo C
 \nabla\times \mathbf{H} = \mathbf{0}
 \end{align}
 
-\paragraph{} O número de Reynolds é $\mathrm{Re}$ e o coeficiente de pressão magnética é $\mathrm{C}_{\mathbf{pm}}$.\\
+\paragraph{} O número de Reynolds é $\mathit{Re}=\frac{\rho L U}{\mu}$ e o coeficiente de pressão magnética é $\mathrm{C}_{\mathbf{pm}} = \frac{\mu_0 H_0^2}{\rho U ^2}$.\\
 
 - Hipótese constitutiva (regime superparamagnético): \begin{align}
 	\mathbf{M} &= \chi \mathbf{H}.
@@ -132,11 +133,12 @@ Os autores são gratos pelo apoio financeiro a este trabalho que foi dado pelo C
 \end{align}
 \item Time-splitting \cite{chorin68} aplicado às equações de Navier Stokes \begin{align}
   \frac{\partial \textbf{v}}{\partial t} & \approx \frac{\textbf{v}^{n+1}-\textbf{v}^n}{\Delta t}=\frac{\textbf{v}^{n+1}-\textbf{v}^*}{\Delta t}+\frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t} \label{vdottimesplitting}\\
-  \frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}&= \frac{1}{\mathit{Re}}\nabla ^2 \textbf{v} + \mathrm{C}_{\mathrm{pm}}\; \mathbf{M}\cdot \nabla \mathbf{H} - \textbf{v}\cdot \nabla \textbf{v}\label{equacaovestrela}\\
+  \frac{\textbf{v}^{*}-\textbf{v}^n}{\Delta t}&= \frac{1}{\mathit{Re}}\nabla ^2 \textbf{v}^n + \mathrm{C}_{\mathrm{pm}}\; \mathbf{M}^n\cdot \nabla \mathbf{H}^n - \textbf{v}^n\cdot \nabla \textbf{v}^n\label{equacaovestrela}\\
   \nabla^2 p & = \frac{1}{\Delta t}\nabla\cdot \textbf{v}^{*}\label{pressurePoisson}\\  \mathbf{v}^{n+1} &= \mathbf{v}^*  - \Delta t\cdot  \nabla p \label{nextStepV}
 \end{align}
 \item Problemas de Poisson para a pressão, Equação \ref{pressurePoisson}, e para o campo magnético local com condições de contorno de Neumann resolvidos por fatoração Choleski \begin{align}
-	\textrm{Campo magnético: } \nabla^2\phi &= \nabla\cdot \mathbf{M}
+	\textrm{Campo magnético: } \nabla^2\phi &= \nabla\cdot \mathbf{M}\\
+\textrm{Condições de Neumann: }\nabla\phi_{\mathrm{d}}^{\mathrm{n}} & = -H_{\mathrm{out}}^{\mathrm{n}} + M_{\mathrm{in}}^{\mathrm{n}}
 \end{align}
 \item Staggered-grid \cite{hinchLectureNotes} - tipo de malha que é utilizada para diminuir erros no cálculo da pressão
 	\begin{center}
@@ -194,7 +196,7 @@ Os autores são gratos pelo apoio financeiro a este trabalho que foi dado pelo C
 	\item Condições no passo de tempo e tamanho das células da malha
 	\begin{align}
 	    \textrm{Difusão estável: } & \Delta t < \frac{1}{4}\mathit{Re}\Delta x^2\\
-	    \textrm{Advecção estável: }& \Delta t < \frac{\Delta x}{U}\\
+	    \textrm{Advecção estável: }& \Delta t < \Delta x\\
 	    \textrm{Camada limite hidrodinâmica: }& \Delta x < \frac{1}{\mathit{Re}}
 	  \end{align}
 \end{itemize}
@@ -227,13 +229,13 @@ Os autores são gratos pelo apoio financeiro a este trabalho que foi dado pelo C
 %\vspace{1em}
 
 \begin{center}
-\includegraphics[width=0.8\linewidth]{simulations/divBRe50N100Chi05Cpm5T10fps20.png}
-%\captionof{figure}{$\nabla\cdot\mathbf{B}$ máximo calculado na malha}
+\includegraphics[width=0.8\linewidth]{validateHydrodynamicsRe40.png}
+%\captionof{figure}{Análise do erro conforme $\Delta x$ varia}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.8\linewidth]{validateHydrodynamicsRe40.png}
-%\captionof{figure}{Análise do erro conforme $\Delta x$ varia}
+\includegraphics[width=0.8\linewidth]{simulations/divBRe50N100Chi05Cpm5T10fps20.png}
+%\captionof{figure}{$\nabla\cdot\mathbf{B}$ máximo calculado na malha}
 \end{center}
 
 \begin{center}
@@ -252,13 +254,13 @@ Os autores são gratos pelo apoio financeiro a este trabalho que foi dado pelo C
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.8\linewidth]{simulations/divVRe50N100Chi05Cpm5T10fps20.png}
-%\captionof{figure}{$\nabla\cdot\mathbf{v}$ máximo calculado na malha}
+\includegraphics[width=0.8\linewidth]{validateMagnetismRe40.png}
+%\captionof{figure}{Análise do erro conforme $\Delta x$ varia}
 \end{center}
 
 \begin{center}
-\includegraphics[width=0.8\linewidth]{validateMagnetismRe40.png}
-%\captionof{figure}{Análise do erro conforme $\Delta x$ varia}
+\includegraphics[width=0.8\linewidth]{simulations/divVRe50N100Chi05Cpm5T10fps20.png}
+%\captionof{figure}{$\nabla\cdot\mathbf{v}$ máximo calculado na malha}
 \end{center}
 
 \begin{center}
