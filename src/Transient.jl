@@ -9,6 +9,7 @@ export transient
 
 ##TODO
 #Save Mx and My and process it correctly in .py
+#I think this have been done, check
 
 function factor(i)
     if i <= 100
@@ -102,6 +103,9 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
 
     fact = 0
     angles = zeros(n-2, n-2)+1e-15;
+    fxn = zeros(n-2, n-2)+1e-15
+    fyn = zeros(n-2, n-2)+1e-15
+    
     #Salva valores das matrizes em t = 0
     if(save)
         write(file, un); write(file, vn);
@@ -110,6 +114,8 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
         write(file, Mxn); write(file, Myn);
         write(file, phin);
         write(file, angles);
+        write(file, fxn)
+        write(file, fyn)
     end
 
     #Magnetização em regime é constante e só depende de H aplicado
@@ -140,34 +146,38 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
   v∇My = zeros(n,n)
 
 	for i in 1:steps
-        fact = factor(i)
-        for j in -1:n-2
-		        NS.uB[j+2] = fact*(sinpi(j*dx))^2
-	      end
-        #O primeiro passo é obter M em cada passo de tempo
-        #faz sentido não usar o fator fact para getM, pois a evolução inicia
-        #do valor anterior de M, que é 0 no tempo 0
-        v∇M!(n, NS.v.x, NS.v.y, Mx_old, My_old, v∇Mx, v∇My)
-        getM!(n, c1, dt, Mx, My, Mx_old, My_old, Mx0, My0, convec*v∇Mx, convec*v∇My)
-        getPhi!(n, phi, Mx, My, fHx, fHy, A)
-        getH!(n, phi, Hx, Hy)
-        getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
-        solve_navier_stokes!(NS)
+    fact = factor(i)
+    for j in -1:n-2
+        NS.uB[j+2] = fact*(sinpi(j*dx))^2
+    end
+    #O primeiro passo é obter M em cada passo de tempo
+    #faz sentido não usar o fator fact para getM, pois a evolução inicia
+    #do valor anterior de M, que é 0 no tempo 0
+    v∇M!(n, NS.v.x, NS.v.y, Mx_old, My_old, v∇Mx, v∇My)
+    getM!(n, c1, dt, Mx, My, Mx_old, My_old, Mx0, My0, convec*v∇Mx, convec*v∇My)
+    getPhi!(n, phi, Mx, My, fHx, fHy, A)
+    getH!(n, phi, Hx, Hy)
+    getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
+    solve_navier_stokes!(NS)
 
-#        println("i = ", i, " and timeToSave = ", timeToSave, ", therefore i % timeToSave = ", i % timeToSave == 0)
+    #println("i = ", i, " and timeToSave = ", timeToSave, ", therefore i % timeToSave = ", i % timeToSave == 0)
 		if (i % timeToSave == 0) || (i == steps)
 			staggered2not!(NS.v.x, NS.v.y, NS.p, un,  vn,  pn,   n)
-            staggered2not!(Hx,     Hy,     phi,  Hxn, Hyn, phin, n)
-            staggered2not!(Mx,     My,           Mxn, Myn,       n)
-            Angle!(Hxn, Hyn, Mxn, Myn, angles, n-2)
-            if(save)
-                write(file, un); write(file, vn);
-                write(file, pn);
-                write(file, Hxn); write(file, Hyn);
-                write(file, Mxn); write(file, Myn);
-                write(file, phin);
-                write(file, angles);
-            end
+      staggered2not!(Hx,     Hy,     phi,  Hxn, Hyn, phin, n)
+      staggered2not!(Mx,     My,           Mxn, Myn,       n)
+      staggered2not!(NS.f.x, NS.f.y,       fxn, fyn,       n)
+      Angle!(Hxn, Hyn, Mxn, Myn, angles, n-2)
+      if(save)
+        write(file, un); write(file, vn);
+        write(file, pn);
+        write(file, Hxn); write(file, Hyn);
+        write(file, Mxn); write(file, Myn);
+        write(file, phin);
+        write(file, angles);
+        write(file, fxn);
+        write(file, fyn);
+      end #if(save)
+
 			println("t = ", i*dt)
 			println("  u[0.5,0.5]\t= ", un[c,c])
 			println("  v[0.5,0.5]\t= ", vn[c,c])
@@ -179,7 +189,8 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
 			tau = zeros(n-2)
 			for i in 2:n-1
 				tau[i-1] = (1/Re)*((NS.v.x[i,n]-NS.v.x[i,n-1])/dx)
-			end
+			end #for i in 2:n-1
+
 			F = simpson(tau, n-2)
 			println("  F\t= ", F)
 		end #if (i % timeToSave == 0) || (i == steps)
@@ -191,12 +202,12 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
     Mx, Mx_old = Mx_old, Mx
     My, My_old = My_old, My
 
-	end
+	end #for i in 1:steps
 
-    if(save)
-        close(file)
-    end
+  if(save)
+    close(file)
+  end
 	return 0
-end
+end #function transient
 
-end
+end #module

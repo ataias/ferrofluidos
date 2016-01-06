@@ -6,6 +6,8 @@ from numpy import *
 import time as tt
 import math
 
+#Este arquivo cria todas as imagens para os arquivos .dat na pasta na qual ele for executado
+
 if __name__ == "__main__":
 
     for filename in glob.glob("*.dat"):
@@ -102,6 +104,8 @@ if __name__ == "__main__":
         My = zeros((n,n), dtype=float64)
         phi = zeros((n,n), dtype=float64)
         angles = zeros((n,n), dtype=float64)
+        fx = zeros((n,n), dtype=float64)
+        fy = zeros((n,n), dtype=float64)
 
         #Como há o frame 0, precisa somar 1 ao número de frames
         numberFrames = int(round(fps*t))+1
@@ -147,7 +151,6 @@ if __name__ == "__main__":
             vortc[i] = ((v[c+1,c]-v[c-1,c]) - (u[c,c+1]-u[c,c-1]) )/(2*dx)
             # -------------------------------
 
-
             f.seek(n*n*8*1, 1) #pula pressão p
 
             readMatrix(Hx, f, n)
@@ -165,7 +168,10 @@ if __name__ == "__main__":
             phaseM[i] = math.degrees(math.atan2(My[c,c], Mx[c,c]))
             phaseDiffMH[i] = math.degrees(math.atan2(Hy[c,c], Hx[c,c])) - phaseM[i]
 
-            f.seek(n*n*8*2, 1)
+            f.seek(n*n*8, 1) #pula phi
+            f.seek(n*n*8, 1) #pula angles
+            f.seek(n*n*8, 1) #pula fx
+            f.seek(n*n*8, 1) #pula fy
 
         #Gráfico da vorticidade no meio, evoluindo no tempo
         plotPointEvolution(tvector, vortc, sideTextVorticty, "vort" + directory + ".png")

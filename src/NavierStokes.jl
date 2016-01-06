@@ -211,4 +211,4 @@ function simpson(f, n)
     return s * h / 3
 end
 
-end
+end #module
