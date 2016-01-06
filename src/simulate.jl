@@ -8,7 +8,11 @@ if nprocs() - 1 < CPU_CORES
 end
 
 println("nprocs() = ", nprocs())
-
+@everywhere push!(LOAD_PATH,".")
+#Eu chamo import só no processo atual para só ele compilar as bibliotecas
+import Transient
+import NavierTypes
+#Chamo em todos os processos para eles copiarem a biblioteca pré-compilada
 @everywhere using Transient
 @everywhere using NavierTypes
 
@@ -26,16 +30,16 @@ fps = 2
 
 @everywhere main = homedir()*"/Documents/simulacao"
 #Create working folder
-@everywhere wfolder = main * "/shliomis" #working folder
+@everywhere wfolder = main * "/sem-magnetismo" #working folder
 try rm(wfolder, recursive=true) end
 mkdir(wfolder)
 
-@everywhere function simulation(n, dt, n, Re, c1, Cpm, alpha, a, b, t, fps, save, convective=false)
+@everywhere function simulation(n, dt, Re, c1, Cpm, alpha, a, b, t, fps, save, convective=false)
   # println("pwd() = ", pwd())
-  fname = "Re" * string(int(Re)) * "N" * string(int(n-2))
+  fname = "Re" * string(Int(Re)) * "N" * string(Int(n-2))
   fname *= "Pe" * string(round(1/c1, 4))
   fname *= "α" * string(round(alpha, 4))
-  fname *= "Cpm" * string(int(Cpm))
+  fname *= "Cpm" * string(Int(Cpm))
   fname *= "T" * string(t)
   fname *= "fps" * string(fps)
 
@@ -63,37 +67,38 @@ Re = [50.0]
 Pe = [5.0]
 alpha = [50.0]
 Cpm = [10.0]
-N = [100, 200, 250];
+N = [102, 202, 252]
 
 i = 0
 
 dt = getDt(252, 50, divFactor) #fixando dt
 
 @sync begin
+  println("Iniciando simulação...")
   #Simulações para casos não magnéticos
-  for nn in N
+  for n in N
     # dt = getDt(n, R, divFactor)
-    @spawnat int(i % CPU_CORES + 2) begin
-      simulation(n, dt, nn, R, 1, 0, 0, a, b, 10.0, fps, save, false)
-    end #end spawnat
-    i = i + 1
+    @spawnat Int(i % CPU_CORES + 2) begin
+      simulation(n, dt, 50, 1, 0, 0, a, b, 10.0, fps, save, false)
+  end #end spawnat
+  i = i + 1
  end #end for R in Re
-
- #Simulações para casos magnéticos com e sem termo convectivo
-  for R in Re
-    for P in Pe
-      for α in alpha
-        for C in Cpm
-          for nn in N
-            # dt = getDt(n, R, divFactor)
-            @spawnat int(i % CPU_CORES + 2) begin
-              simulation(n, dt, nn, R, 1/P, C, α, a, b, t, fps, save, false)
-              simulation(n, dt, nn, R, 1/P, C, α, a, b, t, fps, save, true)
-            end #end spawnat
-            i = i + 1
-          end #end for nn in N
-        end #end for C in Cpm
-      end #end for α in alpha
-    end #end for P in Pe
-  end #end for R in Re
+#
+# #  #Simulações para casos magnéticos com e sem termo convectivo
+# #   for R in Re
+# #     for P in Pe
+# #       for α in alpha
+# #         for C in Cpm
+# #           for nn in N
+# #             # dt = getDt(n, R, divFactor)
+# #             @spawnat Int(i % CPU_CORES + 2) begin
+# #               simulation(nn, dt,R, 1/P, C, α, a, b, t, fps, save, false)
+# #               simulation(nn, dt, R, 1/P, C, α, a, b, t, fps, save, true)
+# #             end #end spawnat
+# #             i = i + 1
+# #           end #end for nn in N
+# #         end #end for C in Cpm
+# #       end #end for α in alpha
+# #     end #end for P in Pe
+# #   end #end for R in Re
 end #end @sync begin

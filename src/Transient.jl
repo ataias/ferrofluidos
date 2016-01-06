@@ -41,13 +41,13 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
     println(" a\t= ", a)
     println(" b\t= ", b)
     println(" c1\t= ", c1)
-    println(strftime(time()), "\n")
+    println(Libc.strftime(time()), "\n")
 
 
-	steps = integer(t/dt)
-	c = integer(n/2); #center, non-staggered grid
+	steps = round(Int,t/dt)
+	c = round(Int,n/2); #center, non-staggered grid
 
-    NS = createNSObject(n, Re)
+  NS = createNSObject(n, float(Re))
 
 	for i in -1:n-2
 		NS.uB[i+2] = 0*(sinpi(i*dx))^2 #inicialmente, repouso
@@ -68,8 +68,8 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
 	vn = zeros(n-2,n-2)+1e-15
 	pn = zeros(n-2,n-2)+1e-15
 
-	numberFrames = integer(fps*t)
-	timeToSave = integer(steps/numberFrames)
+	numberFrames = round(Int,fps*t)
+	timeToSave = round(Int,steps/numberFrames)
 
     #Variáveis para a parte magnética
     phi = zeros(n,n);
@@ -105,7 +105,7 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
     angles = zeros(n-2, n-2)+1e-15;
     fxn = zeros(n-2, n-2)+1e-15
     fyn = zeros(n-2, n-2)+1e-15
-    
+
     #Salva valores das matrizes em t = 0
     if(save)
         write(file, un); write(file, vn);
