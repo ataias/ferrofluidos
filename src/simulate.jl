@@ -13,7 +13,7 @@ println("nprocs() = ", nprocs())
 @everywhere using NavierTypes
 
 t = 30.0
-n = 102
+n = 252
 divFactor = 1.25
 
 save = true;
@@ -30,7 +30,7 @@ fps = 2
 try rm(wfolder, recursive=true) end
 mkdir(wfolder)
 
-@everywhere function simulation(n, dt, Re, c1, Cpm, alpha, a, b, t, fps, save, convective=false)
+@everywhere function simulation(n, dt, n, Re, c1, Cpm, alpha, a, b, t, fps, save, convective=false)
   # println("pwd() = ", pwd())
   fname = "Re" * string(int(Re)) * "N" * string(int(n-2))
   fname *= "Pe" * string(round(1/c1, 4))
@@ -59,34 +59,39 @@ mkdir(wfolder)
   close(f)
 end #end simulate function
 
-Re = [1.0, 10.0, 50.0]
-Pe = [0.1, 5.0]
-alpha = [0.1, 50.0]
-Cpm = [1.0, 10.0]
+Re = [50.0]
+Pe = [5.0]
+alpha = [50.0]
+Cpm = [10.0]
+N = [100, 200, 250];
 
 i = 0
 
+dt = getDt(252, 50, divFactor) #fixando dt
+
 @sync begin
   #Simulações para casos não magnéticos
-  for R in Re
-    dt = getDt(n, R, divFactor)
+  for nn in N
+    # dt = getDt(n, R, divFactor)
     @spawnat int(i % CPU_CORES + 2) begin
-      simulation(n, dt, R, 1, 0, 0, a, b, 10.0, fps, save, false)
+      simulation(n, dt, nn, R, 1, 0, 0, a, b, 10.0, fps, save, false)
     end #end spawnat
     i = i + 1
  end #end for R in Re
 
- #Simulações para casos magnéticos sem termo convectivo
+ #Simulações para casos magnéticos com e sem termo convectivo
   for R in Re
     for P in Pe
       for α in alpha
         for C in Cpm
-          dt = getDt(n, R, divFactor)
-          @spawnat int(i % CPU_CORES + 2) begin
-            simulation(n, dt, R, 1/P, C, α, a, b, t, fps, save, false)
-            simulation(n, dt, R, 1/P, C, α, a, b, t, fps, save, true)
-          end #end spawnat
-          i = i + 1
+          for nn in N
+            # dt = getDt(n, R, divFactor)
+            @spawnat int(i % CPU_CORES + 2) begin
+              simulation(n, dt, nn, R, 1/P, C, α, a, b, t, fps, save, false)
+              simulation(n, dt, nn, R, 1/P, C, α, a, b, t, fps, save, true)
+            end #end spawnat
+            i = i + 1
+          end #end for nn in N
         end #end for C in Cpm
       end #end for α in alpha
     end #end for P in Pe
