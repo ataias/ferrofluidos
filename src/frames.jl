@@ -1,3 +1,4 @@
+using ArgParse
 using Transient
 using NavierTypes
 
@@ -13,8 +14,8 @@ using NavierTypes
 #b - ARGS[9] é o deslocamento em y da posição central do campo magnético
 # alpha - ARGS[10] é relacionado com a intensidade do campo magnético
 #Exemplo:
-# 		julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 -0.05 3
-# (nomag)     julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 -0.05 3
+# 		julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 -0.05 3 10
+# (nomag)     julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 -0.05 3 10
 # A saída padrão é salva num arquivo txt nomeado de acordo com Re e n
 
 
@@ -30,7 +31,7 @@ using NavierTypes
 #o python não pede para dizer o 2 em "52" por exemplo, posso editar isso aqui também
 #fiz algumas modificações aí
 
-n = int(ARGS[1]);
+n = parse(Int, ARGS[1]);
 @assert(n > 10, "Arg 1: Use um tamanho de malha maior.");
 
 t = float(ARGS[2]);
@@ -56,7 +57,7 @@ dt = getDt(n, Re, float(ARGS[4]));
 c1 = float(ARGS[5]);
 Cpm = float(ARGS[6]);
 
-save = bool(int(ARGS[7]));
+save = parse(Int, ARGS[7]) != 0;
 
 a = float(ARGS[8]);
 b = float(ARGS[9]);
@@ -67,9 +68,16 @@ end
 
 alpha = float(ARGS[10]);
 
+fps = parse(Int, ARGS[11]);
 
-filename = "Re" * string(int(Re)) * "N" * string(n-2) *".txt"
+basefilename = "Re" * string(round(Int,Re)) * "N" * string(n-2)
+
+filename = basefilename * ".txt"
+datafilename = basefilename *".h5"
+
 file = open(filename, "w")
+
 redirect_stdout(file)
-@time transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1)
+@time transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, datafilename)
+
 close(file)

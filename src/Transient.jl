@@ -1,5 +1,6 @@
 module Transient
 
+using HDF5
 using NavierStokes
 using NavierTypes
 using Magnetism
@@ -19,33 +20,60 @@ function factor(i)
     end
 end
 
-#transient
-#simula t tempos adimensionais
-#retorna o valor em cada tempo para o 0.5, 0.5
-#resolve equações para um dado n e Re
-#t is time, in dimensioless units, of physical simulation
-#fps is frames per second
-#convec é igual a 1.0 ou 0.0 e é multiplicado pelo termo convectivo para suprimí-lo
-# ou permitir que seja considerado
+macro saveFrames(index, dt)
+  return quote
+    frames["velocity/x/" * string($index)] = un
+    frames["velocity/y/" * string($index)] = vn
+    frames["pressure/" * string($index)] = pn
+    frames["H/x/" * string($index)] = Hxn
+    frames["H/y/" * string($index)] = Hyn
+    frames["M/x/" * string($index)] = Mxn
+    frames["M/y/" * string($index)] = Myn
+    frames["phi/" * string($index)] = phin
+    frames["angles/" * string($index)] = angles
+    frames["F/x/" * string($index)] = fxn
+    frames["F/y/" * string($index)] = fyn
+    frames["t/" * string($index)] = float($index * dt)
+  end
+end
+
+"""
+A função `transient(...)` realiza a simulação do sistema do tempo zero até o tempo adimensional `t`.
+`n` é o tamanho da malha
+`dt` é o passo de tempo
+`Re` é o número de Reynolds
+`Cpm` é o ...
+`$\alpha$` é um parâmetro parte da definição de $\mathbf{M}_0 = M_S L(\alpha|\mathbf{H}|)\hat{e}_H$, sendo $L$ a função de Langevin e $\hat{e}_H$ um vetor unitário na direção do campo magnético aplicado
+`a` e `b` são a posição `x` e `y` to centro do campo magnético aplicado
+`save` é uma variável booleana que indica que um arquivo com os dados de simulação deve ser salvo. Caso falso, só um arquivo com dados da evolução da magnetização é salvo, mas ele não contém as matrizes da evolução temporal completa para posterior análise
+`c1` é definido por $\frac{L}{\tau U}$, sendo $\tau$ o tempo de relaxação rotacional de movimento browniano. Da adimensionalização, tem-se que L é o tamanho característico e U a velocidade característica.
+`fps` quer dizer frames per second. O dt pode ser bem pequeno e pode-se não desejar salvar todos os frames, daí se escolhe uma quantidade específica por segundo adimensional para se salvar.
+`filename` é o nome do arquivo hdf5 no qual serão salvos os dados de simulação
+`convec` é usado para indicar se o termo convectivo deve ser considerado. Deve ser igual a 1.0 ou 0.0.
+"""
 function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, convec=0.0)
-    dx = 1/(n-2)
 
-    println("Dados sobre simulação: ")
-    println(" n\t= ", n)
-    println(" dx\t= ", dx)
-    println(" t\t= ", t)
-    println(" Re\t= ", Re)
-    println(" dt\t= ", dt)
-    println(" Cpm\t= ", Cpm)
-    println(" α\t= ", alpha)
-    println(" a\t= ", a)
-    println(" b\t= ", b)
-    println(" c1\t= ", c1)
-    println(Libc.strftime(time()), "\n")
+  dx = 1/(n-2)
 
+  println("Dados sobre simulação: ")
+  println(" n\t= ", n)
+  println(" dx\t= ", dx)
+  println(" t\t= ", t)
+  println(" Re\t= ", Re)
+  println(" dt\t= ", dt)
+  println(" Cpm\t= ", Cpm)
+  println(" α\t= ", alpha)
+  println(" a\t= ", a)
+  println(" b\t= ", b)
+  println(" c1\t= ", c1)
+
+  "Instante de início da simulação"
+  println(Libc.strftime(time()), "\n")
 
 	steps = round(Int,t/dt)
-	c = round(Int,n/2); #center, non-staggered grid
+
+  "Índice que contém o ponto central da malha não escalonada que será impresso na tela"
+	c = round(Int,n/2);
 
   NS = createNSObject(n, float(Re))
 
@@ -60,10 +88,6 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
 	#fx = zeros(n,n)
 	#fy = zeros(n,n)
 
-    if(save)
-	   file = open(filename, "w")
-    end
-
 	un = zeros(n-2,n-2)+1e-15 #malha não escalonada
 	vn = zeros(n-2,n-2)+1e-15
 	pn = zeros(n-2,n-2)+1e-15
@@ -72,19 +96,18 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
 	timeToSave = round(Int,steps/numberFrames)
 
     #Variáveis para a parte magnética
-    phi = zeros(n,n);
-    Mx = zeros(n,n); Mx_old = zeros(n,n);
-    My = zeros(n,n); My_old = zeros(n,n);
-    left = zeros(n);
-    right = zeros(n);
-    upper = zeros(n);
-    lower = zeros(n);
+    phi = zeros(n,n)
+    Mx = zeros(n,n)
+    Mx_old = zeros(n,n)
+    My = zeros(n,n)
+    My_old = zeros(n,n);
+    left = zeros(n)
+    right = zeros(n)
+    upper = zeros(n)
+    lower = zeros(n)
     for i in -1:n-2
-      x = (i+0.5)*dx;
-#      upper[i+2] = 1
-#      left[i+2] = x
-#      right[i+2] = x
-       upper[i+2] = sinpi(x)^2
+      x = (i+0.5)*dx
+     upper[i+2] = sinpi(x)^2
     end
     Hx = zeros(n,n)
     Hy = zeros(n,n)
@@ -107,15 +130,17 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
     fyn = zeros(n-2, n-2)+1e-15
 
     #Salva valores das matrizes em t = 0
+
     if(save)
-        write(file, un); write(file, vn);
-        write(file, pn);
-        write(file, Hxn); write(file, Hyn);
-        write(file, Mxn); write(file, Myn);
-        write(file, phin);
-        write(file, angles);
-        write(file, fxn)
-        write(file, fyn)
+     #In Julia, these variables will be in the scope out of this if clause
+     file = h5open(filename, "w")
+     frames = g_create(file, "frames")
+     attrs(frames)["Description"] = "Frames with time series of several variables. Naming follows convention of 'variable name/direction x or y if applicable/frameNumber'. Notice direction does not apply to pressure, angles and potential field."
+     frameNumber = 0
+    end
+
+    if(save)
+        @saveFrames(0, dt)
     end
 
     #Magnetização em regime é constante e só depende de H aplicado
@@ -168,14 +193,7 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
       staggered2not!(NS.f.x, NS.f.y,       fxn, fyn,       n)
       Angle!(Hxn, Hyn, Mxn, Myn, angles, n-2)
       if(save)
-        write(file, un); write(file, vn);
-        write(file, pn);
-        write(file, Hxn); write(file, Hyn);
-        write(file, Mxn); write(file, Myn);
-        write(file, phin);
-        write(file, angles);
-        write(file, fxn);
-        write(file, fyn);
+        @saveFrames(i, dt)
       end #if(save)
 
 			println("t = ", i*dt)
@@ -185,7 +203,7 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
       #Este cálculo de vorticidade só é válido caso n seja PAR!
 			vortc =  ((vn[c+1,c]-vn[c-1,c]) - (un[c,c+1]-un[c,c-1]) )/(2*dx)
 			println("  ω [0.5,0.5]\t= ", vortc)
-            println("  Pressure values in range\t [", minimum(pn), ", ", maximum(pn), "]")
+      println("  Pressure values in range\t [", minimum(pn), ", ", maximum(pn), "]")
 			tau = zeros(n-2)
 			for i in 2:n-1
 				tau[i-1] = (1/Re)*((NS.v.x[i,n]-NS.v.x[i,n-1])/dx)
