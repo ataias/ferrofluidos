@@ -95,75 +95,75 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
 	numberFrames = round(Int,fps*t)
 	timeToSave = round(Int,steps/numberFrames)
 
-    #Variáveis para a parte magnética
-    phi = zeros(n,n)
-    Mx = zeros(n,n)
-    Mx_old = zeros(n,n)
-    My = zeros(n,n)
-    My_old = zeros(n,n);
-    left = zeros(n)
-    right = zeros(n)
-    upper = zeros(n)
-    lower = zeros(n)
-    for i in -1:n-2
-      x = (i+0.5)*dx
-     upper[i+2] = sinpi(x)^2
+  #Variáveis para a parte magnética
+  phi = zeros(n,n)
+  Mx = zeros(n,n)
+  Mx_old = zeros(n,n)
+  My = zeros(n,n)
+  My_old = zeros(n,n);
+  left = zeros(n)
+  right = zeros(n)
+  upper = zeros(n)
+  lower = zeros(n)
+  for i in -1:n-2
+    x = (i+0.5)*dx
+   upper[i+2] = sinpi(x)^2
+  end
+  Hx = zeros(n,n)
+  Hy = zeros(n,n)
+
+  #non-staggered forms
+  Hxn = zeros(n-2, n-2)+1e-15
+  Hyn = zeros(n-2, n-2)+1e-15
+  Mxn = zeros(n-2, n-2)+1e-15
+  Myn = zeros(n-2, n-2)+1e-15
+  phin = zeros(n-2, n-2)+1e-15
+  A = getANeumannSparse(n);
+
+  #gamma foi acoplado dentro do alpha que é usado para calcular M0
+  fHx = (x,y) ->  1/(2*pi)*(y-b)/((x-a)^2+(y-b)^2)
+  fHy = (x,y) -> -1/(2*pi)*(x-a)/((x-a)^2+(y-b)^2)
+
+  fact = 0
+  angles = zeros(n-2, n-2)+1e-15;
+  fxn = zeros(n-2, n-2)+1e-15
+  fyn = zeros(n-2, n-2)+1e-15
+
+  #Salva valores das matrizes em t = 0
+
+  if(save)
+   #In Julia, these variables will be in the scope out of this if clause
+   file = h5open(filename, "w")
+   frames = g_create(file, "frames")
+   attrs(frames)["Description"] = "Frames with time series of several variables. Naming follows convention of 'variable name/direction x or y if applicable/frameNumber'. Notice direction does not apply to pressure, angles and potential field."
+   frameNumber = 0
+  end
+
+  if(save)
+      @saveFrames(0, dt)
+  end
+
+  #Magnetização em regime é constante e só depende de H aplicado
+  #pode ser calculada só uma vez
+  Mx0 = zeros(n,n)
+  for i in 2:n #
+    for j in 2:n-1
+      x = (i-2)*dx
+      y = (j-2)*dx + dx/2
+      mH = sqrt(fHx(x,y)^2 + fHy(x,y)^2) #módulo de H
+      Mx0[i,j] = (coth(alpha*mH) - 1/(alpha*mH)) * fHx(x,y)/mH
     end
-    Hx = zeros(n,n)
-    Hy = zeros(n,n)
+  end
 
-    #non-staggered forms
-    Hxn = zeros(n-2, n-2)+1e-15
-    Hyn = zeros(n-2, n-2)+1e-15
-    Mxn = zeros(n-2, n-2)+1e-15
-    Myn = zeros(n-2, n-2)+1e-15
-    phin = zeros(n-2, n-2)+1e-15
-    A = getANeumannSparse(n);
-
-    #gamma foi acoplado dentro do alpha que é usado para calcular M0
-    fHx = (x,y) ->  1/(2*pi)*(y-b)/((x-a)^2+(y-b)^2)
-    fHy = (x,y) -> -1/(2*pi)*(x-a)/((x-a)^2+(y-b)^2)
-
-    fact = 0
-    angles = zeros(n-2, n-2)+1e-15;
-    fxn = zeros(n-2, n-2)+1e-15
-    fyn = zeros(n-2, n-2)+1e-15
-
-    #Salva valores das matrizes em t = 0
-
-    if(save)
-     #In Julia, these variables will be in the scope out of this if clause
-     file = h5open(filename, "w")
-     frames = g_create(file, "frames")
-     attrs(frames)["Description"] = "Frames with time series of several variables. Naming follows convention of 'variable name/direction x or y if applicable/frameNumber'. Notice direction does not apply to pressure, angles and potential field."
-     frameNumber = 0
+  My0 = zeros(n,n)
+  for i in 2:n-1
+    for j in 2:n
+      x = (i-2)*dx + dx/2
+      y = (j-2)*dx
+      mH = sqrt(fHx(x,y)^2 + fHy(x,y)^2) #módulo de H
+      My0[i,j] = (coth(alpha*mH) - 1/(alpha*mH)) * fHy(x,y)/mH
     end
-
-    if(save)
-        @saveFrames(0, dt)
-    end
-
-    #Magnetização em regime é constante e só depende de H aplicado
-    #pode ser calculada só uma vez
-    Mx0 = zeros(n,n)
-    for i in 2:n #
-      for j in 2:n-1
-        x = (i-2)*dx
-        y = (j-2)*dx + dx/2
-        mH = sqrt(fHx(x,y)^2 + fHy(x,y)^2) #módulo de H
-        Mx0[i,j] = (coth(alpha*mH) - 1/(alpha*mH)) * fHx(x,y)/mH
-      end
-    end
-
-    My0 = zeros(n,n)
-    for i in 2:n-1
-      for j in 2:n
-        x = (i-2)*dx + dx/2
-        y = (j-2)*dx
-        mH = sqrt(fHx(x,y)^2 + fHy(x,y)^2) #módulo de H
-        My0[i,j] = (coth(alpha*mH) - 1/(alpha*mH)) * fHy(x,y)/mH
-      end
-    end
+  end
 
   #Variáveis auxiliares
   #Termo de convecção magnética
