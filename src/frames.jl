@@ -2,82 +2,118 @@ using ArgParse
 using Transient
 using NavierTypes
 
-#modo de usar
-#n   - ARGS[1] é o tamanho da matriz escalonada
-#t   - ARGS[2] é o tempo de simulação, em unidades adimensionais
-#Re  - ARGS[3] é o número de Reynolds
-#divFactor  - ARGS[4] dividir o passo de tempo, deve ser maior do que 1
-#c1 - ARGS[5]
-#Cpm - ARGS[6]
-#save - ARGS[7] se for 1, salva um arquivo com as matrizes evoluindo no tempo
-#a - ARGS[8] é o deslocamento em x da posição central do campo magnético
-#b - ARGS[9] é o deslocamento em y da posição central do campo magnético
-# alpha - ARGS[10] é relacionado com a intensidade do campo magnético
 #Exemplo:
-# 		julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 -0.05 3 10
-# (nomag)     julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 -0.05 3 10
-# A saída padrão é salva num arquivo txt nomeado de acordo com Re e n
+# julia frames.jl --help para mostrar ajudar
+# 		julia frames.jl 50 10.0 2.5 0.5 0.8 0.8 0.0 -0.05
 
+#Antes, era necessário entrar com "52" para um tamanho de malha de 50, por conta de 2 colunas/linhas extras da malha escalonada
+#Modifiquei isso, mas sem modificar todo o resto do código então precisa de compensação neste
+EXTRA_STAGGERED_GRID = 2
 
-#TODO
-#Algo que me incomoda aqui é que há algumas coisas que podem levar a erros
-# e que não são verificadas
-#divFactor deve ser maior que um, mas não uso nenhum "assert" pra ver isso,
-# ou um if mesmo
-# mesmo coisa com o tempo de simulação, deve ser positivo
-#a e b devem ser números que indiquem posições fora da fronteira. A singularidade
-# passando por dentro do escoamento é algo que não funciona direito
+function parse_commandline()
+    s = ArgParseSettings(description = "Este programa simula as equações de Navier Stokes em uma cavidade sob ação de um campo magnético aplicado.",
+                         version = "1.0",
+                        add_version = true)
 
-#o python não pede para dizer o 2 em "52" por exemplo, posso editar isso aqui também
-#fiz algumas modificações aí
+    @add_arg_table s begin
+        "--divFactor", "-d"
+          help = "Fator de divisão para obter dt, deve ser maior que 1.0"
+          arg_type = Float64
+          default = 1.25
 
-n = parse(Int, ARGS[1]);
-@assert(n > 10, "Arg 1: Use um tamanho de malha maior.");
+        "--fps", "-f"
+          help = "Número de frames por segundo que devem ser salvos"
+          arg_type = Int
+          default = 30
 
-t = float(ARGS[2]);
-if t <= 0
-   println("Arg 2: Tempo de simulação deve ser maior que zero.")
-   exit()
+        "--save"
+          help = "Salvar dados da simulação em arquivo HDF5"
+          action = :store_true
+
+        "n"
+          help = "Tamanho da malha, deve ser maior que o número de Reynolds da simulação"
+          arg_type = Int
+          required = true
+
+        "Re"
+          help = "Número de Reynolds"
+          arg_type = Float64
+          required = true
+
+        "t"
+          help = "Tempo total de simulação, deve ser maior que 0. A unidade é adimensional."
+          arg_type = Float64
+          required = true
+
+        "c1"
+          help = "Constante relacionada a 1/tau adimensionalizado"
+          arg_type = Float64
+          required = true
+
+        "Cpm"
+          help = "Variável adimensional que influencia diretamente na magnitude da força magnética."
+          arg_type = Float64
+          required = true
+
+        "alpha"
+          help = "Constante relacionada ao campo magnético inicial obtido com a função de Langevin. É relacionado com a intensidade do campo magnético."
+          arg_type = Float64
+          required = true
+
+        "a"
+          help = "Posição x do centro do campo magnético aplicado, deve ser menor que 0 ou maior que 1 para estar fora do quadrado unitário"
+          arg_type = Float64
+          required = true
+
+        "b"
+          help = "Posição y do centro do campo magnético aplicado, deve ser menor que 0 ou maior que 1 para estar fora do quadrado unitário"
+          arg_type = Float64
+          required = true
+
+    end
+
+    return parse_args(s)
 end
 
-Re = float(ARGS[3]);
-if Re <= 0
-  println("Arg 3: Re deve ser maior que zero.")
-  exit()
+function assertParsed(parsed_args)
+  @assert(parsed_args["n"] > 10, "n: Use um tamanho de malha maior.")
+  @assert(parsed_args["t"] > 0, "t: Tempo de simulação deve ser maior que zero.")
+  @assert(parsed_args["Re"] > 0, "Re deve ser maior que zero.")
+  @assert(parsed_args["divFactor"] > 1, "Fator de divisão deve ser maior que 1.")
+  @assert(!((0 < parsed_args["b"] < 1) && (0 < parsed_args["a"] < 1)), "Centro do campo magnético deve ser definido fora da cavidade.")
+  @assert(parsed_args["fps"] > 0, "fps deve ser maior que 0. Caso não queira salvar, não configure ative a opção --save")
+  #TODO criar asserts para c1, Cpm, alpha
 end
 
-divFactor = float(ARGS[4]);
-if divFactor <= 1
-  println("Arg 4: Fator de divisão deve ser maior que 1.")
-  exit()
+function main()
+
+  #Command line parsing
+  parsed_args = parse_commandline()
+  # assertParsed(parsed_args)
+
+  n = parsed_args["n"] + EXTRA_STAGGERED_GRID
+
+  #Name of files that will be saved
+  basefilename = "Re" * string(round(Int,parsed_args["Re"])) * "N" * string(n-2)
+  filename = basefilename * ".txt"
+  datafilename = basefilename *".h5"
+
+  file = open(filename, "w")
+  redirect_stdout(file)
+
+  @time transient(n,
+                  getDt(n, parsed_args["Re"], parsed_args["divFactor"]),
+                  parsed_args["Re"],
+                  parsed_args["t"],
+                  parsed_args["Cpm"],
+                  parsed_args["alpha"],
+                  parsed_args["a"],
+                  parsed_args["b"],
+                  parsed_args["save"],
+                  parsed_args["c1"],
+                  parsed_args["fps"],
+                  datafilename)
+  close(file)
 end
 
-dt = getDt(n, Re, float(ARGS[4]));
-
-c1 = float(ARGS[5]);
-Cpm = float(ARGS[6]);
-
-save = parse(Int, ARGS[7]) != 0;
-
-a = float(ARGS[8]);
-b = float(ARGS[9]);
-if (0 < b < 1) && (0 < a < 1)
-  println("Arg 8 'a' e 9 'b': Centro do campo magnético deve ser definido fora da cavidade.")
-  exit()
-end
-
-alpha = float(ARGS[10]);
-
-fps = parse(Int, ARGS[11]);
-
-basefilename = "Re" * string(round(Int,Re)) * "N" * string(n-2)
-
-filename = basefilename * ".txt"
-datafilename = basefilename *".h5"
-
-file = open(filename, "w")
-
-redirect_stdout(file)
-@time transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, datafilename)
-
-close(file)
+main()

@@ -43,10 +43,10 @@ A função `transient(...)` realiza a simulação do sistema do tempo zero até 
 `dt` é o passo de tempo
 `Re` é o número de Reynolds
 `Cpm` é o ...
-`$\alpha$` é um parâmetro parte da definição de $\mathbf{M}_0 = M_S L(\alpha|\mathbf{H}|)\hat{e}_H$, sendo $L$ a função de Langevin e $\hat{e}_H$ um vetor unitário na direção do campo magnético aplicado
+`\alpha` é um parâmetro parte da definição de \mathbf{M}_0 = M_S L(\alpha|\mathbf{H}|)\hat{e}_H, sendo L a função de Langevin e \hat{e}_H um vetor unitário na direção do campo magnético aplicado
 `a` e `b` são a posição `x` e `y` to centro do campo magnético aplicado
 `save` é uma variável booleana que indica que um arquivo com os dados de simulação deve ser salvo. Caso falso, só um arquivo com dados da evolução da magnetização é salvo, mas ele não contém as matrizes da evolução temporal completa para posterior análise
-`c1` é definido por $\frac{L}{\tau U}$, sendo $\tau$ o tempo de relaxação rotacional de movimento browniano. Da adimensionalização, tem-se que L é o tamanho característico e U a velocidade característica.
+`c1` é definido por L/(\tau U), sendo \tau o tempo de relaxação rotacional de movimento browniano. Da adimensionalização, tem-se que L é o tamanho característico e U a velocidade característica.
 `fps` quer dizer frames per second. O dt pode ser bem pequeno e pode-se não desejar salvar todos os frames, daí se escolhe uma quantidade específica por segundo adimensional para se salvar.
 `filename` é o nome do arquivo hdf5 no qual serão salvos os dados de simulação
 `convec` é usado para indicar se o termo convectivo deve ser considerado. Deve ser igual a 1.0 ou 0.0.
