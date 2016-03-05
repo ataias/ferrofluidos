@@ -63,12 +63,12 @@ function parse_commandline()
         "a"
           help = "Posição x do centro do campo magnético aplicado, deve ser menor que 0 ou maior que 1 para estar fora do quadrado unitário"
           arg_type = Float64
-          required = true
+          default = -0.2
 
         "b"
           help = "Posição y do centro do campo magnético aplicado, deve ser menor que 0 ou maior que 1 para estar fora do quadrado unitário"
           arg_type = Float64
-          required = true
+          default = -0.2
 
     end
 
@@ -76,7 +76,7 @@ function parse_commandline()
 end
 
 function assertParsed(parsed_args)
-  @assert(parsed_args["n"] > 10, "n: Use um tamanho de malha maior.")
+  @assert(parsed_args["n"] > 10 && parsed_args["n"] > parsed_args["Re"], "n: Use um tamanho de malha maior.")
   @assert(parsed_args["t"] > 0, "t: Tempo de simulação deve ser maior que zero.")
   @assert(parsed_args["Re"] > 0, "Re deve ser maior que zero.")
   @assert(parsed_args["divFactor"] > 1, "Fator de divisão deve ser maior que 1.")

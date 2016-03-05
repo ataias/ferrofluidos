@@ -8,22 +8,22 @@ import sys
 #Modules to list files of current module and remove filename extensions as needed
 import glob, os, re
 
-def readMatrix(array, file, n):
-    for i in range(n):
-    	for j in range(n):
-            array[i,j] = struct.unpack('d',file.read(8))[0]
-
-#file "f"
-def batchRead(u, v, p, Hx, Hy, Mx, My, phi, angles, n, f):
-    readMatrix(u, f, n)
-    readMatrix(v, f, n)
-    readMatrix(p, f, n)
-    readMatrix(Hx, f, n)
-    readMatrix(Hy, f, n)
-    readMatrix(Mx, f, n)
-    readMatrix(My, f, n)
-    readMatrix(phi, f, n)
-    readMatrix(angles, f, n)
+# def readMatrix(array, file, n):
+#     for i in range(n):
+#     	for j in range(n):
+#             array[i,j] = struct.unpack('d',file.read(8))[0]
+#
+# #file "f"
+# def batchRead(u, v, p, Hx, Hy, Mx, My, phi, angles, n, f):
+#     readMatrix(u, f, n)
+#     readMatrix(v, f, n)
+#     readMatrix(p, f, n)
+#     readMatrix(Hx, f, n)
+#     readMatrix(Hy, f, n)
+#     readMatrix(Mx, f, n)
+#     readMatrix(My, f, n)
+#     readMatrix(phi, f, n)
+#     readMatrix(angles, f, n)
 
 def plotStreamFrame(u, v, x, y, n, sideText, time, filename):
     #use LaTeX, choose nice some looking fonts and tweak some settings

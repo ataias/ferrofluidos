@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import h5py
 import glob, os, re, shutil
 from vplot import *
 from numpy import *
@@ -8,32 +9,23 @@ import math
 
 #Este arquivo cria todas as imagens para os arquivos .dat na pasta na qual ele for executado
 
+#f is an hdf5 file
+def printFileData(info):
+    print("Date: ", info['date'].value)
+    print("Re = ", info['Re'].value)
+    print("n = ", info['n'].value)
+    print("Pe = ", info['Pe'].value)
+    print("alpha = ", info['alpha'].value)
+    print("Cpm = ", info['Cpm'].value)
+    print("t = ", info['t'].value)
+    print("fps = ", info['fps'].value)
+
+    print()
+
 if __name__ == "__main__":
 
-    for filename in glob.glob("*.dat"):
+    for filename in glob.glob("*.h5"):
         start = tt.time()
-        #Nome do arquivo tem parâmetros chave para código
-        parameters = re.findall(r"[-+]?\d*\.\d+|\d+", filename)
-
-        Re = float(parameters[0])
-        n = int(parameters[1])
-        Pe = float(parameters[2])
-        alpha = float(parameters[3])
-        Cpm = float(parameters[4])
-        t = float(parameters[5])
-        fps = int(parameters[6])
-
-        print("Arquivo: ", filename)
-        print("Re = ", Re)
-        print("n = ", n)
-        print("Pe = ", Pe)
-        print("alpha = ", alpha)
-        print("Cpm = ", Cpm)
-        print("t = ", t)
-        print("fps = ", fps)
-
-        print()
-
         #Criar pasta
         directory = os.path.splitext(filename)[0]
         if not os.path.exists(directory):
@@ -47,7 +39,20 @@ if __name__ == "__main__":
         os.chdir(directory)
 
         #Abrir arquivo
-        f = open(filename, 'rb')
+        # f = open(filename, 'rb')
+        f = h5py.File(filename, "r")
+
+        info = f.get("info")
+        frames = f.get("frames")
+        printFileData(info)
+
+        Re = info['Re'].value
+        n = info['n'].value
+        Pe = info['Pe'].value
+        alpha = info['alpha'].value
+        Cpm = info['Cpm'].value
+        t = info['t'].value
+        fps = info['fps'].value
 
         #Parâmetros derivados
         dx = 1.0/n
@@ -134,8 +139,8 @@ if __name__ == "__main__":
             #1 = SEEK_CUR -> offset relative to current position
 
             #Criar gráfico para velocidades
-            readMatrix(u, f, n)
-            readMatrix(v, f, n)
+            u = frames['velocity/x/' + str(i)].value
+            v = frames['velocity/y/' + str(i)].value
             plotStreamFrame(u, v, x, y, n, sideTextV, time, "v" + str(i).zfill(4) + ".png")
             print("Criada imagem para campo de velocidades em t = ", time)
             # -------------------------------
@@ -151,15 +156,15 @@ if __name__ == "__main__":
             vortc[i] = ((v[c+1,c]-v[c-1,c]) - (u[c,c+1]-u[c,c-1]) )/(2*dx)
             # -------------------------------
 
-            f.seek(n*n*8*1, 1) #pula pressão p
-
-            readMatrix(Hx, f, n)
-            readMatrix(Hy, f, n)
+            Hx = frames['H/x/' + str(i)].value
+            Hy = frames['H/y/' + str(i)].value
             plotStreamFrame(Hx, Hy, x, y, n, sideTextH, time, "H" + str(i).zfill(4) + ".png")
             print("Criada imagem para campo H em t = ", time)
 
-            readMatrix(Mx, f, n)
-            readMatrix(My, f, n)
+            # readMatrix(Mx, f, n)
+            Mx = frames['M/x/' + str(i)].value
+            # readMatrix(My, f, n)
+            My = frames['M/y/' + str(i)].value
             plotStreamFrame(Mx, My, x, y, n, sideTextM, time, "M" + str(i).zfill(4) + ".png")
             print("Criada imagem para campo M em t = ", time)
 
@@ -167,11 +172,6 @@ if __name__ == "__main__":
             modM[i] = sqrt((Mx[c,c])**2 + (My[c,c])**2)
             phaseM[i] = math.degrees(math.atan2(My[c,c], Mx[c,c]))
             phaseDiffMH[i] = math.degrees(math.atan2(Hy[c,c], Hx[c,c])) - phaseM[i]
-
-            f.seek(n*n*8, 1) #pula phi
-            f.seek(n*n*8, 1) #pula angles
-            f.seek(n*n*8, 1) #pula fx
-            f.seek(n*n*8, 1) #pula fy
 
         #Gráfico da vorticidade no meio, evoluindo no tempo
         plotPointEvolution(tvector, vortc, sideTextVorticty, "vort" + directory + ".png")

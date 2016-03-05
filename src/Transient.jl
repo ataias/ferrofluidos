@@ -13,27 +13,24 @@ export transient
 #I think this have been done, check
 
 function factor(i)
-    if i <= 100
-        return i/100.0
-    else
-        return 1.0
-    end
+    return i <= 100 ? i/100.0 : 1.0
 end
 
-macro saveFrames(index, dt)
+macro saveFrames(i)
   return quote
-    frames["velocity/x/" * string($index)] = un
-    frames["velocity/y/" * string($index)] = vn
-    frames["pressure/" * string($index)] = pn
-    frames["H/x/" * string($index)] = Hxn
-    frames["H/y/" * string($index)] = Hyn
-    frames["M/x/" * string($index)] = Mxn
-    frames["M/y/" * string($index)] = Myn
-    frames["phi/" * string($index)] = phin
-    frames["angles/" * string($index)] = angles
-    frames["F/x/" * string($index)] = fxn
-    frames["F/y/" * string($index)] = fyn
-    frames["t/" * string($index)] = float($index * dt)
+    # println(string($i))
+    frames["velocity/x/" * string($i)] = un
+    frames["velocity/y/" * string($i)] = vn
+    frames["pressure/" * string($i)] = pn
+    frames["H/x/" * string($i)] = Hxn
+    frames["H/y/" * string($i)] = Hyn
+    frames["M/x/" * string($i)] = Mxn
+    frames["M/y/" * string($i)] = Myn
+    frames["phi/" * string($i)] = phin
+    frames["angles/" * string($i)] = angles
+    frames["F/x/" * string($i)] = fxn
+    frames["F/y/" * string($i)] = fyn
+    frames["t/" * string($i)] = float($i * dt)
   end
 end
 
@@ -66,9 +63,29 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
   println(" a\t= ", a)
   println(" b\t= ", b)
   println(" c1\t= ", c1)
+  date = Libc.strftime(time())
+
+  if(save)
+    file = h5open(filename, "w")
+    info = g_create(file, "info")
+    attrs(info)["Description"] = "Info about simulation, like date and time of simulation."
+    info["date"] = date
+    info["n"] = n - 2
+    info["dx"] = dx
+    info["t"] = t
+    info["dt"] = dt
+    info["Re"] = Re
+    info["Cpm"] = Cpm
+    info["alpha"] = alpha
+    info["a"] = a
+    info["b"] = b
+    info["c1"] = c1
+    info["Pe"] = 1/c1
+    info["fps"] = fps
+  end
 
   "Instante de início da simulação"
-  println(Libc.strftime(time()), "\n")
+  println(date, "\n")
 
 	steps = round(Int,t/dt)
 
@@ -129,18 +146,16 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
   fxn = zeros(n-2, n-2)+1e-15
   fyn = zeros(n-2, n-2)+1e-15
 
-  #Salva valores das matrizes em t = 0
-
   if(save)
    #In Julia, these variables will be in the scope out of this if clause
-   file = h5open(filename, "w")
    frames = g_create(file, "frames")
    attrs(frames)["Description"] = "Frames with time series of several variables. Naming follows convention of 'variable name/direction x or y if applicable/frameNumber'. Notice direction does not apply to pressure, angles and potential field."
    frameNumber = 0
   end
 
   if(save)
-      @saveFrames(0, dt)
+    #Salvar valores das matrizes em A
+    @saveFrames(0)
   end
 
   #Magnetização em regime é constante e só depende de H aplicado
@@ -185,7 +200,6 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
     getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
     solve_navier_stokes!(NS)
 
-    #println("i = ", i, " and timeToSave = ", timeToSave, ", therefore i % timeToSave = ", i % timeToSave == 0)
 		if (i % timeToSave == 0) || (i == steps)
 			staggered2not!(NS.v.x, NS.v.y, NS.p, un,  vn,  pn,   n)
       staggered2not!(Hx,     Hy,     phi,  Hxn, Hyn, phin, n)
@@ -193,7 +207,8 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
       staggered2not!(NS.f.x, NS.f.y,       fxn, fyn,       n)
       Angle!(Hxn, Hyn, Mxn, Myn, angles, n-2)
       if(save)
-        @saveFrames(i, dt)
+        frameNumber += 1
+        @saveFrames(frameNumber)
       end #if(save)
 
 			println("t = ", i*dt)
