@@ -16,9 +16,8 @@ function factor(i)
     return i <= 100 ? i/100.0 : 1.0
 end
 
-macro saveFrames(i)
+macro saveFrames(i, time)
   return quote
-    # println(string($i))
     frames["velocity/x/" * string($i)] = un
     frames["velocity/y/" * string($i)] = vn
     frames["pressure/" * string($i)] = pn
@@ -30,7 +29,13 @@ macro saveFrames(i)
     frames["angles/" * string($i)] = angles
     frames["F/x/" * string($i)] = fxn
     frames["F/y/" * string($i)] = fyn
-    frames["t/" * string($i)] = float($i * dt)
+    frames["t/" * string($i)] = float($time)
+
+    #Trying to change an existing value gives an error message
+    if exists(frames, "lastFrame")
+      o_delete(frames, "lastFrame")
+    end
+    frames["lastFrame"] = float($i)
   end
 end
 
@@ -82,6 +87,7 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
     info["c1"] = c1
     info["Pe"] = 1/c1
     info["fps"] = fps
+    info["completed"] = 0
   end
 
   "Instante de início da simulação"
@@ -155,7 +161,7 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
 
   if(save)
     #Salvar valores das matrizes em A
-    @saveFrames(0)
+    @saveFrames(0, 0.0)
   end
 
   #Magnetização em regime é constante e só depende de H aplicado
@@ -208,7 +214,7 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
       Angle!(Hxn, Hyn, Mxn, Myn, angles, n-2)
       if(save)
         frameNumber += 1
-        @saveFrames(frameNumber)
+        @saveFrames(frameNumber, i*dt)
       end #if(save)
 
 			println("t = ", i*dt)
@@ -238,7 +244,12 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
 	end #for i in 1:steps
 
   if(save)
+    if exists(info, "completed")
+      o_delete(info, "completed")
+    end
+    info["completed"] = 1
     close(file)
+    println("File closed")
   end
 	return 0
 end #function transient

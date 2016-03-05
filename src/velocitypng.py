@@ -18,7 +18,9 @@ def printFileData(info):
     print("alpha = ", info['alpha'].value)
     print("Cpm = ", info['Cpm'].value)
     print("t = ", info['t'].value)
+    print("dt = ", info['dt'].value)
     print("fps = ", info['fps'].value)
+    print("Simulation complete: ", bool(info['completed'].value))
 
     print()
 
@@ -134,7 +136,7 @@ if __name__ == "__main__":
         phaseDiffMH = zeros(size(tvector))
 
         for i in range(0, numberFrames):
-            time = i/fps
+            time = frames['t/' + str(i)].value
             # batchRead(u, v, p, Hx, Hy, Mx, My, phi, angles, n, f)
             #1 = SEEK_CUR -> offset relative to current position
 
