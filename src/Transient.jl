@@ -35,7 +35,7 @@ macro saveFrames(i, time)
     if exists(frames, "lastFrame")
       o_delete(frames, "lastFrame")
     end
-    frames["lastFrame"] = float($i)
+    frames["lastFrame"] = $i
   end
 end
 

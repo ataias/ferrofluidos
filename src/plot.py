@@ -40,7 +40,7 @@ def plotStreamFrame(u, v, x, y, n, sideText, time, filename):
     sideText(time)
 
     axis([0, 1.0, 0, 1.02])
-    savefig(filename, dpi=200)
+    savefig(filename, format="png", dpi=200)
 
 def plotPressure(x, y, p, filename):
     #Plotar pressão
@@ -52,7 +52,7 @@ def plotPressure(x, y, p, filename):
     CS = contour(x, y, p)
     clabel(CS, inline=1, fontsize=10)
     title('Pressure')
-    savefig(filename, dpi=200)
+    savefig(filename, format="png", dpi=200)
 
 def plotAngle(x, y, angles, n, filename):
   close('all')
@@ -66,7 +66,7 @@ def plotAngle(x, y, angles, n, filename):
   title(r'Angle between $\mathbf{H}_{\mathrm{calc}}$ and $\mathbf{M}$')
   xlabel(r'$x$')
   ylabel(r'$y$')
-  savefig(filename, dpi=200)
+  savefig(filename, format="png", dpi=200)
 
 def plotPointEvolution(t, w, sideText, filename):
     #use LaTeX, choose nice some looking fonts and tweak some settings
@@ -78,7 +78,7 @@ def plotPointEvolution(t, w, sideText, filename):
 
     axis([min(t), max(t), min(w), max(w)*1.1])
     grid(True)
-    savefig(filename, dpi=200)
+    savefig(filename, format="png", dpi=200)
 
 def plotMEvolution(t, modM, phaseM, phaseDiffMH, sideText, filename):
     setup()
@@ -89,7 +89,6 @@ def plotMEvolution(t, modM, phaseM, phaseDiffMH, sideText, filename):
     axis([min(t), max(t), min(modM), max(modM)*1.1])
     ylabel('$|\mathbf{M}|$')
     sideText()
-
 
     subplot(2,1,2)
     plot(t,phaseM, label='ang(M)')
