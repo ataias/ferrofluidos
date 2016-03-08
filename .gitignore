@@ -12,3 +12,5 @@ eletromagnetismo.pdf
 src/__pycache__/streamlines.cpython-34.pyc
 */__pycache__/*
 __pycache__/*
+dropbox_key.txt
+data/

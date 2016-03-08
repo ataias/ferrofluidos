@@ -26,7 +26,7 @@ def printFileData(info):
 
 if __name__ == "__main__":
 
-    for filename in glob.glob("*.h5"):
+    for filename in glob.glob("*.h5~"):
         start = tt.time()
         #Criar pasta
         directory = os.path.splitext(filename)[0]
@@ -34,9 +34,10 @@ if __name__ == "__main__":
             os.makedirs(directory)
 
         #Mover arquivos
-        shutil.move(filename, directory + "/" + filename)
-        shutil.move(directory + ".txt", directory + "/" + directory + ".txt")
-
+        shutil.move(filename, directory + "/" + directory + ".h5")
+        shutil.move(directory + ".txt~", directory + "/" + directory + ".txt")
+        filename = directory + ".h5" #filename changed
+        
         #Entrar na pasta
         os.chdir(directory)
 

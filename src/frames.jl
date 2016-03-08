@@ -95,8 +95,8 @@ function main()
 
   #Name of files that will be saved
   basefilename = "Re" * string(round(Int,parsed_args["Re"])) * "N" * string(n-2)
-  filename = basefilename * ".txt"
-  datafilename = basefilename *".h5"
+  filename = basefilename * ".txt~"
+  datafilename = basefilename *".h5~"
 
   file = open(filename, "w")
   redirect_stdout(file)
