@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from matplotlib import *
+use('Agg')
 from pylab import *
 import struct
 import sys
