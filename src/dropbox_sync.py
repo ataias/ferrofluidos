@@ -13,6 +13,7 @@ import six
 import sys
 import time
 import unicodedata
+import subprocess
 
 if sys.version.startswith('2'):
     input = raw_input
@@ -183,6 +184,9 @@ def upload(dbx, fullname, folder, subfolder, name, overwrite=False):
             print('*** API error', err)
             return None
     print('uploaded as', res.name.encode('utf8'))
+
+    subprocess.call(["rm", "-rf", fullname])
+
     return res
 
 def yesno(message, default, args):

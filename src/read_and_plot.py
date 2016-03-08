@@ -34,10 +34,9 @@ if __name__ == "__main__":
             os.makedirs(directory)
 
         #Mover arquivos
-        shutil.move(filename, directory + "/" + directory + ".h5")
+        shutil.move(filename, directory + "/" + filename)
         shutil.move(directory + ".txt~", directory + "/" + directory + ".txt")
-        filename = directory + ".h5" #filename changed
-        
+
         #Entrar na pasta
         os.chdir(directory)
 
@@ -155,15 +154,21 @@ if __name__ == "__main__":
 
             Hx = frames['H/x/' + str(i)].value
             Hy = frames['H/y/' + str(i)].value
-            plotStreamFrame(Hx, Hy, x, y, n, sideTextH, time, "H" + str(i).zfill(4) + ".png")
+
+            pngName = "H" + str(i).zfill(4) + ".png~"
+            plotStreamFrame(Hx, Hy, x, y, n, sideTextH, time, pngName)
             print("Criada imagem para campo H em t = ", time)
+            shutil.move(pngName, os.path.splitext(pngName)[0] + ".png")
 
             # readMatrix(Mx, f, n)
             Mx = frames['M/x/' + str(i)].value
             # readMatrix(My, f, n)
             My = frames['M/y/' + str(i)].value
-            plotStreamFrame(Mx, My, x, y, n, sideTextM, time, "M" + str(i).zfill(4) + ".png")
+
+            pngName = "M" + str(i).zfill(4) + ".png~"
+            plotStreamFrame(Mx, My, x, y, n, sideTextM, time, pngName)
             print("Criada imagem para campo M em t = ", time)
+            shutil.move(pngName, os.path.splitext(pngName)[0] + ".png")
 
             #Evolução do magnetismo no meio
             modM[i] = sqrt((Mx[c,c])**2 + (My[c,c])**2)
@@ -171,17 +176,24 @@ if __name__ == "__main__":
             phaseDiffMH[i] = math.degrees(math.atan2(Hy[c,c], Hx[c,c])) - phaseM[i]
 
         #Gráfico da vorticidade no meio, evoluindo no tempo
-        plotPointEvolution(tvector, vortc, sideTextVorticty, "vort" + directory + ".png")
+        pngName = "vort" + directory + ".png~"
+        plotPointEvolution(tvector, vortc, sideTextVorticty, pngName)
         print("Criada imagem para evolução temporal da vorticidade em (0.5, 0.5)")
+        shutil.move(pngName, os.path.splitext(pngName)[0] + ".png")
 
+        pngName = "Magnetism" + directory + ".png~"
         plotMEvolution(tvector, modM, phaseM, phaseDiffMH, titleTextMagnetism,\
-                        "Magnetism" + directory + ".png")
+                        pngName)
         print("Criada imagem para evolução temporal do magnetismo em (0.5, 0.5)")
+        shutil.move(pngName, os.path.splitext(pngName)[0] + ".png")
 
-        os.chdir("..")
+        os.chdir("..") #out of png directory
         f.close()
 
+        #Let simulation file be uploaded and then deleted by dropbox daemon
+        shutil.move(filename, directory + ".h5")
+
         #Voltar a pasta anterior
-        os.chdir("..")
+        os.chdir("..") #out of simulation directory and back to "simulations"
         end = tt.time()
         print("Tempo gasto em " + directory + " foi de ", end - start, " segundos")
