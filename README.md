@@ -34,7 +34,7 @@ First off, clone the repository:
 
 Before running, the line with the repository path should be added to your `~/.juliarc.jl`. If the repository was cloned in your home folder, you should do:
 
-		push!(LOAD_PATH,ENV["HOME"] * "/ferrofluidos/src")
+	push!(LOAD_PATH,ENV["HOME"] * "/ferrofluidos/src")
 
 After that, cd `ferrofluidos/src` to be in the folder with the source code. A simple simulation can be done running `frames.jl`. For that, go to a terminal and run in the folder:
 
