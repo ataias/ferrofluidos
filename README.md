@@ -1,43 +1,48 @@
 <a name="Vortex"/>
 ## Vortex
-Este projeto faz parte do grupo Vortex.
-- **Vortex:** <http://www.vortex.unb.br>
+This project is part of the vortex group
+- **Old website:** <http://www.vortex.unb.br>
+- **New Website:** <http://www.vortexresearchgroup.com/>
 
 <a name="Ferrofluidos"/>
 ## Ferrofluidos
 
-Este é um Projeto de Iniciação Científica na área de fluidos realizado na Universidade de Brasília sob a supervisão principal do professor Yuri Dumaresq. O objetivo é simular fluidos magnéticos em diversas aplicações. Para isso, discretizações de equações diferenciais devem ser realizadas e então executadas em um computador. As equações principais discretizadas aqui são: Laplace, Poisson e Navier Stokes (esta última ainda está em projeto). A solução das equações se dá num quadrado de lado 1 com o número de pontos na malha, n, variável. As discretizações são feitas aqui com o método das diferenças finitas.
+This is a Scientific Junior Research Project in the area of magnetic fluids currently in development during my graduation (my = Ataias) at University of Brasília. The supervisor is professor [Yuri Dumaresq](http://yuri.mat.unb.br/). The goal is to simulate magnetic fluids in a couple different scenarios. For that, mathematical equations are discretized using finite differences then executed on a computer. The main equations are: Laplace, Poisson and Navier Stokes. They are working well on a cavity and the current work is on the magnetization. The domain of the simulation is a cavity, here this is a square mesh of nondimensional size equals to one that has n points.
 
-<a name="Dependências"/>
-## Dependências
+<a name="Dependencies"/>
+## Dependencies
 
 - **Julia:** <http://julialang.org>
+	- [ArgParse](https://github.com/carlobaldassi/ArgParse.jl)
+	- [HDF5](https://github.com/JuliaLang/HDF5.jl)
 - **Python 3:** <https://www.python.org>
-- **Matploblib:** <http://matplotlib.org>
-- **NumPy:** <http://www.numpy.org>
+	- [Matploblib](http://matplotlib.org)
+	- [NumPy](http://www.numpy.org)
+	- [h5py](http://www.h5py.org/)
 - **LaTeX:** <http://latex-project.org>
 
-<a name="Como compilar e executar"/>
-## Compilar e executar
+If you wish to run the project in a virtual machine, it can be easily set up checking the vagrant repository available at <https://github.com/ataias/ubuntu-vagrant>. If you are using ubuntu, you can check what programs you actually need to install verifying the shell scripts there.
 
-Os programas aqui são feitos em Julia e os gráficos são feitos com a ajuda da biblioteca python matplotlib. Para o código em Julia, basta executar e o sistema fará a compilação Just-In-Time. No caso do python, os códigos serão interpretados.
+<a name="How to compile and run"/>
+## Compile and run
 
-Primeiramente, obtenha o código fonte clonando o repositório git. Isto pode ser feito tanto por ssh como por https:
+The simulation code is written in Julia and the graphics are made using [matplotlib](http://matplotlib.org/). Julia compiles it the first time that you use the code, using compilation Just-In-Time. As for Python, code is interpreted.
 
-	git clone git@github.com:ataias/ferrofluidos.git
+First off, clone the repository:
+
 	git clone https://github.com/ataias/ferrofluidos.git
 
-Após isso, entre no diretório `ferrofluidos/` e então terás acesso ao código fonte. Julia usa compilação Just-In-Time. Para executar o código `frames.jl`, pode-se ir ao terminal e:
+Before running, the line with the repository path should be added to your `~/.juliarc.jl`. If the repository was cloned in your home folder, you should do:
 
-	julia frames.jl 52 2.5 10.0 1.25 0.5 0.8 0 0.0 0.0 > out.txt
+		push!(LOAD_PATH,ENV["HOME"] * "/ferrofluidos/src")
 
-Detalhes sobre os parâmetros estão disponíveis no código `frames.jl`. Dados da velocidade e pressão estão disponíveis na saída `.dat` de cada um desses programas. Pode-se processar a saída do `frames.jl` com o `vectorField.py`
+After that, cd `ferrofluidos/src` to be in the folder with the source code. A simple simulation can be done running `frames.jl`. For that, go to a terminal and run in the folder:
 
-	chmod +x vectorField.py
-	./vectorField.py
+	julia frames.jl 50 10.0 2.5 0.5 0.8 0.8 0.0 -0.05
 
-É recomendável adicionar a linha 
+Details are available in the code and you can also type `julia frames.jl --help` to learn more. The output file is HDF5. Once the program finishes, you can process it calling `read_and_plot.py` in the same folder where the simulation files, .h5~ and .txt~ files are. If they are in the `src` folder, you can run
 
-	push!(LOAD_PATH,"/home/ataias/ferrofluidos/src")
+	chmod +x read_and_plot.py
+	./read_and_plot.py
 
-ao arquivo `~/.juliarc.jl`, lembrando de adicionar o diretório correto onde `ferrofluidos/src` está.
+If you have any questions, don't hesitate to contact me.

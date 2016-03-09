@@ -101,6 +101,8 @@ function main()
   file = open(filename, "w")
   redirect_stdout(file)
 
+  #TODO: Add `file` as a parameter to transient and flush it more frequently so that the user can see the evolution of the problem in the .txt~ file.
+
   @time transient(n,
                   getDt(n, parsed_args["Re"], parsed_args["divFactor"]),
                   parsed_args["Re"],
