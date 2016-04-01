@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+#Source: https://www.dropbox.com/developers/documentation/python
+#Accessed in March 8th, 2016
+
+#Custom modifications were made! Particularly, the file is deleted after upload
 """Upload the contents of your Downloads folder to Dropbox.
 This is an example app for API v2.
 """
