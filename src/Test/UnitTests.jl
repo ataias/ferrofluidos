@@ -90,9 +90,9 @@ function NavierStokesVaryingNTest(;Re=10, divFactor=1.25, t=1.0, N=[52])
   println("RSS = $(RSS)")
 
   # Plotting
-  dx2min = minimum(dx2)
-  dx2max = maximum(dx2)
-  test_plot = plot(layer(x=dx2, y=du, Geom.point), layer(e, dx2min, dx2max, Geom.line), Guide.XLabel("dx2"), Guide.YLabel("Error"), Guide.Title("Evolution of error: Re=" * string(Re) * ", divFactor=" * string(divFactor)))
+  dxmin = minimum(dx)
+  dxmax = maximum(dx)
+  test_plot = plot(layer(x=dx2, y=du, Geom.point), layer(e, dxmin, dxmax, Geom.line), Guide.XLabel("dx2"), Guide.YLabel("Error"), Guide.Title("Evolution of error: Re=" * string(Re) * ", divFactor=" * string(divFactor)))
 
   # Creating pdf
   nRe = round(Int, Re)
@@ -180,7 +180,7 @@ function NavierStokesVaryingDtTest(;Re=10, divFactor=[1.25,1.5,2.5], t=1.0, N=52
   println("Coefficients:")
   println("w[1] = $(w[1])")
   println("w[2] = $(w[2])")
-  e = dt -> w[1] + dt*w[2] # erro
+  e = x -> w[1] + x*w[2] # erro
   RSS = sum(map(x -> x*x, y - map(e, dt)))
   println("RSS = $(RSS)")
 
@@ -194,8 +194,8 @@ function NavierStokesVaryingDtTest(;Re=10, divFactor=[1.25,1.5,2.5], t=1.0, N=52
 end
 
 function main()
-  NavierStokesVaryingNTest(Re=10.0, divFactor=1.25, t=1.0, N=2 + [50, 60, 70])
-  NavierStokesVaryingDtTest(Re=10, divFactor=[1.25,1.5,2.5], t=1.0, N=52)
+  @time NavierStokesVaryingNTest(Re=10.0, divFactor=1.25, t=1.0, N=2 + [50, 60, 70])
+  @time NavierStokesVaryingDtTest(Re=10, divFactor=[1.25,1.5,2.5], t=1.0, N=52)
 end
 
 main()
