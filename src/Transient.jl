@@ -104,10 +104,10 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
 		NS.uB[i+2] = 0*(sinpi(i*dx))^2 #inicialmente, repouso
 	end
 
-    #Condições de contorno, basta editar em v_old
+  #Condições de contorno, basta editar em v_old
 	NS.v_old.x[:,n] = 2*NS.uB
 
-    #Força
+  #Força
 	#fx = zeros(n,n)
 	#fy = zeros(n,n)
 
@@ -147,6 +147,8 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
   fHx = (x,y) ->  1/(2*pi)*(y-b)/((x-a)^2+(y-b)^2)
   fHy = (x,y) -> -1/(2*pi)*(x-a)/((x-a)^2+(y-b)^2)
 
+  # A small offset is added to avoid complaining from matplotlib if it there
+  # are only zeros
   fact = 0
   angles = zeros(n-2, n-2)+1e-15;
   fxn = zeros(n-2, n-2)+1e-15
@@ -156,8 +158,8 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
    #In Julia, these variables will be in the scope out of this if clause
    frames = g_create(file, "frames")
    attrs(frames)["Description"] = "Frames with time series of several variables. Naming follows convention of 'variable name/direction x or y if applicable/frameNumber'. Notice direction does not apply to pressure, angles and potential field."
-   frameNumber = 0
   end
+  frameNumber = 0
 
   if(save)
     #Salvar valores das matrizes em A
@@ -191,6 +193,13 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
   v∇Mx = zeros(n,n)
   v∇My = zeros(n,n)
 
+  # TODO: Create variable to store vorticity, it can be in memory
+  # 24/05/2016
+  midPoint = Dict(:t     => zeros(numberFrames),
+                  :vortc => zeros(numberFrames),
+                  :u     => zeros(numberFrames),
+                  :v     => zeros(numberFrames))
+
 	for i in 1:steps
     fact = factor(i)
     for j in -1:n-2
@@ -212,12 +221,13 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
       staggered2not!(Mx,     My,           Mxn, Myn,       n)
       staggered2not!(NS.f.x, NS.f.y,       fxn, fyn,       n)
       Angle!(Hxn, Hyn, Mxn, Myn, angles, n-2)
+      frameNumber += 1
       if(save)
-        frameNumber += 1
         @saveFrames(frameNumber, i*dt)
       end #if(save)
 
-			println("t = ", i*dt)
+      time = i*dt
+			println("t = ", time)
 			println("  u[0.5,0.5]\t= ", un[c,c])
 			println("  v[0.5,0.5]\t= ", vn[c,c])
       #Observe que vn e un estão salvas nas quinas.
@@ -232,6 +242,12 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
 
 			F = simpson(tau, n-2)
 			println("  F\t= ", F)
+
+      # Testes unitários -> retorno da função será valores do ponto intermediário
+      midPoint[:t][frameNumber] = time
+      midPoint[:u][frameNumber] = un[c,c]
+      midPoint[:v][frameNumber] = vn[c,c]
+      midPoint[:vortc][frameNumber] = vortc
 		end #if (i % timeToSave == 0) || (i == steps)
 
     #Preparing for next time step
@@ -251,7 +267,8 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
     close(file)
     println("File closed")
   end
-	return 0
+
+	return midPoint
 end #function transient
 
 end #module
