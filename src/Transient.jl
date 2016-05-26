@@ -53,21 +53,23 @@ A função `transient(...)` realiza a simulação do sistema do tempo zero até 
 `filename` é o nome do arquivo hdf5 no qual serão salvos os dados de simulação
 `convec` é usado para indicar se o termo convectivo deve ser considerado. Deve ser igual a 1.0 ou 0.0.
 """
-function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, convec=0.0)
+function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, convec=0.0; should_print=true)
 
   dx = 1/(n-2)
 
-  println("Dados sobre simulação: ")
-  println(" n\t= ", n)
-  println(" dx\t= ", dx)
-  println(" t\t= ", t)
-  println(" Re\t= ", Re)
-  println(" dt\t= ", dt)
-  println(" Cpm\t= ", Cpm)
-  println(" α\t= ", alpha)
-  println(" a\t= ", a)
-  println(" b\t= ", b)
-  println(" c1\t= ", c1)
+  if should_print
+    println("Dados sobre simulação: ")
+    println(" n\t= ", n)
+    println(" dx\t= ", dx)
+    println(" t\t= ", t)
+    println(" Re\t= ", Re)
+    println(" dt\t= ", dt)
+    println(" Cpm\t= ", Cpm)
+    println(" α\t= ", alpha)
+    println(" a\t= ", a)
+    println(" b\t= ", b)
+    println(" c1\t= ", c1)
+  end
   date = Libc.strftime(time())
 
   if(save)
@@ -227,21 +229,25 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
       end #if(save)
 
       time = i*dt
-			println("t = ", time)
-			println("  u[0.5,0.5]\t= ", un[c,c])
-			println("  v[0.5,0.5]\t= ", vn[c,c])
       #Observe que vn e un estão salvas nas quinas.
       #Este cálculo de vorticidade só é válido caso n seja PAR!
 			vortc =  ((vn[c+1,c]-vn[c-1,c]) - (un[c,c+1]-un[c,c-1]) )/(2*dx)
-			println("  ω [0.5,0.5]\t= ", vortc)
-      println("  Pressure values in range\t [", minimum(pn), ", ", maximum(pn), "]")
 			tau = zeros(n-2)
 			for i in 2:n-1
 				tau[i-1] = (1/Re)*((NS.v.x[i,n]-NS.v.x[i,n-1])/dx)
 			end #for i in 2:n-1
 
 			F = simpson(tau, n-2)
-			println("  F\t= ", F)
+
+      if should_print
+        # Presenting information
+        println("t = ", time)
+  			println("  u[0.5,0.5]\t= ", un[c,c])
+  			println("  v[0.5,0.5]\t= ", vn[c,c])
+  			println("  ω [0.5,0.5]\t= ", vortc)
+        println("  Pressure values in range\t [", minimum(pn), ", ", maximum(pn), "]")
+  			println("  F\t= ", F)
+      end
 
       # Testes unitários -> retorno da função será valores do ponto intermediário
       midPoint[:t][frameNumber] = time
