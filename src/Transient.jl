@@ -92,8 +92,10 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
     info["completed"] = 0
   end
 
-  "Instante de início da simulação"
-  println(date, "\n")
+  if should_print
+    "Instante de início da simulação"
+    println(date, "\n")
+  end
 
 	steps = round(Int,t/dt)
 

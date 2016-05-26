@@ -1,6 +1,10 @@
 using Transient
 using NavierTypes
 using Gadfly
+@everywhere using Transient
+@everywhere using NavierTypes
+@everywhere using Gadfly
+
 #N is a vector of all Ns that are going to be used!
 # Run everything up to 1 or 2 times
 function NavierStokesVaryingNTest(;Re=10, divFactor=1.25, t=1.0, N=[52])
@@ -22,13 +26,24 @@ function NavierStokesVaryingNTest(;Re=10, divFactor=1.25, t=1.0, N=[52])
   # Dictionary for which key is the mesh size n and its values are dictionaries
   # returne by transient()
   results = Dict{Int,Any}()
+  
+  println("Iniciando simulação...")
+  #Simulações para casos não magnéticos
 
-  for n in N
-    dt = getDt(n, Re, divFactor)
-    @time results[n] = transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, datafilename, should_print=false)
-    println("Finished simulation for n = $(n)")
+  @sync begin
+    for n in N
+      println(n)
+      @async begin
+        dt = getDt(n, Re, divFactor)
+        call = @spawn transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, datafilename, should_print=false)
+        println("Tasks n = $(n) started executing")
+        results[n] = fetch(call)
+        println("Task n = $(n) ended")
+      end
+    end
   end
 
+  println("Ended executing tasks")
   # Need to know length of an array in results (depends on fps)
   points = length(results[N[1]][:t])
   midTPoint = round(Int, points/2)
@@ -67,13 +82,13 @@ function NavierStokesVaryingNTest(;Re=10, divFactor=1.25, t=1.0, N=[52])
   w = (H'*H)\H'*y
 
   println("Coefficients are:")
-  println(w)
-  println(size(w))
-
+  println("w[1] = $(w[1])")
+  println("w[2] = $(w[2])")
+  println("w[3] = $(w[3])")
 end
 
 function main()
-  NavierStokesVaryingNTest(Re=10.0, divFactor=1.25, t=1.0, N=2 + [50, 60])
+  NavierStokesVaryingNTest(Re=10.0, divFactor=1.25, t=1.0, N=2 + [50, 60, 70])
 end
 
 main()
