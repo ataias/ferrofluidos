@@ -34,20 +34,21 @@ function NavierStokesVaryingNTest(N=[52])
   for i in range(1,length(N))
     k = N[i]
     t[i] = results[k][:t][midTPoint]
+    println("Time of N = " * string(N[i]) * " is " * string(t[i]))
     u[i] = results[k][:u][midTPoint]
     v[i] = results[k][:v][midTPoint]
     vortc[i] = results[k][:vortc][midTPoint]
   end
 
-  dx = [1/(i-2) for i in N]
+  dx = [(1/(i-2))^2 for i in N]
   base_u = u[length(N)]
   du = [abs(x - base_u) for x in u]
-  plotu = plot(layer(x=dx, y=du, Geom.point), Guide.XLabel("dx"), Guide.YLabel("Error"), Guide.Title("Evolution of error according to mesh size step"))
+  plotu = plot(layer(x=dx, y=du, Geom.point), Guide.XLabel("dx2"), Guide.YLabel("Error"), Guide.Title("Evolution of error according to mesh size step"))
   draw(PDF("plotu.pdf", 8inch, 6inch), plotu)
 end
 
 function main()
-  NavierStokesVaryingNTest(2 + [50, 60, 70])
+  NavierStokesVaryingNTest(2 + [50, 60, 70, 80, 90, 100])
 end
 
 main()
