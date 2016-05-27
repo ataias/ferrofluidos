@@ -9,6 +9,9 @@ using Gadfly
 # Run everything up to 1 or 2 times
 function NavierStokesVaryingNTest(;Re=10, divFactor=1.25, t=1.0, N=[52])
 
+  originalSTDOUT = STDOUT
+  (outRead, outWrite) = redirect_stdout()
+
   date = Libc.strftime(time())
   println("$(date): NavierStokesVaryingNTest starting")
   println("\tRe=$(Re)")
@@ -103,14 +106,36 @@ function NavierStokesVaryingNTest(;Re=10, divFactor=1.25, t=1.0, N=[52])
   # Creating pdf
   nRe = round(Int, Re)
   ndF = round(Int, divFactor*100)
-  draw(PDF("NavierStokesVaryingNTest_Re$(nRe)_divFactor$(ndF).pdf", 8inch, 6inch), test_plot)
+  pdfname = "NavierStokesVaryingNTest_Re$(nRe)_divFactor$(ndF).pdf"
+  pngname = "NavierStokesVaryingNTest_Re$(nRe)_divFactor$(ndF).png"
+  draw(PDF(pdfname, 8inch, 6inch), test_plot)
+  draw(PNG(pngname, 8inch, 6inch), test_plot)
 
   # Show that plotting finished
   println("Finished plotting for test No Magnetism with Re=$(round(Int, Re)) and divFactor=$(divFactor))")
   println()
+
+  close(outWrite)
+  data = utf8(readavailable(outRead))
+  close(outRead)
+  redirect_stdout(originalSTDOUT)
+
+  command = `curl -s --user "api:$(mailgun[:API_KEY])" $(mailgun[:DOMAIN_NAME]) \
+      -F from=$(mailgun[:from]) \
+      -F to=$(mailgun[:to]) \
+      -F subject="Simulation NavierStokesVaryingNTest of $(date)"  \
+      -F text="Follows information about the test simulation that started at $(date)\n $(data)" \
+      -F attachment=$(abspath(pdfname)) \
+      -F attachment=$(abspath(pngname))`
+
+    try run(command) catch; end # for some reason, julia things an error happened
+    println(data) # print data to screen, can be redirected using nohup
 end
 
 function NavierStokesVaryingDtTest(;Re=10, divFactor=[1.25,1.5,2.5], t=1.0, N=52)
+
+  originalSTDOUT = STDOUT
+  (outRead, outWrite) = redirect_stdout()
 
   date = Libc.strftime(time())
   println("$(date): NavierStokesVaryingDtTest starting")
@@ -197,9 +222,28 @@ function NavierStokesVaryingDtTest(;Re=10, divFactor=[1.25,1.5,2.5], t=1.0, N=52
   dtmax = maximum(dt)
   test_plot = plot(layer(x=dt, y=du, Geom.point), layer(e, dtmin, dtmax, Geom.line), Guide.XLabel("dt"), Guide.YLabel("Error"), Guide.Title("Evolution of error: Re=$(Re), n=$(N)"))
   nRe = round(Int, Re)
-  draw(PDF("NavierStokesVaryingDtTest_Re$(Re)_N$(N).pdf", 8inch, 6inch), test_plot)
+  pdfname = "NavierStokesVaryingDtTest_Re$(Re)_N$(N).pdf"
+  pngname = "NavierStokesVaryingDtTest_Re$(Re)_N$(N).png"
+  draw(PDF(pdfname, 8inch, 6inch), test_plot)
+  draw(PNG(pngname, 8inch, 6inch), test_plot)
   println("Finished plotting for test No Magnetism with Re=$(round(Int, Re)) and divFactor=$(divFactor)), dt varying, n fixed in $(N)")
 
+
+  close(outWrite)
+  data = utf8(readavailable(outRead))
+  close(outRead)
+  redirect_stdout(originalSTDOUT)
+
+   command = `curl -s --user "api:$(mailgun[:API_KEY])" $(mailgun[:DOMAIN_NAME]) \
+       -F from=$(mailgun[:from]) \
+       -F to=$(mailgun[:to]) \
+       -F subject="Simulation NavierStokesVaryingDtTest of $(date)"  \
+       -F text="Follows information about the test simulation that started at $(date)\n $(data)" \
+       -F attachment=$(abspath(pdfname)) \
+       -F attachment=$(abspath(pngname))`
+
+    try run(command) catch; end # for some reason, julia things an error happened
+    println(data) # print data to screen, can be redirected using nohup
 end
 
 function main()
