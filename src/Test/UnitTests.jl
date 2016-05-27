@@ -81,6 +81,9 @@ function NavierStokesVaryingNTest(;Re=10, divFactor=1.25, t=1.0, N=[52])
   y = du
   w = (H'*H)\H'*y
 
+  println("dx = $(dx)")
+  println("error = $(du)")
+
   println("Coefficients:")
   println("w[1] = $(w[1])")
   println("w[2] = $(w[2])")
@@ -92,7 +95,10 @@ function NavierStokesVaryingNTest(;Re=10, divFactor=1.25, t=1.0, N=[52])
   # Plotting
   dxmin = minimum(dx)
   dxmax = maximum(dx)
-  test_plot = plot(layer(x=dx2, y=du, Geom.point), layer(e, dxmin, dxmax, Geom.line), Guide.XLabel("dx2"), Guide.YLabel("Error"), Guide.Title("Evolution of error: Re=" * string(Re) * ", divFactor=" * string(divFactor)))
+  dxInterval = linspace(dxmin, dxmax, 100)
+  dx2Interval = map(x -> x*x, dxInterval)
+  value = map(e, dxInterval) # 100 pontos
+  test_plot = plot(layer(x=dx2, y=du, Geom.point), layer(x=dx2Interval, y=value, Geom.line), Guide.XLabel("dx2"), Guide.YLabel("Error"), Guide.Title("Evolution of error: Re=" * string(Re) * ", divFactor=" * string(divFactor)))
 
   # Creating pdf
   nRe = round(Int, Re)
@@ -176,6 +182,9 @@ function NavierStokesVaryingDtTest(;Re=10, divFactor=[1.25,1.5,2.5], t=1.0, N=52
   H = [ones(length(dt)) dt]
   y = du
   w = (H'*H)\H'*y
+
+  println("dt = $(dt)")
+  println("error = $(du)")
 
   println("Coefficients:")
   println("w[1] = $(w[1])")
