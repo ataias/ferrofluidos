@@ -125,8 +125,8 @@ function NavierStokesVaryingNTest(;Re=10, divFactor=1.25, t=1.0, N=[52])
       -F to=$(mailgun[:to]) \
       -F subject="Simulation NavierStokesVaryingNTest of $(date)"  \
       -F text="Follows information about the test simulation that started at $(date)\n $(data)" \
-      -F attachment=$(abspath(pdfname)) \
-      -F attachment=$(abspath(pngname))`
+      -F attachment=@$(abspath(pdfname)) \
+      -F attachment=@$(abspath(pngname))`
 
     try run(command) catch; end # for some reason, julia things an error happened
     println(data) # print data to screen, can be redirected using nohup
@@ -239,8 +239,8 @@ function NavierStokesVaryingDtTest(;Re=10, divFactor=[1.25,1.5,2.5], t=1.0, N=52
        -F to=$(mailgun[:to]) \
        -F subject="Simulation NavierStokesVaryingDtTest of $(date)"  \
        -F text="Follows information about the test simulation that started at $(date)\n $(data)" \
-       -F attachment=$(abspath(pdfname)) \
-       -F attachment=$(abspath(pngname))`
+       -F attachment=@$(abspath(pdfname)) \
+       -F attachment=@$(abspath(pngname))`
 
     try run(command) catch; end # for some reason, julia things an error happened
     println(data) # print data to screen, can be redirected using nohup
