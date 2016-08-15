@@ -129,17 +129,6 @@ function getH!(n, phi, Hx, Hy)
         end
     end
 
-    #H fora da cavidade estava sendo calculado por meio de
-    # for j in 2:n-1
-    #     Hy[1,j] = -(phi[1,j] - phi[1,j-1])/dx
-    #     Hy[n,j] = -(phi[n,j] - phi[n,j-1])/dx
-    # end
-    #
-    # for i in 2:n-1
-    #     Hx[i,1] = -(phi[i,1] - phi[i-1,1])/dx
-    #     Hx[i,n] = -(phi[i,n] - phi[i-1,n])/dx
-    # end
-    # Mas isto não é necessário. Como H é utilizado para obter M e M é nulo fora da cavidade
 end #end getH!
 
 function getM!(n, c1, dt, Mx, My, Mx_old, My_old, Mx0, My0, v∇Mx, v∇My)
@@ -149,7 +138,6 @@ function getM!(n, c1, dt, Mx, My, Mx_old, My_old, Mx0, My0, v∇Mx, v∇My)
   #simétricos (de 2 a n-1 em ambos os índices, pois, dependendo se é Mx ou My
   #pode haver um valor de interesse ou não)
 
-  #c1 = 1/Pe
   for i in 2:n
     for j in 2:n-1
       Mx[i,j] = Mx_old[i,j] - c1 * dt * (Mx_old[i,j] - Mx0[i,j])

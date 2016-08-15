@@ -18,7 +18,7 @@ function navier_stokes_step1!(n, dt, Re, u, v, u_old, v_old, fx, fy, uB)
 	dtx = dt/(2*dx)
 
 	for i in 3:n-1
-		for j in 2:n-1
+		for j in 3:n-1
 			#summing the stencil around i,j
 			u_s  = u_old[i+1,j]+u_old[i-1,j]+u_old[i,j+1]+u_old[i,j-1]
 			#average of u around i,j considering staggered grid
@@ -32,7 +32,7 @@ function navier_stokes_step1!(n, dt, Re, u, v, u_old, v_old, fx, fy, uB)
 	end #for i
 	## end u* ---------------
 
-	for i in 2:n-1
+	for i in 3:n-1
 		for j in 3:n-1
 			#summing the stencil around i,j
 			v_s  = v_old[i+1,j]+v_old[i-1,j]+v_old[i,j+1]+v_old[i,j-1]
@@ -57,9 +57,8 @@ function navier_stokes_step2!(n, A, dt, Re, p, #pressão ter sido inicializada
 	DIVij = 0.0
 	dx = 1/(n-2)
 	dx2 = dx*dx
-	dtx = dt/(2*dx)
 	dtdx = dt*dx
-	ReDx = Re*dx
+	ReDx2 = Re*dx*dx
 
   #nabla^2 p = f
   f = zeros(n,n)
@@ -69,7 +68,7 @@ function navier_stokes_step2!(n, A, dt, Re, p, #pressão ter sido inicializada
 		end
 	end
 
-  #Condições de fronteira de fluxo
+  #Condições de fronteira de fluxo (derivadas)
   left = zeros(n)
   right = zeros(n)
   upper = zeros(n)
@@ -79,28 +78,28 @@ function navier_stokes_step2!(n, A, dt, Re, p, #pressão ter sido inicializada
 	i = 2
 	for j in 2:n-1
 		sum_aux = 2*u_old[i,j]-5*u_old[i+1,j]+4*u_old[i+2,j]-u_old[i+3,j]
-		left[j] = sum_aux/ReDx + dx*fx[i,j]
+		left[j] = sum_aux/ReDx2 + fx[i,j]
 	end
 
 	#Processar fronteira direita
 	i = n #n é o tamanho da malha escalonada
 	for j in 2:n-1
 		sum_aux = 2*u_old[i,j]-5*u_old[i-1,j]+4*u_old[i-2,j]-u_old[i-3,j]
-		right[j] = sum_aux/ReDx + dx*fx[i,j]
+		right[j] = sum_aux/ReDx2 + fx[i,j]
 	end
 
 	#Processar fronteira inferior
 	j = 2
 	for i in 2:n-1
 		sum_aux = 2*v_old[i,j]-5*v_old[i,j+1]+4*v_old[i,j+2]-v_old[i,j+3]
-		lower[i] = sum_aux/ReDx + dx*fy[i,j]
+		lower[i] = sum_aux/ReDx2 + fy[i,j]
 	end
 
 	#Processar fronteira superior
 	j = n #n é o tamanho da malha escalonada
 	for i in 2:n-1
 		sum_aux = 2*v_old[i,j]-5*v_old[i,j-1]+4*v_old[i,j-2]-v_old[i,j-3]
-		upper[i] = sum_aux/ReDx + dx*fy[i,j]
+		upper[i] = sum_aux/ReDx2 + fy[i,j]
 	end
 
   poissonNeumannSparseSolver(n, p, f, A, left, right, upper, lower)
@@ -116,23 +115,17 @@ function navier_stokes_step3!(n, dt, Re, p, #pressão já calculada
 
 	#Pontos internos
 	for i in 2:n-1
-		for j in 2:n-1
-			px = (p[i,j]-p[i-1,j]) / dx
+		for j in 3:n-1
 			py = (p[i,j]-p[i,j-1]) / dx
-			u[i,j] = u[i,j] - dt*px
 			v[i,j] = v[i,j] - dt*py
 		end
 	end
 
-    #Boundary conditions, velocidades normais na malha escalonada
-	for j in 2:n-1
-		u[2,j] = 0 #esquerda
-		u[n,j] = 0 #direita
-	end
-
-	for i in 2:n-1
-		v[i,2] = 0 #embaixo
-		v[i,n] = 0 #em cima
+	for i in 3:n-1
+		for j in 2:n-1
+			px = (p[i,j]-p[i-1,j]) / dx
+			u[i,j] = u[i,j] - dt*px
+		end
 	end
 
 	#Fronteira

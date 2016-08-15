@@ -7,7 +7,7 @@ from numpy import *
 import time as tt
 import math
 
-#Este arquivo cria todas as imagens para os arquivos .dat na pasta na qual ele for executado
+#Este arquivo cria todas as imagens para os arquivos .h5 na pasta na qual ele for executado
 
 #f is an hdf5 file
 def printFileData(info):
@@ -75,6 +75,10 @@ if __name__ == "__main__":
             setupSideText()
             title(r'$\mathbf{M}$, ' + 't = ' + '{:10.8f}'.format(time))
 
+        def sideTextF(time):
+            setupSideText()
+            title(r'$\mathbf{F}$, ' + 't = ' + '{:10.8f}'.format(time))
+
         def sideTextH(time):
             setupSideText()
             title(r'$\mathbf{H}$, ' + 't = ' + '{:10.8f}'.format(time))
@@ -131,7 +135,7 @@ if __name__ == "__main__":
         phaseM = zeros(size(tvector))
         phaseDiffMH = zeros(size(tvector))
 
-        for i in range(0, numberFrames):
+        for i in range(0, numberFrames, 5):
             time = frames['t/' + str(i)].value
 
             #Criar gráfico para velocidades
@@ -175,13 +179,21 @@ if __name__ == "__main__":
             phaseM[i] = math.degrees(math.atan2(My[c,c], Mx[c,c]))
             phaseDiffMH[i] = math.degrees(math.atan2(Hy[c,c], Hx[c,c])) - phaseM[i]
 
+            # Força
+            Fx = frames['F/x/' + str(i)].value
+            Fy = frames['F/y/' + str(i)].value
+            pngName = "F" + str(i).zfill(4) + ".png~"
+            plotStreamFrame(Fx, Fy, x, y, n, sideTextF, time, pngName)
+            print("Criada imagem para campo F em t = ", time)
+            shutil.move(pngName, os.path.splitext(pngName)[0] + ".png")
+
         #Gráfico da vorticidade no meio, evoluindo no tempo
         pngName = "vort" + directory + ".png~"
         plotPointEvolution(tvector, vortc, sideTextVorticty, pngName)
         print("Criada imagem para evolução temporal da vorticidade em (0.5, 0.5)")
         shutil.move(pngName, os.path.splitext(pngName)[0] + ".png")
 
-        pngName = "Magnetism" + directory + ".png~"
+        pngName = "Magnetism" + directory + ".png"
         plotMEvolution(tvector, modM, phaseM, phaseDiffMH, titleTextMagnetism,\
                         pngName)
         print("Criada imagem para evolução temporal do magnetismo em (0.5, 0.5)")

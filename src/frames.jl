@@ -114,7 +114,8 @@ function main()
                   parsed_args["save"],
                   parsed_args["c1"],
                   parsed_args["fps"],
-                  datafilename)
+                  datafilename,
+                  1.0)
   close(file)
 end
 

@@ -69,6 +69,7 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
     println(" a\t= ", a)
     println(" b\t= ", b)
     println(" c1\t= ", c1)
+    println(" convec\t= ", convec)
   end
   date = Libc.strftime(time())
 
@@ -197,6 +198,9 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
   v∇Mx = zeros(n,n)
   v∇My = zeros(n,n)
 
+  # Auxiliar variable to compute force
+  tau = zeros(n-2)
+
   # TODO: Create variable to store vorticity, it can be in memory
   # 24/05/2016
   midPoint = Dict(:t     => zeros(numberFrames),
@@ -209,14 +213,19 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
     for j in -1:n-2
         NS.uB[j+2] = fact*(sinpi(j*dx))^2
     end
+
+    #Obter força
     #O primeiro passo é obter M em cada passo de tempo
     #faz sentido não usar o fator fact para getM, pois a evolução inicia
     #do valor anterior de M, que é 0 no tempo 0
-    v∇M!(n, NS.v.x, NS.v.y, Mx_old, My_old, v∇Mx, v∇My)
-    getM!(n, c1, dt, Mx, My, Mx_old, My_old, Mx0, My0, convec*v∇Mx, convec*v∇My)
-    getPhi!(n, phi, Mx, My, fHx, fHy, A)
-    getH!(n, phi, Hx, Hy)
-    getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y);
+    if Cpm > 1e-8
+      v∇M!(n, NS.v.x, NS.v.y, Mx_old, My_old, v∇Mx, v∇My)
+      getM!(n, c1, dt, Mx, My, Mx_old, My_old, Mx0, My0, convec*v∇Mx, convec*v∇My)
+      getPhi!(n, phi, Mx, My, fHx, fHy, A)
+      getH!(n, phi, Hx, Hy)
+      getForce!(n, Cpm, Hx, Hy, Mx, My, NS.f.x, NS.f.y)
+    end
+    # Resolver hidrodinâmica
     solve_navier_stokes!(NS)
 
 		if (i % timeToSave == 0) || (i == steps)
@@ -234,7 +243,6 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
       #Observe que vn e un estão salvas nas quinas.
       #Este cálculo de vorticidade só é válido caso n seja PAR!
 			vortc =  ((vn[c+1,c]-vn[c-1,c]) - (un[c,c+1]-un[c,c-1]) )/(2*dx)
-			tau = zeros(n-2)
 			for i in 2:n-1
 				tau[i-1] = (1/Re)*((NS.v.x[i,n]-NS.v.x[i,n-1])/dx)
 			end #for i in 2:n-1
@@ -252,10 +260,10 @@ function transient(n, dt, Re, t, Cpm, alpha, a, b, save, c1, fps, filename, conv
       end
 
       # Testes unitários -> retorno da função será valores do ponto intermediário
-      midPoint[:t][frameNumber] = time
-      midPoint[:u][frameNumber] = un[c,c]
-      midPoint[:v][frameNumber] = vn[c,c]
-      midPoint[:vortc][frameNumber] = vortc
+      # midPoint[:t][frameNumber] = time
+      # midPoint[:u][frameNumber] = un[c,c]
+      # midPoint[:v][frameNumber] = vn[c,c]
+      # midPoint[:vortc][frameNumber] = vortc
 		end #if (i % timeToSave == 0) || (i == steps)
 
     #Preparing for next time step
