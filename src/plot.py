@@ -43,6 +43,22 @@ def plotStreamFrame(u, v, x, y, n, sideText, time, filename):
     axis([0, 1.0, 0, 1.02])
     savefig(filename, format="png", dpi=200)
 
+def plotVectorFrame(u, v, x, y, n, sideText, time, filename):
+    setup()
+
+    #1 é a velocidade máxima na malha, ela varia se a condição de contorno for modificada
+    # norm = Normalize(vmin=0, vmax=1.0) #intensidade deve ser de 0 a 1
+    # streamplot(x, y, u, v, color=u, linewidth=1.3, cmap=cm.brg, arrowsize=4, norm=norm)
+    # colorbar(norm=norm, cmap=cm.winter, ticks=[0, 0.25, 0.75, 1])
+    scale = (amax(u)**2 + amax(v)**2)**0.5
+    quiver(x[0:n:4], y[0:n:4], u[0:n:4], v[0:n:4])
+    xlabel('$x$')
+    ylabel('$y$')
+    sideText(time)
+
+    axis([0, 1.0, 0, 1.02])
+    savefig(filename, format="png", dpi=200)
+
 def plotPressure(x, y, p, filename):
     #Plotar pressão
     close('all')

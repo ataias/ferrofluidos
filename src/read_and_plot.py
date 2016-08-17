@@ -183,7 +183,7 @@ if __name__ == "__main__":
             Fx = frames['F/x/' + str(i)].value
             Fy = frames['F/y/' + str(i)].value
             pngName = "F" + str(i).zfill(4) + ".png~"
-            plotStreamFrame(Fx, Fy, x, y, n, sideTextF, time, pngName)
+            plotVectorFrame(Fx, Fy, x, y, n, sideTextF, time, pngName)
             print("Criada imagem para campo F em t = ", time)
             shutil.move(pngName, os.path.splitext(pngName)[0] + ".png")
 
