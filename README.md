@@ -1,3 +1,16 @@
+# About
+This project was written during my graduation in Mechatronics Engineering.
+It has code to solve Poisson equation in a 1x1 square, as well as code to solve
+Navier Stokes equations in the same square.
+Initially it was written in C++, but after I learned functional programming (OCaml), 
+I thought that maybe the right tool for this task would be a programming language that
+was more expressive. At the same time, I didn't want to use Python cause I was afraid of
+having performance issues due to the several loops that I had to implement. This way I found
+Julia and was pretty happy with it. In 2 or 3 days I converted one year of work in C++ to Julia
+after having spent little time learning it.
+There is one bug in the project that I wasn't able to find out. When I compared values in the mesh
+with references from the literature, the values didn't match exactly. There was an error or around 0.5% that I still don't know the cause.
+
 <a name="Vortex"/>
 ## Vortex
 This project is part of the vortex group
